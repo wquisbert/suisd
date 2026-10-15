@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SEDES LA PAZ - SUISD</title>
+
+  <!-- Bootstrap 5.3.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- DataTables Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+  <!-- Leaflet & MarkerCluster -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <style>
+    :root {
+      --sedes-amber: #f59e0b;
+      --sedes-amber-dark: #b45309;
+      --sedes-gold: #fbbf24;
+      --glass-bg: rgba(255, 255, 255, 0.86);
+      --glass-border: rgba(245, 158, 11, 0.25);
+      --card-shadow: 0 10px 30px -5px rgba(180, 83, 9, 0.08);
+    }
+
+    [data-bs-theme="dark"] {
+      --glass-bg: rgba(15, 23, 42, 0.88);
+      --glass-border: rgba(251, 191, 36, 0.2);
+      --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.55);
+    }
+
+    body {
+      padding-top: 78px;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      body { padding-bottom: 82px; }
+    }
+
+    /* CANVAS INTERACTIVO DE FONDO */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    main, nav, .offcanvas, .modal {
+      position: relative;
+      z-index: 2;
+    }
+
+    .glass-navbar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .card-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 1.35rem;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .card-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 35px -8px rgba(245, 158, 11, 0.22);
+    }
+
+    /* SPLASH SCREEN CON CANVAS ORBITAL */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: radial-gradient(circle at center, #fffbeb 0%, #fef3c7 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+    [data-bs-theme="dark"] #splash-screen {
+      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    }
+
+    .splash-logo-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #splash-canvas {
+      position: absolute;
+      inset: 0;
+      width: 160px;
+      height: 160px;
+    }
+
+    .splash-logo {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      z-index: 2;
+      filter: drop-shadow(0 8px 16px rgba(180, 83, 9, 0.25));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-8px) scale(1.04); }
+    }
+
+    /* PESTAÑAS */
+    .tab-pane-custom {
+      display: none;
+      animation: fadeSlide 0.3s ease-out;
+    }
+    .tab-pane-custom.active {
+      display: block;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-nav-pill {
+      border-radius: 50rem;
+      padding: 0.45rem 1.15rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      background: transparent;
+      color: var(--bs-secondary-color);
+      transition: all 0.2s ease;
+    }
+    .btn-nav-pill:hover {
+      color: var(--sedes-amber);
+      background: rgba(245, 158, 11, 0.1);
+    }
+    .btn-nav-pill.active {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #fff !important;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+    }
+
+    /* MAPA LEAFLET */
+    #map {
+      height: 540px;
+      width: 100%;
+      border-radius: 1.1rem;
+      z-index: 5;
+    }
+    @media (max-width: 768px) {
+      #map { height: 420px; }
+    }
+
+    .marker-cluster {
+      background-color: rgba(245, 158, 11, 0.35) !important;
+    }
+    .marker-cluster div {
+      background: linear-gradient(135deg, #b45309, #78350f) !important;
+      color: #fff !important;
+      font-weight: 800;
+      font-size: 13px !important;
+      border: 2px solid #fbbf24;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    }
+
+    .form-select-sedes, .form-control-sedes {
+      border-radius: 0.9rem;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.55rem 0.9rem;
+    }
+    .form-select-sedes:focus, .form-control-sedes:focus {
+      border-color: var(--sedes-amber);
+      box-shadow: 0 0 0 0.22rem rgba(245, 158, 11, 0.22);
+    }
+
+    .page-item.active .page-link {
+      background-color: var(--sedes-amber) !important;
+      border-color: var(--sedes-amber) !important;
+      color: #fff !important;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CANVAS DE FONDO INTERACTIVO -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Input oculto para importar CSV local si se desea -->
+  <input type="file" id="csv-file-input" accept=".csv" class="d-none" onchange="importarArchivoCSV(event)">
+
+  <!-- SPLASH SCREEN -->
+  <div id="splash-screen">
+    <div class="splash-logo-wrapper mb-3">
+      <canvas id="splash-canvas" width="160" height="160"></canvas>
+      <img src="logo.png" alt="Logo SEDES" class="splash-logo" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+    </div>
+    <h2 class="fw-black mb-1 text-uppercase" style="letter-spacing: -0.5px;">SEDES LA PAZ - SUISD</h2>
+    <p class="text-warning fw-bold text-uppercase small mb-3" style="letter-spacing: 2px;">Sistema Único de Información en Salud</p>
+    <div class="d-flex align-items-center gap-2 text-secondary small fw-semibold">
+      <div class="spinner-grow spinner-grow-sm text-warning" role="status"></div>
+      <span id="splash-msg">Conectando con tu hoja de cálculo...</span>
+    </div>
+  </div>
+
+  <!-- BARRA SUPERIOR -->
+  <nav class="navbar fixed-top glass-navbar py-2">
+    <div class="container-xl d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3" style="cursor: pointer;" onclick="switchTab('tab1')">
+        <img src="logo.png" alt="SEDES" width="42" height="42" class="object-fit-contain" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+        <div class="lh-1">
+          <span class="fs-5 fw-black d-block text-warning-emphasis">SEDES LA PAZ - SUISD</span>
+          <span class="text-muted fw-bold text-uppercase" style="font-size: 0.63rem; letter-spacing: 1px;">Geovisor & Padrón Dinámico</span>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <div class="d-none d-md-flex bg-body-tertiary p-1 rounded-pill border me-2">
+          <button onclick="switchTab('tab1')" id="btn-tab1" class="btn-nav-pill"><i class="fa-solid fa-book-medical me-1"></i>1. Definiciones</button>
+          <button onclick="switchTab('tab2')" id="btn-tab2" class="btn-nav-pill active"><i class="fa-solid fa-map-location-dot me-1"></i>2. Mapa y Datos</button>
+          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-pill"><i class="fa-solid fa-screwdriver-wrench me-1"></i>3. Herramientas</button>
+        </div>
+
+        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3 shadow-sm">
+          <i class="fa-solid fa-plug-circle-bolt me-1"></i><span>Conectar Sheet</span>
+        </button>
+
+        <button onclick="toggleTheme()" class="btn btn-light rounded-circle shadow-sm border d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+          <i id="theme-icon" class="fa-solid fa-moon text-secondary"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BANNER DE ESTADO Y CONEXIÓN RÁPIDA -->
+  <div class="container-xl mt-2 d-none" id="status-banner">
+    <div class="alert alert-warning rounded-4 shadow-sm border-warning d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 px-3 mb-2" role="alert">
+      <div class="d-flex align-items-center gap-2 small fw-semibold">
+        <i class="fa-solid fa-triangle-exclamation fs-5 text-warning-emphasis"></i>
+        <span id="status-banner-text">No se ha vinculado la hoja de Google Sheets.</span>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark py-1 px-3">
+          <i class="fa-solid fa-link me-1"></i>Vincular URL de Sheet o Apps Script
+        </button>
+        <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-dark btn-sm rounded-pill fw-bold py-1 px-3">
+          <i class="fa-solid fa-file-arrow-up me-1"></i>Cargar CSV
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container-xl py-3">
+
+    <!-- PESTAÑA 1: DEFINICIONES -->
+    <section id="tab1" class="tab-pane-custom">
+      <div class="card card-glass mb-4 overflow-hidden border-start border-warning border-5">
+        <div class="card-body p-4 p-lg-5">
+          <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+              <span class="badge bg-warning text-dark rounded-pill fw-bold mb-2 px-3 py-1">MARCO NORMATIVO SNIS-VE</span>
+              <h1 class="display-6 fw-black mb-3">Sistema Único de Información en Salud Departamental (<span class="text-warning">SUISD</span>)</h1>
+              <p class="text-body-secondary mb-4">
+                Plataforma oficial del <strong>SEDES La Paz</strong> para la consulta georreferenciada, análisis por niveles resolutivos y clasificación administrativa de los establecimientos de salud urbanos y rurales del departamento.
+              </p>
+              <div class="d-flex flex-wrap gap-2">
+                <button onclick="switchTab('tab2')" class="btn btn-warning rounded-pill fw-bold text-dark px-4 py-2 shadow-sm">
+                  <i class="fa-solid fa-map-location-dot me-2"></i>Ir al Mapa Interactivo
+                </button>
+                <button onclick="abrirModalConexion()" class="btn btn-outline-warning rounded-pill fw-bold px-4 py-2">
+                  <i class="fa-solid fa-cloud-arrow-down me-2"></i>Configurar Origen de Datos
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-4 text-center">
+              <img src="logo.png" alt="Logo Institucional" class="img-fluid" style="max-height: 150px; filter: drop-shadow(0 10px 20px rgba(245,158,11,0.25));" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="card card-glass card-lift h-100 p-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:52px; height:52px;">
+              <i class="fa-solid fa-layer-group fs-4"></i>
+            </div>
+            <h5 class="fw-bold">Niveles de Atención</h5>
+            <ul class="small text-body-secondary ps-3 mb-0 mt-2">
+              <li class="mb-2"><strong>1er Nivel:</strong> Puestos y Centros de Salud (Ambulatorios, con Internación e Integrales).</li>
+              <li class="mb-2"><strong>2do Nivel:</strong> Hospitales Básicos con las 4 especialidades troncales.</li>
+              <li><strong>3er Nivel:</strong> Hospitales Generales e Institutos Especializados de alta complejidad.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-glass card-lift h-100 p-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:52px; height:52px;">
+              <i class="fa-solid fa-network-wired fs-4"></i>
+            </div>
+            <h5 class="fw-bold">Redes Funcionales</h5>
+            <p class="small text-body-secondary mt-2 mb-3">
+              El Departamento de La Paz estructura sus establecimientos en <strong>Redes Urbanas</strong> y <strong>Redes Rurales</strong> articuladas por Provincias y Municipios.
+            </p>
+            <div class="p-3 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 small">
+              <strong class="text-warning-emphasis"><i class="fa-solid fa-fingerprint me-1"></i>COD_SNIS:</strong> Código único del Registro Único de Establecimientos de Salud (RUES).
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-glass card-lift h-100 p-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:52px; height:52px;">
+              <i class="fa-solid fa-building-shield fs-4"></i>
+            </div>
+            <h5 class="fw-bold">Subsectores de Salud</h5>
+            <ul class="small text-body-secondary ps-3 mb-0 mt-2">
+              <li class="mb-2"><strong>Público:</strong> Ministerio de Salud, Gobernación (SEDES) y Gobiernos Autónomos Municipales.</li>
+              <li class="mb-2"><strong>Seguridad Social:</strong> Cajas de Salud (CNS, CPS, CORDES, COSSMIL, Banca, Seguro Universitario).</li>
+              <li><strong>Privado / ONG / Iglesia:</strong> Establecimientos privados y de convenio.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 2: MAPA Y DATOS DINÁMICOS -->
+    <section id="tab2" class="tab-pane-custom active">
+
+      <!-- KPIs -->
+      <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+          <div class="card card-glass card-lift p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Establecimientos</div>
+                <div class="fs-2 fw-black text-warning" id="kpi-total">0</div>
+              </div>
+              <div class="rounded-4 bg-warning bg-opacity-15 text-warning d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+                <i class="fa-solid fa-hospital fs-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card card-glass card-lift p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Redes Activas</div>
+                <div class="fs-2 fw-black" id="kpi-redes">0</div>
+              </div>
+              <div class="rounded-4 bg-primary bg-opacity-15 text-primary d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+                <i class="fa-solid fa-diagram-project fs-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card card-glass card-lift p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Municipios</div>
+                <div class="fs-2 fw-black" id="kpi-municipios">0</div>
+              </div>
+              <div class="rounded-4 bg-info bg-opacity-15 text-info d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+                <i class="fa-solid fa-city fs-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card card-glass card-lift p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Georreferenciados</div>
+                <div class="fs-2 fw-black text-success" id="kpi-geo">0</div>
+              </div>
+              <div class="rounded-4 bg-success bg-opacity-15 text-success d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+                <i class="fa-solid fa-location-crosshairs fs-4"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTROS EN CASCADA -->
+      <div class="card card-glass mb-3">
+        <div class="card-body p-3 p-md-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 pb-2 border-bottom">
+            <div class="d-flex align-items-center gap-2">
+              <i class="fa-solid fa-filter text-warning fs-5"></i>
+              <h6 class="fw-black mb-0">Filtros Dinámicos con Herencia en Cascada</h6>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning border-opacity-25 px-3 py-2 fw-bold" id="loading-badge">
+                <i class="fa-solid fa-spinner fa-spin me-1"></i>Conectando...
+              </span>
+              <button onclick="sincronizarAhora()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3">
+                <i class="fa-solid fa-rotate me-1"></i>Sincronizar
+              </button>
+              <button onclick="resetFilters()" class="btn btn-outline-danger btn-sm rounded-pill fw-bold px-3">
+                <i class="fa-solid fa-eraser me-1"></i>Limpiar
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-12 col-md-6 col-lg-3">
+              <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">BUSCAR NOMBRE O COD_SNIS</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-warning bg-opacity-15 border-warning border-opacity-25 text-warning-emphasis"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="filter-search" oninput="aplicarFiltros()" class="form-control form-control-sedes" placeholder="Ej. Hospital o 200...">
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-3">
+              <label class="form-label small fw-bold text-warning-emphasis mb-1" style="font-size: 0.7rem;"><i class="fa-solid fa-sitemap me-1"></i>RED DE SALUD (BASE)</label>
+              <select id="filter-red" onchange="aplicarFiltros(true)" class="form-select form-select-sedes bg-warning bg-opacity-10 fw-bold">
+                <option value="">Todas las Redes</option>
+              </select>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+              <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">PROVINCIA</label>
+              <select id="filter-provincia" onchange="aplicarFiltros(true)" class="form-select form-select-sedes">
+                <option value="">Todas</option>
+              </select>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+              <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">MUNICIPIO</label>
+              <select id="filter-municipio" onchange="aplicarFiltros(true)" class="form-select form-select-sedes">
+                <option value="">Todos</option>
+              </select>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+              <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">NIVEL</label>
+              <select id="filter-nivel" onchange="aplicarFiltros(true)" class="form-select form-select-sedes">
+                <option value="">Todos</option>
+              </select>
+            </div>
+
+            <div class="col-6 col-md-6 col-lg-6 mt-2">
+              <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">SUBSECTOR</label>
+              <select id="filter-subsector" onchange="aplicarFiltros(true)" class="form-select form-select-sedes">
+                <option value="">Todos los Subsectores</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-6 mt-2">
+              <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">TIPO DE ESTABLECIMIENTO</label>
+              <select id="filter-tipo" onchange="aplicarFiltros(true)" class="form-select form-select-sedes">
+                <option value="">Todos los Tipos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAPA CANVAS + GRÁFICOS CANVAS -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="card card-glass h-100 p-2">
+            <div class="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 gap-2">
+              <div class="d-flex flex-wrap align-items-center gap-3 small fw-bold">
+                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:12px;height:12px;background:#facc15;border:2px solid #451a03;"></span> 1er Nivel (<span id="leg-n1">0</span>)</span>
+                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:13px;height:13px;background:#f97316;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.4);"></span> 2do Nivel (<span id="leg-n2">0</span>)</span>
+                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:14px;height:14px;background:#dc2626;border:2px solid #fde047;box-shadow:0 0 8px #f59e0b;"></span> 3er Nivel (<span id="leg-n3">0</span>)</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button onclick="toggleClusterMode()" id="btn-cluster-mode" class="btn btn-outline-warning btn-sm rounded-pill fw-bold" style="font-size: 0.75rem;">
+                  <i class="fa-solid fa-circle-nodes me-1"></i>Agrupar: ON
+                </button>
+                <button onclick="fitMapToMarkers()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark" style="font-size: 0.75rem;">
+                  <i class="fa-solid fa-expand me-1"></i>Centrar Mapa
+                </button>
+              </div>
+            </div>
+            <div id="map"></div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <div class="card card-glass h-100 p-3 d-flex flex-column justify-content-between">
+            <div>
+              <h6 class="fw-black mb-1"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Distribución por Nivel</h6>
+              <p class="text-muted small mb-2" style="font-size: 0.73rem;">Gráfico Canvas interactivo</p>
+              <div style="height: 210px; position: relative;">
+                <canvas id="chartNiveles"></canvas>
+              </div>
+            </div>
+            <hr class="my-2">
+            <div>
+              <h6 class="fw-black mb-1"><i class="fa-solid fa-chart-bar text-warning me-2"></i>Top Redes de Salud</h6>
+              <div style="height: 220px; position: relative;">
+                <canvas id="chartRedes"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA DATATABLES -->
+      <div class="card card-glass">
+        <div class="card-header bg-transparent py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom">
+          <h6 class="mb-0 fw-black"><i class="fa-solid fa-table-list text-warning me-2"></i>Padrón Dinámico de Establecimientos</h6>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-warning text-dark rounded-pill fw-bold px-3 py-2" id="table-count-label">0 registros</span>
+            <button onclick="exportarCSV()" class="btn btn-success btn-sm rounded-pill fw-bold px-3">
+              <i class="fa-solid fa-file-excel me-1"></i>Exportar CSV
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-3 p-md-4">
+          <div class="table-responsive">
+            <table id="tabla-padron" class="table table-hover align-middle w-100" style="font-size: 0.84rem;">
+              <thead class="table-warning">
+                <tr>
+                  <th>COD_SNIS</th>
+                  <th>ESTABLECIMIENTO</th>
+                  <th>RED</th>
+                  <th>PROVINCIA / MUNICIPIO</th>
+                  <th>NIVEL</th>
+                  <th>SUBSECTOR / TIPO</th>
+                  <th class="text-center">ACCIÓN</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 3: HERRAMIENTAS -->
+    <section id="tab3" class="tab-pane-custom">
+      <div class="card card-glass mb-4 border-start border-warning border-5">
+        <div class="card-body p-4">
+          <h3 class="fw-black mb-1"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Herramientas Informáticas - SUISD</h3>
+          <p class="text-body-secondary mb-0 small">Conecta tu hoja por link de Google Sheets, link `/exec` de Apps Script o archivo CSV local.</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:50px; height:50px;">
+                <i class="fa-solid fa-plug-circle-check fs-4"></i>
+              </div>
+              <h5 class="fw-bold">Conexión Multi-Vía</h5>
+              <p class="small text-body-secondary">Acepta tanto la URL <code>/exec</code> de Apps Script (vía JSONP sin bloqueos CORS) como el enlace directo de tu Google Sheet compartido.</p>
+            </div>
+            <div class="d-grid gap-2 mt-3">
+              <button onclick="abrirModalConexion()" class="btn btn-warning rounded-pill fw-bold text-dark">
+                <i class="fa-solid fa-link me-2"></i>Vincular Google Sheet / API
+              </button>
+              <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-secondary rounded-pill fw-bold">
+                <i class="fa-solid fa-file-csv me-2"></i>Subir CSV desde mi PC
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-success bg-opacity-15 text-success mb-3" style="width:50px; height:50px;">
+                <i class="fa-solid fa-file-excel fs-4"></i>
+              </div>
+              <h5 class="fw-bold">Exportar Padrón Filtrado</h5>
+              <p class="small text-body-secondary">Descarga un archivo CSV (UTF-8 con BOM) con los establecimientos filtrados actualmente en el Geovisor.</p>
+            </div>
+            <button onclick="exportarCSV()" class="btn btn-success rounded-pill fw-bold mt-3">
+              <i class="fa-solid fa-download me-2"></i>Descargar Reporte Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-danger bg-opacity-15 text-danger mb-3" style="width:50px; height:50px;">
+                <i class="fa-solid fa-satellite-dish fs-4"></i>
+              </div>
+              <h5 class="fw-bold">Auditoría de Coordenadas</h5>
+              <p class="small text-body-secondary">Identifica establecimientos que carecen de coordenadas Latitud/Longitud válidas en la hoja.</p>
+            </div>
+            <button onclick="auditarGPS()" class="btn btn-danger rounded-pill fw-bold mt-3">
+              <i class="fa-solid fa-magnifying-glass-location me-2"></i>Ejecutar Auditoría GPS
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- OFFCANVAS FICHA TÉCNICA -->
+  <div class="offcanvas offcanvas-end rounded-start-4" tabindex="-1" id="fichaOffcanvas">
+    <div class="offcanvas-header bg-warning text-dark">
+      <h5 class="offcanvas-title fw-black"><i class="fa-solid fa-hospital-user me-2"></i>Ficha del Establecimiento</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body" id="ficha-body"></div>
+  </div>
+
+  <!-- BARRA INFERIOR MÓVIL -->
+  <div class="d-md-none fixed-bottom glass-navbar d-flex justify-content-around py-2 border-top shadow-lg">
+    <button onclick="switchTab('tab1')" id="m-btn-tab1" class="btn text-secondary fw-bold d-flex flex-column align-items-center" style="font-size: 0.68rem;">
+      <i class="fa-solid fa-book-medical fs-5 mb-1"></i>Definiciones
+    </button>
+    <button onclick="switchTab('tab2')" id="m-btn-tab2" class="btn text-warning fw-bold d-flex flex-column align-items-center" style="font-size: 0.68rem;">
+      <i class="fa-solid fa-map-location-dot fs-5 mb-1"></i>Mapa y Datos
+    </button>
+    <button onclick="switchTab('tab3')" id="m-btn-tab3" class="btn text-secondary fw-bold d-flex flex-column align-items-center" style="font-size: 0.68rem;">
+      <i class="fa-solid fa-screwdriver-wrench fs-5 mb-1"></i>Herramientas
+    </button>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    /**
+     * =========================================================================
+     * OPCIONAL: PUEDES PEGAR AQUÍ TU URL DE APPS SCRIPT O EL LINK DE TU GOOGLE SHEET
+     * (O pegarlo directamente en la web desde el botón amarillo "Conectar Sheet")
+     * =========================================================================
+     */
+    const DEFAULT_SOURCE_URL = "https://script.google.com/macros/s/AKfycbxsd8lIXwsJx5fMqpUC9SynT2x9PgaX2H-fAJRq05bhUktQUojTX_ZGfloIk0oeu1vG/exec";
+
+    const STORAGE_URL_KEY = "SUISD_ACTIVE_SOURCE_URL_V11";
+    const CACHE_KEY_DATA  = "SUISD_CACHE_DATA_V11";
+    const CACHE_KEY_TIME  = "SUISD_CACHE_TIME_V11";
+    const CACHE_TTL_MS    = 6 * 60 * 60 * 1000;
+
+    let rawData = [];
+    let filteredData = [];
+    let map = null;
+    let canvasRenderer = null;
+    let tileLayer = null;
+    let markerClusterGroup = null;
+    let directLayerGroup = null;
+    let useClustering = true;
+    let markersByCode = {};
+    let dataTable = null;
+    let chartNiveles = null;
+    let chartRedes = null;
+
+    const filterKeys = ['RED', 'PROVINCIA', 'MUNICIPIO', 'NIVEL', 'SUBSECTOR', 'TIPO'];
+    const filterIds  = {
+      RED: 'filter-red',
+      PROVINCIA: 'filter-provincia',
+      MUNICIPIO: 'filter-municipio',
+      NIVEL: 'filter-nivel',
+      SUBSECTOR: 'filter-subsector',
+      TIPO: 'filter-tipo'
+    };
+    const defLabels = {
+      RED: 'Todas las Redes',
+      PROVINCIA: 'Todas',
+      MUNICIPIO: 'Todos',
+      NIVEL: 'Todos',
+      SUBSECTOR: 'Todos los Subsectores',
+      TIPO: 'Todos los Tipos'
+    };
+
+    function getConfiguredUrl() {
+      const saved = localStorage.getItem(STORAGE_URL_KEY);
+      if (saved && saved.trim().startsWith("http")) return saved.trim();
+      if (DEFAULT_SOURCE_URL && DEFAULT_SOURCE_URL.trim().startsWith("http")) return DEFAULT_SOURCE_URL.trim();
+      return "";
+    }
+
+    // =========================================================
+    // 1. MOTOR DE CONEXIÓN TRIPLE (GVIZ + JSONP + FETCH)
+    // =========================================================
+
+    // Vía A: Petición JSONP (Salta el bloqueo CORS de Google Apps Script y Google Visualization)
+    function cargarViaJSONP(url, timeoutMs = 10000) {
+      return new Promise((resolve, reject) => {
+        const cbName = 'suisd_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        const script = document.createElement('script');
+        let timer = setTimeout(() => {
+          limpiar();
+          reject(new Error('Tiempo de espera agotado al conectar con Google.'));
+        }, timeoutMs);
+
+        function limpiar() {
+          clearTimeout(timer);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[cbName] = (respuesta) => {
+          limpiar();
+          resolve(respuesta);
+        };
+
+        script.onerror = () => {
+          limpiar();
+          reject(new Error('Bloqueo de acceso. Verifica que tu Apps Script o Sheet tenga acceso público ("Cualquier persona").'));
+        };
+
+        const sep = url.includes('?') ? '&' : '?';
+        script.src = `${url}${sep}callback=${cbName}&_t=${Date.now()}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Vía B: Si el usuario pega el link directo de Google Sheets (https://docs.google.com/spreadsheets/d/ID/edit...)
+    function cargarDesdeGoogleSheetDirecto(sheetUrl) {
+      return new Promise((resolve, reject) => {
+        const match = sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+        if (!match) {
+          reject(new Error("El enlace de Google Sheet no contiene un ID válido."));
+          return;
+        }
+        const sheetId = match[1];
+        const gidMatch = sheetUrl.match(/[#&?]gid=([0-9]+)/);
+        const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '';
+
+        const cbName = 'suisd_gviz_' + Date.now();
+        const script = document.createElement('script');
+        let timer = setTimeout(() => {
+          limpiar();
+          reject(new Error("Tiempo agotado leyendo Google Sheet."));
+        }, 10000);
+
+        function limpiar() {
+          clearTimeout(timer);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[cbName] = (gvizResp) => {
+          limpiar();
+          try {
+            if (!gvizResp || !gvizResp.table || !gvizResp.table.rows) {
+              throw new Error("Formato de hoja vacío o privado.");
+            }
+            const cols = gvizResp.table.cols.map((c, idx) => (c.label || c.id || `COL_${idx}`).trim());
+            const rows = gvizResp.table.rows;
+
+            // Si los encabezados quedaron en la primera fila en lugar de cols.label
+            let usarPrimeraFilaComoHeader = cols.every(c => /^COL_|^[A-Z]$/.test(c));
+            let headers = cols;
+            let startRow = 0;
+
+            if (usarPrimeraFilaComoHeader && rows.length > 0) {
+              headers = rows[0].c.map((cell, i) => (cell && cell.v !== null ? String(cell.v).trim() : `COL_${i}`));
+              startRow = 1;
+            }
+
+            const registros = [];
+            for (let i = startRow; i < rows.length; i++) {
+              const r = rows[i];
+              if (!r || !r.c) continue;
+              const obj = {};
+              headers.forEach((h, colIdx) => {
+                const cell = r.c[colIdx];
+                obj[h] = cell ? (cell.f !== undefined && cell.f !== null ? cell.f : (cell.v ?? '')) : '';
+              });
+              registros.push(obj);
+            }
+            resolve(registros);
+          } catch (err) {
+            reject(err);
+          }
+        };
+
+        script.onerror = () => {
+          limpiar();
+          reject(new Error("No se pudo leer la hoja. En tu Google Sheet haz clic en 'Compartir' -> 'Cualquier persona con el enlace (Lector)'."));
+        };
+
+        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${cbName}${gidParam}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Orquestador principal de carga de datos
+    async function cargarDatosIniciales(forzarDescarga = false) {
+      const badge = document.getElementById('loading-badge');
+      badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i>Conectando con Sheet...`;
+
+      // 1. Si ejecutamos dentro de Google Apps Script nativo
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => {
+            const lista = Array.isArray(res) ? res : (res.data || []);
+            guardarEnCacheYRenderizar(lista, "Google Apps Script Nativo");
+          })
+          .withFailureHandler(err => mostrarFallbackDemo(err.message))
+          .obtenerEstablecimientos();
+        return;
+      }
+
+      // 2. Revisar caché si no es recarga forzada
+      if (!forzarDescarga) {
+        const cData = localStorage.getItem(CACHE_KEY_DATA);
+        const cTime = localStorage.getItem(CACHE_KEY_TIME);
+        if (cData && cTime && (Date.now() - parseInt(cTime, 10) < CACHE_TTL_MS)) {
+          try {
+            const parsed = JSON.parse(cData);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              procesarDatos(parsed, "Caché Local");
+              ocultarSplash();
+              return;
+            }
+          } catch (e) {
+            localStorage.removeItem(CACHE_KEY_DATA);
+          }
+        }
+      }
+
+      const sourceUrl = getConfiguredUrl();
+      if (!sourceUrl) {
+        mostrarFallbackDemo("Aún no vinculaste el enlace de tu Google Sheet o Apps Script. Haz clic en 'Conectar Sheet' arriba a la derecha.");
+        return;
+      }
+
+      try {
+        let registros = [];
+
+        // Caso 1: El usuario pegó el link directo de Google Sheets
+        if (sourceUrl.includes("docs.google.com/spreadsheets")) {
+          registros = await cargarDesdeGoogleSheetDirecto(sourceUrl);
+        }
+        // Caso 2: El usuario pegó el link /exec de Google Apps Script
+        else {
+          let rawResp = null;
+          try {
+            // Intentar primero JSONP (no sufre bloqueo CORS en file:// ni en dominios externos)
+            rawResp = await cargarViaJSONP(sourceUrl);
+          } catch (jsonpErr) {
+            // Si el Code.gs aún no tiene soporte JSONP, intentar fetch estándar
+            const fRes = await fetch(sourceUrl, { method: 'GET', redirect: 'follow' });
+            const text = await fRes.text();
+            if (text.trim().startsWith('<')) {
+              throw new Error("El Apps Script devolvió una página de login. Cambia 'Quién tiene acceso' a 'Cualquier persona'.");
+            }
+            rawResp = JSON.parse(text);
+          }
+
+          if (rawResp && rawResp.status === 'error') {
+            throw new Error(rawResp.message || 'Error en Apps Script');
+          }
+          registros = Array.isArray(rawResp) ? rawResp : (rawResp.data || rawResp.establecimientos || []);
+        }
+
+        if (!Array.isArray(registros) || registros.length === 0) {
+          throw new Error("La conexión fue exitosa pero la hoja no devolvió filas válidas.");
+        }
+
+        guardarEnCacheYRenderizar(registros, "Google Sheets Sincronizado");
+
+      } catch (err) {
+        console.warn("Detalle de conexión:", err);
+        mostrarFallbackDemo(err.message);
+      }
+    }
+
+    function guardarEnCacheYRenderizar(registros, etiqueta) {
+      try {
+        localStorage.setItem(CACHE_KEY_DATA, JSON.stringify(registros));
+        localStorage.setItem(CACHE_KEY_TIME, String(Date.now()));
+      } catch (e) {}
+      document.getElementById('status-banner').classList.add('d-none');
+      procesarDatos(registros, etiqueta);
+      ocultarSplash();
+    }
+
+    function mostrarFallbackDemo(motivo) {
+      document.getElementById('status-banner-text').textContent = motivo;
+      document.getElementById('status-banner').classList.remove('d-none');
+      cargarDatosDemostracionReales();
+      ocultarSplash();
+    }
+
+    // =========================================================
+    // 2. NORMALIZADOR INTELIGENTE DE COLUMNAS Y COORDENADAS
+    // =========================================================
+    function procesarDatos(filas, origenLabel) {
+      rawData = [];
+
+      filas.forEach((r, idx) => {
+        if (!r || typeof r !== 'object') return;
+        const norm = {};
+        Object.keys(r).forEach(k => {
+          const cleanKey = String(k).trim().toUpperCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "_");
+          norm[cleanKey] = r[k];
+        });
+
+        const nombre = String(norm.NOMBRE || norm.ESTABLECIMIENTO || norm.NOMBRE_ESTABLECIMIENTO || '').trim();
+        const cod    = String(norm.COD_SNIS || norm.CODIGO_SNIS || norm.SNIS || norm.CODIGO || '').trim();
+        if (!nombre && !cod) return;
+
+        const rawLat = norm.LATITUD ?? norm.LAT ?? norm.LATITUDE ?? norm.Y ?? '';
+        const rawLng = norm.LONGITUD ?? norm.LNG ?? norm.LON ?? norm.LONG ?? norm.LONGITUDE ?? norm.X ?? '';
+
+        let lat = parseFloat(String(rawLat).trim().replace(',', '.'));
+        let lng = parseFloat(String(rawLng).trim().replace(',', '.'));
+
+        // Si las coordenadas están invertidas (ej. Latitud -68 y Longitud -16), corregirlas automáticamente
+        if (!isNaN(lat) && !isNaN(lng) && lat < -50 && lng > -30) {
+          const tmp = lat; lat = lng; lng = tmp;
+        }
+
+        const validCoords = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+
+        rawData.push({
+          COD_SNIS:  cod || `LP-${idx + 1}`,
+          RED:       String(norm.RED || norm.RED_DE_SALUD || norm.RED_SALUD || 'S/D').trim(),
+          PROVINCIA: String(norm.PROVINCIA || 'S/D').trim(),
+          MUNICIPIO: String(norm.MUNICIPIO || 'S/D').trim(),
+          NIVEL:     String(norm.NIVEL || norm.NIVEL_ATENCION || norm.NIVEL_DE_ATENCION || '1ER NIVEL').trim(),
+          SUBSECTOR: String(norm.SUBSECTOR || norm.SECTOR || 'PÚBLICO').trim(),
+          TIPO:      String(norm.TIPO || norm.TIPO_ESTABLECIMIENTO || norm.TIPO_DE_ESTABLECIMIENTO || 'CENTRO DE SALUD').trim(),
+          NOMBRE:    nombre || 'Sin Nombre',
+          Latitud:   validCoords ? lat : null,
+          Longitud:  validCoords ? lng : null
+        });
+      });
+
+      document.getElementById('loading-badge').innerHTML = `<i class="fa-solid fa-circle-check text-success me-1"></i>${rawData.length} reg. (${origenLabel})`;
+      aplicarFiltros(true);
+    }
+
+    // =========================================================
+    // 3. MODAL DE CONEXIÓN PASO A PASO E IMPORTACIÓN CSV
+    // =========================================================
+    function abrirModalConexion() {
+      const actual = getConfiguredUrl();
+      Swal.fire({
+        title: 'Conectar con Google Sheets',
+        html: `
+          <div class="text-start small">
+            <p class="mb-2">Puedes pegar <strong>cualquiera de estos 2 enlaces</strong>:</p>
+            <ol class="ps-3 mb-3 text-muted">
+              <li class="mb-1"><strong>Enlace directo de tu Google Sheet:</strong> (Asegúrate de que en <em>Compartir</em> esté como <em>"Cualquier persona con el enlace"</em>).</li>
+              <li><strong>URL de tu Web App de Apps Script:</strong> Terminada en <code>/exec</code>.</li>
+            </ol>
+          </div>
+        `,
+        input: 'url',
+        inputValue: actual,
+        inputPlaceholder: 'https://docs.google.com/spreadsheets/d/... o https://script.google.com/.../exec',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-bolt me-1"></i>Conectar Ahora',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#f59e0b'
+      }).then(res => {
+        if (res.isConfirmed && res.value) {
+          localStorage.setItem(STORAGE_URL_KEY, res.value.trim());
+          localStorage.removeItem(CACHE_KEY_DATA);
+          cargarDatosIniciales(true);
+        }
+      });
+    }
+
+    // Lector de archivos CSV locales por si el usuario desea cargar su hoja descargada
+    function importarArchivoCSV(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const texto = e.target.result;
+        const lineas = texto.split(/\r?\n/).filter(l => l.trim() !== '');
+        if (lineas.length < 2) return;
+
+        // Detectar separador (, o ;)
+        const sep = lineas[0].includes(';') && !lineas[0].includes(',') ? ';' : ',';
+        const parseLine = (line) => {
+          const res = [];
+          let cur = '', inQuotes = false;
+          for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') inQuotes = !inQuotes;
+            else if (ch === sep && !inQuotes) { res.push(cur.trim()); cur = ''; }
+            else cur += ch;
+          }
+          res.push(cur.trim());
+          return res;
+        };
+
+        const headers = parseLine(lineas[0]);
+        const objetos = [];
+        for (let i = 1; i < lineas.length; i++) {
+          const vals = parseLine(lineas[i]);
+          const obj = {};
+          headers.forEach((h, idx) => obj[h] = vals[idx] ?? '');
+          objetos.push(obj);
+        }
+        guardarEnCacheYRenderizar(objetos, "Archivo CSV Local");
+        Swal.fire({ icon: 'success', title: 'CSV Cargado', text: `Se importaron ${objetos.length} establecimientos.`, timer: 2000, showConfirmButton: false });
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    // =========================================================
+    // 4. FILTROS EN CASCADA, MAPA CANVAS, DATATABLES Y GRÁFICOS
+    // =========================================================
+    function aplicarFiltros(centrarMapa = false) {
+      const searchEl = document.getElementById('filter-search');
+      const q = searchEl ? searchEl.value.toLowerCase().trim() : '';
+
+      const sel = {};
+      filterKeys.forEach(k => {
+        const el = document.getElementById(filterIds[k]);
+        sel[k] = el ? el.value : '';
+      });
+
+      filteredData = [];
+      const opcionesValidas = {
+        RED: new Set(), PROVINCIA: new Set(), MUNICIPIO: new Set(),
+        NIVEL: new Set(), SUBSECTOR: new Set(), TIPO: new Set()
+      };
+
+      for (let i = 0; i < rawData.length; i++) {
+        const item = rawData[i];
+        const matchQ = !q || item.NOMBRE.toLowerCase().includes(q) || item.COD_SNIS.toLowerCase().includes(q);
+        if (!matchQ) continue;
+
+        let matchAll = true;
+        for (const k of filterKeys) {
+          if (sel[k] && item[k] !== sel[k]) { matchAll = false; break; }
+        }
+        if (matchAll) filteredData.push(item);
+
+        for (const targetKey of filterKeys) {
+          let matchOthers = true;
+          for (const otherKey of filterKeys) {
+            if (otherKey !== targetKey && sel[otherKey] && item[otherKey] !== sel[otherKey]) {
+              matchOthers = false; break;
+            }
+          }
+          if (matchOthers && item[targetKey] && item[targetKey] !== 'S/D') {
+            opcionesValidas[targetKey].add(item[targetKey]);
+          }
+        }
+      }
+
+      filterKeys.forEach(k => {
+        const selectEl = document.getElementById(filterIds[k]);
+        if (!selectEl) return;
+        const valorPrevio = sel[k];
+        const listaOrdenada = [...opcionesValidas[k]].sort();
+
+        let html = `<option value="">${defLabels[k]} (${listaOrdenada.length})</option>`;
+        listaOrdenada.forEach(v => {
+          const selected = v === valorPrevio ? 'selected' : '';
+          html += `<option value="${v}" ${selected}>${v}</option>`;
+        });
+        selectEl.innerHTML = html;
+      });
+
+      actualizarInterfazCompleta(centrarMapa);
+    }
+
+    function resetFilters() {
+      const searchEl = document.getElementById('filter-search');
+      if (searchEl) searchEl.value = '';
+      filterKeys.forEach(k => {
+        const el = document.getElementById(filterIds[k]);
+        if (el) el.value = '';
+      });
+      aplicarFiltros(true);
+    }
+
+    function actualizarInterfazCompleta(centrarMapa = false) {
+      document.getElementById('kpi-total').textContent = filteredData.length;
+      document.getElementById('kpi-redes').textContent = new Set(filteredData.map(d => d.RED)).size;
+      document.getElementById('kpi-municipios').textContent = new Set(filteredData.map(d => d.MUNICIPIO)).size;
+      document.getElementById('kpi-geo').textContent = filteredData.filter(d => d.Latitud !== null).length;
+      document.getElementById('table-count-label').textContent = `${filteredData.length} registros`;
+
+      if (dataTable) {
+        dataTable.clear().rows.add(filteredData).draw();
+      }
+
+      dibujarPuntosEnMapa(centrarMapa);
+      actualizarGraficosCanvas();
+    }
+
+    function clasificarNivel(nivelStr) {
+      const n = String(nivelStr || '').toUpperCase();
+      if (n.includes('3') || n.includes('TERCER') || n.includes('INSTITUTO')) return 3;
+      if (n.includes('2') || n.includes('SEGUNDO')) return 2;
+      return 1;
+    }
+
+    function dibujarPuntosEnMapa(centrar = false) {
+      if (!map) return;
+      markerClusterGroup.clearLayers();
+      directLayerGroup.clearLayers();
+      markersByCode = {};
+
+      let c1 = 0, c2 = 0, c3 = 0;
+      const listaMarcadores = [];
+
+      filteredData.forEach(item => {
+        const niv = clasificarNivel(item.NIVEL);
+        if (niv === 1) c1++;
+        else if (niv === 2) c2++;
+        else c3++;
+
+        if (item.Latitud === null || item.Longitud === null) return;
+
+        let fillColor = '#facc15', borderColor = '#451a03', radius = 7, weight = 2;
+        if (niv === 2) {
+          fillColor = '#f97316'; borderColor = '#ffffff'; radius = 9; weight = 2.5;
+        } else if (niv === 3) {
+          fillColor = '#dc2626'; borderColor = '#fde047'; radius = 11; weight = 3;
+        }
+
+        const marker = L.circleMarker([item.Latitud, item.Longitud], {
+          renderer: canvasRenderer,
+          radius: radius,
+          fillColor: fillColor,
+          color: borderColor,
+          weight: weight,
+          opacity: 1,
+          fillOpacity: 0.92
+        });
+
+        const safeCod = String(item.COD_SNIS).replace(/'/g, "\\'");
+        marker.bindPopup(`
+          <div style="min-width: 220px; font-family: system-ui, sans-serif;">
+            <div class="bg-warning text-dark fw-black px-2 py-1 rounded mb-2 small">${item.NOMBRE}</div>
+            <div class="small mb-1"><strong>COD_SNIS:</strong> <span class="font-monospace">${item.COD_SNIS}</span></div>
+            <div class="small mb-1"><strong>Red:</strong> ${item.RED}</div>
+            <div class="small mb-1"><strong>Municipio:</strong> ${item.PROVINCIA} - ${item.MUNICIPIO}</div>
+            <div class="small mb-2"><strong>Nivel:</strong> <span class="badge bg-warning text-dark">${item.NIVEL}</span></div>
+            <div class="d-flex justify-content-between pt-1 border-top">
+              <button onclick="abrirFicha('${safeCod}')" class="btn btn-warning btn-sm fw-bold py-0 px-2" style="font-size:0.72rem;">Ficha completa</button>
+              <a href="https://www.google.com/maps?q=${item.Latitud},${item.Longitud}" target="_blank" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size:0.72rem;">Google Maps</a>
+            </div>
+          </div>
+        `);
+
+        listaMarcadores.push(marker);
+        markersByCode[item.COD_SNIS] = marker;
+      });
+
+      document.getElementById('leg-n1').textContent = c1;
+      document.getElementById('leg-n2').textContent = c2;
+      document.getElementById('leg-n3').textContent = c3;
+
+      if (useClustering) {
+        markerClusterGroup.addLayers(listaMarcadores);
+      } else {
+        listaMarcadores.forEach(m => directLayerGroup.addLayer(m));
+      }
+
+      if (centrar && listaMarcadores.length > 0) {
+        fitMapToMarkers();
+      }
+    }
+
+    function actualizarGraficosCanvas() {
+      if (!chartNiveles || !chartRedes) return;
+      let n1 = 0, n2 = 0, n3 = 0;
+      const conteoRedes = {};
+
+      filteredData.forEach(d => {
+        const niv = clasificarNivel(d.NIVEL);
+        if (niv === 1) n1++;
+        else if (niv === 2) n2++;
+        else n3++;
+        conteoRedes[d.RED] = (conteoRedes[d.RED] || 0) + 1;
+      });
+
+      chartNiveles.data.datasets[0].data = [n1, n2, n3];
+      chartNiveles.update();
+
+      const topRedes = Object.entries(conteoRedes).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      chartRedes.data.labels = topRedes.map(r => r[0].replace('RED ', ''));
+      chartRedes.data.datasets[0].data = topRedes.map(r => r[1]);
+      chartRedes.update();
+    }
+
+    // =========================================================
+    // 5. INICIALIZACIÓN DE COMPONENTES Y ANIMACIONES CANVAS
+    // =========================================================
+    function initSplashCanvas() {
+      const c = document.getElementById('splash-canvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      let angle = 0;
+      function draw() {
+        if (!document.getElementById('splash-screen')) return;
+        ctx.clearRect(0, 0, 160, 160);
+        ctx.save();
+        ctx.translate(80, 80);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.arc(0, 0, 68, 0, Math.PI * 1.4);
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        ctx.rotate(-angle * 2);
+        ctx.beginPath();
+        ctx.arc(0, 0, 56, 0, Math.PI * 1.1);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.restore();
+        angle += 0.045;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    function initBackgroundCanvas() {
+      const canvas = document.getElementById('bg-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const nodes = Array.from({ length: 36 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        r: Math.random() * 2.2 + 1.2
+      }));
+
+      let mouse = { x: -9999, y: -9999 };
+      window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+      function animateBg() {
+        ctx.clearRect(0, 0, width, height);
+        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        const dotColor = isDark ? 'rgba(251, 191, 36, 0.35)' : 'rgba(217, 119, 6, 0.28)';
+
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          n.x += n.vx; n.y += n.vy;
+          if (n.x < 0 || n.x > width) n.vx *= -1;
+          if (n.y < 0 || n.y > height) n.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = dotColor;
+          ctx.fill();
+
+          for (let j = i + 1; j < nodes.length; j++) {
+            const n2 = nodes[j];
+            const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+            if (dist < 130) {
+              ctx.beginPath();
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(n2.x, n2.y);
+              ctx.strokeStyle = isDark
+                ? `rgba(251, 191, 36, ${(1 - dist / 130) * 0.14})`
+                : `rgba(245, 158, 11, ${(1 - dist / 130) * 0.14})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animateBg);
+      }
+      animateBg();
+    }
+
+    function initMap() {
+      canvasRenderer = L.canvas({ padding: 0.5 });
+      map = L.map('map', { zoomControl: false, preferCanvas: true, renderer: canvasRenderer }).setView([-16.5000, -68.1500], 9);
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+      const url = isDark
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      tileLayer = L.tileLayer(url, { maxZoom: 19, attribution: '&copy; OpenStreetMap | SEDES La Paz - SUISD' }).addTo(map);
+
+      markerClusterGroup = L.markerClusterGroup({
+        maxClusterRadius: 42,
+        disableClusteringAtZoom: 16,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        chunkedLoading: true
+      });
+      directLayerGroup = L.layerGroup();
+      map.addLayer(markerClusterGroup);
+    }
+
+    function toggleClusterMode() {
+      useClustering = !useClustering;
+      const btn = document.getElementById('btn-cluster-mode');
+      if (useClustering) {
+        map.removeLayer(directLayerGroup);
+        map.addLayer(markerClusterGroup);
+        btn.innerHTML = `<i class="fa-solid fa-circle-nodes me-1"></i>Agrupar: ON`;
+      } else {
+        map.removeLayer(markerClusterGroup);
+        map.addLayer(directLayerGroup);
+        btn.innerHTML = `<i class="fa-solid fa-braille me-1"></i>Puntos Canvas: ON`;
+      }
+      dibujarPuntosEnMapa();
+    }
+
+    function initDataTable() {
+      dataTable = $('#tabla-padron').DataTable({
+        responsive: true,
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 100],
+        language: {
+          search: "Filtrar en tabla:",
+          lengthMenu: "Mostrar _MENU_",
+          info: "Mostrando _START_ a _END_ de _TOTAL_ establecimientos",
+          infoEmpty: "Sin registros",
+          emptyTable: "No se encontraron establecimientos con los filtros seleccionados",
+          paginate: { first: "Primero", last: "Último", next: "Sig.", previous: "Ant." }
+        },
+        columns: [
+          { data: 'COD_SNIS', className: 'font-monospace fw-bold text-warning-emphasis' },
+          { data: 'NOMBRE', className: 'fw-bold' },
+          { data: 'RED', className: 'small' },
+          { data: null, className: 'small', render: r => `<strong>${r.PROVINCIA}</strong><br><span class="text-muted">${r.MUNICIPIO}</span>` },
+          { data: 'NIVEL', render: d => `<span class="badge bg-warning bg-opacity-20 text-warning-emphasis border border-warning border-opacity-50">${d}</span>` },
+          { data: null, className: 'small', render: r => `<strong>${r.SUBSECTOR}</strong><br><span class="text-muted">${r.TIPO}</span>` },
+          { data: null, orderable: false, className: 'text-center', render: r => {
+              const safeCod = String(r.COD_SNIS).replace(/'/g, "\\'");
+              if (r.Latitud !== null && r.Longitud !== null) {
+                return `
+                  <div class="btn-group btn-group-sm">
+                    <button onclick="focusMap('${safeCod}')" class="btn btn-warning text-dark fw-bold" title="Ubicar en Mapa"><i class="fa-solid fa-location-dot"></i></button>
+                    <button onclick="abrirFicha('${safeCod}')" class="btn btn-outline-secondary" title="Ver Ficha"><i class="fa-solid fa-eye"></i></button>
+                  </div>`;
+              }
+              return `<button onclick="abrirFicha('${safeCod}')" class="btn btn-outline-secondary btn-sm" title="Sin GPS"><i class="fa-solid fa-eye"></i></button>`;
+            }
+          }
+        ]
+      });
+    }
+
+    function initCharts() {
+      const ctxNiv = document.getElementById('chartNiveles');
+      const ctxRed = document.getElementById('chartRedes');
+      if (!ctxNiv || !ctxRed) return;
+
+      chartNiveles = new Chart(ctxNiv, {
+        type: 'doughnut',
+        data: {
+          labels: ['1er Nivel', '2do Nivel', '3er Nivel / Inst.'],
+          datasets: [{ data: [0, 0, 0], backgroundColor: ['#facc15', '#f97316', '#dc2626'], borderWidth: 2 }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11, weight: 'bold' } } } }
+        }
+      });
+
+      chartRedes = new Chart(ctxRed, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [{ label: 'Establecimientos', data: [], backgroundColor: '#f59e0b', borderRadius: 6 }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, ticks: { precision: 0, font: { size: 10 } } },
+            y: { ticks: { font: { size: 10, weight: 'bold' } } }
+          }
+        }
+      });
+    }
+
+    function fitMapToMarkers() {
+      const valid = filteredData.filter(d => d.Latitud !== null && d.Longitud !== null);
+      if (valid.length > 0 && map) {
+        const bounds = L.latLngBounds(valid.map(d => [d.Latitud, d.Longitud]));
+        map.fitBounds(bounds, { padding: [35, 35], maxZoom: 15 });
+      }
+    }
+
+    function focusMap(codSnis) {
+      const item = rawData.find(d => String(d.COD_SNIS) === String(codSnis));
+      if (!item || item.Latitud === null) return;
+      switchTab('tab2');
+      setTimeout(() => {
+        map.invalidateSize();
+        const marker = markersByCode[codSnis];
+        if (marker) {
+          if (useClustering) markerClusterGroup.zoomToShowLayer(marker, () => marker.openPopup());
+          else { map.setView([item.Latitud, item.Longitud], 16); marker.openPopup(); }
+        }
+        document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+
+    function abrirFicha(codSnis) {
+      const item = rawData.find(d => String(d.COD_SNIS) === String(codSnis));
+      if (!item) return;
+      document.getElementById('ficha-body').innerHTML = `
+        <div class="mb-3">
+          <span class="badge bg-warning text-dark fw-bold mb-1">${item.NIVEL}</span>
+          <h4 class="fw-black mb-1">${item.NOMBRE}</h4>
+          <p class="text-muted font-monospace small mb-0">COD_SNIS: <strong>${item.COD_SNIS}</strong></p>
+        </div>
+        <ul class="list-group list-group-flush rounded-4 border mb-4 small">
+          <li class="list-group-item d-flex justify-content-between"><span>Red de Salud:</span><strong class="text-end">${item.RED}</strong></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Provincia:</span><strong>${item.PROVINCIA}</strong></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Municipio:</span><strong>${item.MUNICIPIO}</strong></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Subsector:</span><strong>${item.SUBSECTOR}</strong></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Tipo:</span><strong>${item.TIPO}</strong></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Coordenadas WGS84:</span><strong class="font-monospace">${item.Latitud ? item.Latitud.toFixed(5) + ', ' + item.Longitud.toFixed(5) : 'Sin GPS'}</strong></li>
+        </ul>
+      `;
+      new bootstrap.Offcanvas(document.getElementById('fichaOffcanvas')).show();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane-custom').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      ['tab1', 'tab2', 'tab3'].forEach(id => {
+        document.getElementById('btn-' + id)?.classList.remove('active');
+        const mBtn = document.getElementById('m-btn-' + id);
+        if (mBtn) { mBtn.classList.remove('text-warning'); mBtn.classList.add('text-secondary'); }
+      });
+      document.getElementById('btn-' + tabId)?.classList.add('active');
+      const activeMob = document.getElementById('m-btn-' + tabId);
+      if (activeMob) { activeMob.classList.add('text-warning'); activeMob.classList.remove('text-secondary'); }
+
+      if (tabId === 'tab2') {
+        setTimeout(() => {
+          if (map) map.invalidateSize();
+          if (dataTable) dataTable.columns.adjust().responsive.recalc();
+        }, 150);
+      }
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', next);
+      localStorage.setItem('bs-theme', next);
+      document.getElementById('theme-icon').className = next === 'dark' ? 'fa-solid fa-sun text-warning' : 'fa-solid fa-moon text-secondary';
+      if (map && tileLayer) {
+        map.removeLayer(tileLayer);
+        const url = next === 'dark'
+          ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+          : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        tileLayer = L.tileLayer(url, { maxZoom: 19 }).addTo(map);
+      }
+      actualizarGraficosCanvas();
+    }
+
+    function ocultarSplash() {
+      const s = document.getElementById('splash-screen');
+      if (s) { s.style.opacity = '0'; s.style.visibility = 'hidden'; setTimeout(() => s.remove(), 450); }
+    }
+
+    function sincronizarAhora() {
+      localStorage.removeItem(CACHE_KEY_DATA);
+      localStorage.removeItem(CACHE_KEY_TIME);
+      cargarDatosIniciales(true);
+    }
+
+    function exportarCSV() {
+      if (filteredData.length === 0) return;
+      const cols = ["COD_SNIS", "RED", "PROVINCIA", "MUNICIPIO", "NIVEL", "SUBSECTOR", "TIPO", "NOMBRE", "Latitud", "Longitud"];
+      const filas = [cols.join(','), ...filteredData.map(r => cols.map(c => `"${String(r[c] ?? '').replace(/"/g, '""')}"`).join(','))];
+      const blob = new Blob(["\uFEFF" + filas.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `SEDES_LAPAZ_SUISD_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    }
+
+    function auditarGPS() {
+      const sinGps = rawData.filter(d => d.Latitud === null || d.Longitud === null);
+      if (sinGps.length === 0) {
+        Swal.fire({ icon: 'success', title: '¡Padrón 100% Georreferenciado!', text: `Todos los ${rawData.length} establecimientos tienen GPS válido.`, confirmButtonColor: '#f59e0b' });
+      } else {
+        const listaHtml = sinGps.slice(0, 30).map(d => `<li class="text-start small"><strong>${d.COD_SNIS}</strong> - ${d.NOMBRE} (${d.MUNICIPIO})</li>`).join('');
+        Swal.fire({ icon: 'warning', title: `${sinGps.length} Establecimientos sin GPS`, html: `<ul class="ps-3 mb-0" style="max-height:220px;overflow-y:auto;">${listaHtml}</ul>`, confirmButtonColor: '#f59e0b' });
+      }
+    }
+
+    function cargarDatosDemostracionReales() {
+      const demo = [
+        { COD_SNIS: "200001", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL DE CLÍNICAS", Latitud: -16.5097, Longitud: -68.1215 },
+        { COD_SNIS: "200002", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL ESPECIALIZADO", NOMBRE: "HOSPITAL DEL NIÑO DR. OVIDIO ALIAGA URÍA", Latitud: -16.5089, Longitud: -68.1211 },
+        { COD_SNIS: "200003", RED: "RED 1 SUR OESTE", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL COTAHUMA", Latitud: -16.5165, Longitud: -68.1412 },
+        { COD_SNIS: "200004", RED: "RED 5 SUR", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL LOS PINOS", Latitud: -16.5441, Longitud: -68.0745 },
+        { COD_SNIS: "200005", RED: "RED COREA", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL DEL NORTE", Latitud: -16.4942, Longitud: -68.1965 },
+        { COD_SNIS: "200006", RED: "RED HOLANDÉS", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL BOLIVIANO HOLANDÉS", Latitud: -16.5208, Longitud: -68.1652 },
+        { COD_SNIS: "200007", RED: "RED RURAL 4 OMASUYOS", PROVINCIA: "OMASUYOS", MUNICIPIO: "ACHACACHI", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL ACHACACHI", Latitud: -16.0528, Longitud: -68.6861 },
+        { COD_SNIS: "200008", RED: "RED RURAL 8 NOR YUNGAS", PROVINCIA: "NOR YUNGAS", MUNICIPIO: "COROICO", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL GENERAL DE LOS YUNGAS COROICO", Latitud: -16.1889, Longitud: -67.7275 }
+      ];
+      procesarDatos(demo, "Modo Demo");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initSplashCanvas();
+      initBackgroundCanvas();
+      const savedTheme = localStorage.getItem('bs-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', savedTheme);
+      document.getElementById('theme-icon').className = savedTheme === 'dark' ? 'fa-solid fa-sun text-warning' : 'fa-solid fa-moon text-secondary';
+
+      initMap();
+      initDataTable();
+      initCharts();
+      cargarDatosIniciales();
+      setTimeout(ocultarSplash, 3500);
+    });
+  </script>
+</body>
+</html>
