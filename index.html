@@ -22,14 +22,14 @@
       --sedes-amber: #f59e0b;
       --sedes-amber-dark: #b45309;
       --sedes-gold: #fbbf24;
-      --glass-bg: rgba(255, 255, 255, 0.86);
-      --glass-border: rgba(245, 158, 11, 0.25);
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(245, 158, 11, 0.28);
       --card-shadow: 0 10px 30px -5px rgba(180, 83, 9, 0.08);
     }
 
     [data-bs-theme="dark"] {
-      --glass-bg: rgba(15, 23, 42, 0.88);
-      --glass-border: rgba(251, 191, 36, 0.2);
+      --glass-bg: rgba(15, 23, 42, 0.90);
+      --glass-border: rgba(251, 191, 36, 0.22);
       --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.55);
     }
 
@@ -43,10 +43,9 @@
     }
 
     @media (max-width: 768px) {
-      body { padding-bottom: 90px; }
+      body { padding-bottom: 92px; }
     }
 
-    /* CANVAS INTERACTIVO DE FONDO */
     #bg-canvas {
       position: fixed;
       inset: 0;
@@ -56,9 +55,25 @@
       pointer-events: none;
     }
 
-    main, nav, .offcanvas, .modal {
+    main, nav {
       position: relative;
       z-index: 2;
+    }
+
+    /* ========================================================
+       CORRECCIÓN CRÍTICA: MODAL Y ALERTAS SIEMPRE AL FRENTE
+       ======================================================== */
+    .modal-backdrop {
+      z-index: 100040 !important;
+    }
+    #modalEmergenciaSOS.modal {
+      z-index: 100050 !important;
+    }
+    .swal2-container {
+      z-index: 100060 !important;
+    }
+    .offcanvas {
+      z-index: 100030 !important;
     }
 
     .glass-navbar {
@@ -66,6 +81,7 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--glass-border);
+      z-index: 1030;
     }
 
     .card-glass {
@@ -83,11 +99,11 @@
       box-shadow: 0 16px 35px -8px rgba(245, 158, 11, 0.22);
     }
 
-    /* SPLASH SCREEN CON CANVAS ORBITAL */
+    /* SPLASH SCREEN */
     #splash-screen {
       position: fixed;
       inset: 0;
-      z-index: 99999;
+      z-index: 100080;
       background: radial-gradient(circle at center, #fffbeb 0%, #fef3c7 100%);
       display: flex;
       flex-direction: column;
@@ -204,14 +220,12 @@
       font-weight: 700;
     }
 
-    /* =================================================
-       BOTÓN FLOTANTE DE EMERGENCIA DINÁMICO (SOS / WA)
-       ================================================= */
+    /* BOTÓN FLOTANTE DE EMERGENCIA DINÁMICO (SOLO MENSAJE WHATSAPP) */
     .emergency-fab-container {
       position: fixed;
       right: 22px;
       bottom: 24px;
-      z-index: 1055;
+      z-index: 1040;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -220,22 +234,22 @@
     @media (max-width: 768px) {
       .emergency-fab-container {
         right: 16px;
-        bottom: 84px; /* Encima de la barra móvil */
+        bottom: 84px;
       }
     }
 
     .btn-emergency-fab {
       position: relative;
-      background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #16a34a 100%);
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #dc2626 100%);
       background-size: 200% 200%;
       animation: gradientShift 4s ease infinite;
       color: #fff !important;
       border: 2px solid #fde047;
       border-radius: 50rem;
-      padding: 0.65rem 1.25rem;
+      padding: 0.72rem 1.35rem;
       font-weight: 800;
-      font-size: 0.85rem;
-      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.45);
+      font-size: 0.86rem;
+      box-shadow: 0 8px 25px rgba(22, 163, 74, 0.45);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -243,7 +257,7 @@
     }
     .btn-emergency-fab:hover {
       transform: scale(1.06) translateY(-2px);
-      box-shadow: 0 12px 30px rgba(220, 38, 38, 0.65);
+      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.65);
     }
 
     .btn-emergency-fab::before {
@@ -251,7 +265,7 @@
       position: absolute;
       inset: -5px;
       border-radius: 50rem;
-      border: 2px solid #ef4444;
+      border: 2px solid #22c55e;
       animation: sosRadar 1.8s ease-out infinite;
       pointer-events: none;
     }
@@ -265,21 +279,11 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
-    .quick-sos-actions {
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      animation: fadeSlide 0.25s ease-out;
-    }
-    .quick-sos-actions.show {
-      display: flex;
-    }
   </style>
 </head>
 <body>
 
-  <!-- CANVAS DE FONDO INTERACTIVO -->
+  <!-- CANVAS INTERACTIVO DE FONDO -->
   <canvas id="bg-canvas"></canvas>
 
   <!-- Input oculto para importar CSV local -->
@@ -306,7 +310,7 @@
         <img src="logo.png" alt="SEDES" width="42" height="42" class="object-fit-contain" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
         <div class="lh-1">
           <span class="fs-6 fs-sm-5 fw-black d-block text-warning-emphasis">SEDES LA PAZ - SUISD</span>
-          <span class="text-muted fw-bold text-uppercase" style="font-size: 0.62rem; letter-spacing: 1px;">Geovisor & Padrón Dinámico</span>
+          <span class="text-muted fw-bold text-uppercase" style="font-size: 0.62rem; letter-spacing: 1px;">Geovisor & Notificación de Emergencias</span>
         </div>
       </div>
 
@@ -314,13 +318,13 @@
         <div class="d-none d-lg-flex bg-body-tertiary p-1 rounded-pill border me-1">
           <button onclick="switchTab('tab1')" id="btn-tab1" class="btn-nav-pill"><i class="fa-solid fa-book-medical me-1"></i>1. Definiciones</button>
           <button onclick="switchTab('tab2')" id="btn-tab2" class="btn-nav-pill active"><i class="fa-solid fa-map-location-dot me-1"></i>2. Mapa y Datos</button>
-          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-pill"><i class="fa-solid fa-screwdriver-wrench me-1"></i>3. Herramientas</button>
+          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-pill"><i class="fa-solid fa-screwdriver-wrench me-1"></i>3. Herramientas y SOS</button>
         </div>
 
-        <!-- Botón de Emergencia Rápido en Navbar -->
-        <button onclick="abrirModalEmergencia()" class="btn btn-danger btn-sm rounded-pill fw-bold px-3 shadow-sm d-flex align-items-center gap-1" title="Emergencia / Soporte Directo (+591 79107617)">
-          <i class="fa-solid fa-truck-medical fa-beat-fade"></i>
-          <span class="d-none d-sm-inline">Emergencia</span>
+        <!-- Botón de Emergencia Rápido en Navbar (Solo Mensaje WhatsApp) -->
+        <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-3 shadow-sm d-flex align-items-center gap-1" title="Notificar Emergencia por Mensaje de WhatsApp">
+          <i class="fa-brands fa-whatsapp fs-6"></i>
+          <span class="d-none d-sm-inline">Mensaje SOS</span>
         </button>
 
         <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3 shadow-sm">
@@ -334,7 +338,7 @@
     </div>
   </nav>
 
-  <!-- BANNER DE ESTADO Y CONEXIÓN RÁPIDA -->
+  <!-- BANNER DE ESTADO -->
   <div class="container-xl mt-2 d-none" id="status-banner">
     <div class="alert alert-warning rounded-4 shadow-sm border-warning d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 px-3 mb-2" role="alert">
       <div class="d-flex align-items-center gap-2 small fw-semibold">
@@ -343,7 +347,7 @@
       </div>
       <div class="d-flex flex-wrap gap-2">
         <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark py-1 px-3">
-          <i class="fa-solid fa-link me-1"></i>Vincular URL de Sheet o Apps Script
+          <i class="fa-solid fa-link me-1"></i>Vincular URL de Apps Script (/exec)
         </button>
         <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-dark btn-sm rounded-pill fw-bold py-1 px-3">
           <i class="fa-solid fa-file-arrow-up me-1"></i>Cargar CSV
@@ -364,14 +368,14 @@
               <span class="badge bg-warning text-dark rounded-pill fw-bold mb-2 px-3 py-1">MARCO NORMATIVO SNIS-VE</span>
               <h1 class="display-6 fw-black mb-3">Sistema Único de Información en Salud Departamental (<span class="text-warning">SUISD</span>)</h1>
               <p class="text-body-secondary mb-4">
-                Plataforma oficial del <strong>SEDES La Paz</strong> para la consulta georreferenciada, análisis por niveles resolutivos y clasificación administrativa de los establecimientos de salud urbanos y rurales del departamento.
+                Plataforma oficial del <strong>SEDES La Paz</strong> para la consulta georreferenciada, análisis por niveles resolutivos y notificación dinámica de emergencias vía mensaje de WhatsApp con registro automático de nombre, celular y coordenadas en Google Sheets.
               </p>
               <div class="d-flex flex-wrap gap-2">
                 <button onclick="switchTab('tab2')" class="btn btn-warning rounded-pill fw-bold text-dark px-4 py-2 shadow-sm">
                   <i class="fa-solid fa-map-location-dot me-2"></i>Ir al Mapa Interactivo
                 </button>
-                <button onclick="abrirModalEmergencia()" class="btn btn-danger rounded-pill fw-bold px-4 py-2 shadow-sm">
-                  <i class="fa-brands fa-whatsapp me-2"></i>Contacto de Emergencia (+591 79107617)
+                <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
+                  <i class="fa-brands fa-whatsapp me-2"></i>Notificar Emergencia por Mensaje
                 </button>
               </div>
             </div>
@@ -412,15 +416,13 @@
         </div>
         <div class="col-md-4">
           <div class="card card-glass card-lift h-100 p-4">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:52px; height:52px;">
-              <i class="fa-solid fa-building-shield fs-4"></i>
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-success bg-opacity-15 text-success mb-3" style="width:52px; height:52px;">
+              <i class="fa-brands fa-whatsapp fs-4"></i>
             </div>
-            <h5 class="fw-bold">Subsectores de Salud</h5>
-            <ul class="small text-body-secondary ps-3 mb-0 mt-2">
-              <li class="mb-2"><strong>Público:</strong> Ministerio de Salud, Gobernación (SEDES) y Gobiernos Autónomos Municipales.</li>
-              <li class="mb-2"><strong>Seguridad Social:</strong> Cajas de Salud (CNS, CPS, CORDES, COSSMIL, Banca, Seguro Universitario).</li>
-              <li><strong>Privado / ONG / Iglesia:</strong> Establecimientos privados y de convenio.</li>
-            </ul>
+            <h5 class="fw-bold">Notificación Dinámica por Mensaje</h5>
+            <p class="small text-body-secondary mt-2 mb-0">
+              Al marcar cualquier establecimiento o punto del mapa, la ventana modal emerge al frente permitiendo registrar <strong>Nombre del Contacto</strong>, <strong>Celular</strong> y <strong>Coordenadas GPS</strong> dinámicamente en Google Sheets y enviarlos por mensaje de WhatsApp.
+            </p>
           </div>
         </div>
       </div>
@@ -497,8 +499,8 @@
               <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning border-opacity-25 px-3 py-2 fw-bold" id="loading-badge">
                 <i class="fa-solid fa-spinner fa-spin me-1"></i>Conectando...
               </span>
-              <button onclick="enviarReporteFiltroWhatsApp()" class="btn btn-success btn-sm rounded-pill fw-bold px-3" title="Enviar resumen del filtro actual por WhatsApp">
-                <i class="fa-brands fa-whatsapp me-1"></i>Enviar Filtro a WhatsApp
+              <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-3">
+                <i class="fa-brands fa-whatsapp me-1"></i>Notificar Emergencia
               </button>
               <button onclick="sincronizarAhora()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3">
                 <i class="fa-solid fa-rotate me-1"></i>Sincronizar
@@ -574,11 +576,14 @@
                 <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:14px;height:14px;background:#dc2626;border:2px solid #fde047;box-shadow:0 0 8px #f59e0b;"></span> 3er Nivel (<span id="leg-n3">0</span>)</span>
               </div>
               <div class="d-flex gap-2">
+                <button onclick="activarSeleccionCoordenadasEnMapa()" class="btn btn-outline-success btn-sm rounded-pill fw-bold" style="font-size: 0.75rem;" title="Haz clic en cualquier punto del mapa para reportar emergencia con esas coordenadas">
+                  <i class="fa-solid fa-crosshairs me-1"></i>Marcar Punto SOS
+                </button>
                 <button onclick="toggleClusterMode()" id="btn-cluster-mode" class="btn btn-outline-warning btn-sm rounded-pill fw-bold" style="font-size: 0.75rem;">
                   <i class="fa-solid fa-circle-nodes me-1"></i>Agrupar: ON
                 </button>
                 <button onclick="fitMapToMarkers()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark" style="font-size: 0.75rem;">
-                  <i class="fa-solid fa-expand me-1"></i>Centrar Mapa
+                  <i class="fa-solid fa-expand me-1"></i>Centrar
                 </button>
               </div>
             </div>
@@ -628,7 +633,7 @@
                   <th>PROVINCIA / MUNICIPIO</th>
                   <th>NIVEL</th>
                   <th>SUBSECTOR / TIPO</th>
-                  <th class="text-center">ACCIÓN</th>
+                  <th class="text-center">MENSAJE SOS / ACCIÓN</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -638,28 +643,33 @@
       </div>
     </section>
 
-    <!-- PESTAÑA 3: HERRAMIENTAS -->
+    <!-- PESTAÑA 3: HERRAMIENTAS Y BITÁCORA DE EMERGENCIAS -->
     <section id="tab3" class="tab-pane-custom">
       <div class="card card-glass mb-4 border-start border-warning border-5">
-        <div class="card-body p-4">
-          <h3 class="fw-black mb-1"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Herramientas Informáticas - SUISD</h3>
-          <p class="text-body-secondary mb-0 small">Gestión de conexión con Google Sheets, central de emergencia/soporte y auditoría de datos.</p>
+        <div class="card-body p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <div>
+            <h3 class="fw-black mb-1"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Herramientas Informáticas y Registro SOS</h3>
+            <p class="text-body-secondary mb-0 small">Gestión de Google Sheets, registro dinámico de mensajes de emergencia y auditoría de coordenadas.</p>
+          </div>
+          <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
+            <i class="fa-brands fa-whatsapp me-2"></i>Nuevo Mensaje de Emergencia
+          </button>
         </div>
       </div>
 
-      <div class="row g-4">
+      <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
           <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
             <div>
               <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:50px; height:50px;">
                 <i class="fa-solid fa-plug-circle-check fs-4"></i>
               </div>
-              <h5 class="fw-bold">Conexión Multi-Vía</h5>
-              <p class="small text-body-secondary">Conecta tu URL <code>/exec</code> de Apps Script o el enlace directo de tu Google Sheet compartido.</p>
+              <h5 class="fw-bold">Conectar Google Sheet</h5>
+              <p class="small text-body-secondary">Pega la URL <code>/exec</code> de tu Google Apps Script para leer establecimientos y guardar emergencias en la hoja <code>EMERGENCIAS</code>.</p>
             </div>
             <div class="d-grid gap-2 mt-3">
               <button onclick="abrirModalConexion()" class="btn btn-warning rounded-pill fw-bold text-dark">
-                <i class="fa-solid fa-link me-2"></i>Vincular Sheet
+                <i class="fa-solid fa-link me-2"></i>Vincular URL /exec
               </button>
               <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-secondary rounded-pill fw-bold">
                 <i class="fa-solid fa-file-csv me-2"></i>Subir CSV Local
@@ -678,7 +688,7 @@
               <p class="small text-body-secondary">Descarga un archivo CSV compatible con Excel con los establecimientos filtrados actualmente.</p>
             </div>
             <button onclick="exportarCSV()" class="btn btn-success rounded-pill fw-bold mt-3">
-              <i class="fa-solid fa-download me-2"></i>Descargar CSV
+              <i class="fa-solid fa-download me-2"></i>Descargar Padrón CSV
             </button>
           </div>
         </div>
@@ -698,30 +708,179 @@
           </div>
         </div>
 
-        <!-- Tarjeta Central de Emergencia y Soporte -->
         <div class="col-md-6 col-lg-3">
-          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between border-danger border-opacity-50">
+          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between border-success border-opacity-50">
             <div>
-              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-danger bg-opacity-15 text-danger mb-3" style="width:50px; height:50px;">
-                <i class="fa-solid fa-headset fs-4"></i>
+              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-success bg-opacity-15 text-success mb-3" style="width:50px; height:50px;">
+                <i class="fa-brands fa-whatsapp fs-4"></i>
               </div>
-              <h5 class="fw-bold">Línea de Emergencia</h5>
-              <p class="small text-body-secondary">Comunicación directa por llamada o WhatsApp al <strong>+591 79107617</strong> con reporte automático del sistema.</p>
+              <h5 class="fw-bold">Mensajería SOS</h5>
+              <p class="small text-body-secondary">Registra nombre del contacto, celular y coordenadas dinámicamente en Google Sheets y envía mensaje al <strong>+591 79107617</strong>.</p>
             </div>
             <div class="d-grid gap-2 mt-3">
               <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold">
-                <i class="fa-brands fa-whatsapp me-2"></i>WhatsApp Dinámico
+                <i class="fa-brands fa-whatsapp me-2"></i>Abrir Ventana de Mensaje
               </button>
-              <a href="tel:+59179107617" class="btn btn-danger rounded-pill fw-bold">
-                <i class="fa-solid fa-phone-volume me-2"></i>Llamar +591 79107617
-              </a>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BITÁCORA RECIENTE DE EMERGENCIAS REGISTRADAS -->
+      <div class="card card-glass">
+        <div class="card-header bg-transparent py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom">
+          <h6 class="mb-0 fw-black"><i class="fa-solid fa-clipboard-list text-success me-2"></i>Bitácora de Mensajes de Emergencia Registrados (Google Sheets)</h6>
+          <div class="d-flex gap-2">
+            <button onclick="cargarHistorialEmergenciasDesdeSheet()" class="btn btn-outline-warning btn-sm rounded-pill fw-bold">
+              <i class="fa-solid fa-rotate me-1"></i>Actualizar desde Hoja EMERGENCIAS
+            </button>
+            <button onclick="exportarEmergenciasCSV()" class="btn btn-outline-success btn-sm rounded-pill fw-bold">
+              <i class="fa-solid fa-download me-1"></i>Exportar Bitácora
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-3">
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle mb-0 small">
+              <thead class="table-warning">
+                <tr>
+                  <th>TICKET</th>
+                  <th>FECHA / HORA</th>
+                  <th>NOMBRE CONTACTO</th>
+                  <th>CELULAR</th>
+                  <th>ESTABLECIMIENTO</th>
+                  <th>COORDENADAS</th>
+                  <th>TIPO / DETALLE</th>
+                  <th>ESTADO SHEET</th>
+                  <th class="text-center">REENVIAR MENSAJE</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-emergencias-body">
+                <tr><td colspan="9" class="text-center text-muted py-3">Aún no se registraron mensajes de emergencia en esta sesión.</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- =========================================================================
+       VENTANA MODAL DE EMERGENCIA (SIEMPRE AL FRENTE - SOLO MENSAJE WHATSAPP)
+       ========================================================================= -->
+  <div class="modal fade" id="modalEmergenciaSOS" tabindex="-1" aria-labelledby="modalEmergenciaLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+        <div class="modal-header bg-success text-white py-3">
+          <h5 class="modal-title fw-black d-flex align-items-center gap-2" id="modalEmergenciaLabel">
+            <i class="fa-brands fa-whatsapp fs-4"></i>
+            <span>Notificación de Emergencia por Mensaje - SEDES LA PAZ</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <div class="alert alert-warning border-warning d-flex align-items-center gap-3 py-2 px-3 rounded-3 mb-3 small">
+            <i class="fa-solid fa-database fs-4 text-warning-emphasis"></i>
+            <div>
+              <strong>Registro Dinámico en Google Sheets + Mensaje de WhatsApp:</strong> Se guardará automáticamente el <strong>Nombre del Contacto</strong>, <strong>Celular</strong> y las <strong>Coordenadas</strong> en la hoja <code>EMERGENCIAS</code> y se enviará el mensaje al <strong>+591 79107617</strong>.
+            </div>
+          </div>
+
+          <form id="form-emergencia-sos" onsubmit="procesarYEnviarEmergencia(event)">
+            <div class="row g-3">
+              <!-- 1. Selección de Establecimiento -->
+              <div class="col-12">
+                <label class="form-label small fw-bold text-warning-emphasis mb-1">
+                  <i class="fa-solid fa-hospital me-1"></i>1. Establecimiento de Salud Marcado (Carga coordenadas automáticamente):
+                </label>
+                <input type="text" id="sos-est-search" oninput="filtrarSelectorEstablecimientosSOS()" class="form-control form-control-sm mb-1" placeholder="Buscar establecimiento por nombre, municipio o COD_SNIS...">
+                <select id="sos-establecimiento" class="form-select form-select-sedes fw-bold" onchange="alCambiarEstablecimientoSOS()">
+                  <option value="">-- Ubicación / Emergencia General (Usar coordenadas manuales o GPS actual) --</option>
+                </select>
+                <div id="sos-est-info" class="form-text small text-muted mt-1"></div>
+              </div>
+
+              <!-- 2. Nombre del Contacto -->
+              <div class="col-md-6">
+                <label class="form-label small fw-bold mb-1">
+                  <i class="fa-solid fa-user-check me-1 text-success"></i>2. Nombre del Contacto <span class="text-danger">*</span>
+                </label>
+                <input type="text" id="sos-nombre-contacto" class="form-control form-control-sedes" placeholder="Ej. Dr. Juan Pérez / Lic. María Quispe" required>
+              </div>
+
+              <!-- 3. Celular de Referencia -->
+              <div class="col-md-6">
+                <label class="form-label small fw-bold mb-1">
+                  <i class="fa-solid fa-mobile-screen me-1 text-success"></i>3. Celular de Referencia <span class="text-danger">*</span>
+                </label>
+                <input type="tel" id="sos-numero-referencia" class="form-control form-control-sedes" placeholder="Ej. 71234567" required>
+              </div>
+
+              <!-- 4. Coordenadas Dinámicas (Del establecimiento, del Mapa o del GPS del dispositivo) -->
+              <div class="col-12">
+                <label class="form-label small fw-bold mb-1">
+                  <i class="fa-solid fa-location-crosshairs me-1 text-danger"></i>4. Coordenadas Dinámicas (Latitud, Longitud) <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-warning bg-opacity-15 border-warning border-opacity-25 text-warning-emphasis font-monospace small">WGS84</span>
+                  <input type="text" id="sos-coordenadas" class="form-control form-control-sedes font-monospace" placeholder="-16.50970, -68.12150" required>
+                  <button type="button" onclick="obtenerMiGPSActualSOS()" class="btn btn-outline-warning fw-bold text-dark" title="Capturar ubicación GPS actual de este dispositivo">
+                    <i class="fa-solid fa-location-arrow me-1"></i>Mi GPS Actual
+                  </button>
+                  <button type="button" onclick="activarSeleccionCoordenadasEnMapa()" class="btn btn-outline-secondary fw-bold" title="Marcar un punto haciendo clic en el mapa">
+                    <i class="fa-solid fa-map-pin me-1"></i>Elegir en Mapa
+                  </button>
+                </div>
+                <div class="form-text small" id="sos-coord-status">Las coordenadas se actualizan dinámicamente al elegir un establecimiento o usar tu GPS.</div>
+              </div>
+
+              <!-- 5. Tipo de Emergencia -->
+              <div class="col-md-6">
+                <label class="form-label small fw-bold mb-1">
+                  <i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i>5. Tipo de Emergencia / Reporte:
+                </label>
+                <select id="sos-tipo" class="form-select form-select-sedes">
+                  <option value="EMERGENCIA MÉDICA / REFERENCIA URGENTE">🚨 Emergencia Médica / Referencia Urgente</option>
+                  <option value="ALERTA EPIDEMIOLÓGICA / NOTIFICACIÓN">🦠 Alerta Epidemiológica / Brote</option>
+                  <option value="REQUERIMIENTO DE INSUMOS / OXÍGENO">💊 Requerimiento Crítico de Insumos / Oxígeno</option>
+                  <option value="SOPORTE TÉCNICO SISTEMA SUISD / SNIS">💻 Soporte Técnico Sistema SUISD / SNIS</option>
+                  <option value="CONTINGENCIA / AMBULANCIA / RED VIAL">🚑 Contingencia / Ambulancia / Red Vial</option>
+                </select>
+              </div>
+
+              <!-- 6. Destino del Mensaje -->
+              <div class="col-md-6">
+                <label class="form-label small fw-bold mb-1">
+                  <i class="fa-brands fa-whatsapp me-1 text-success"></i>6. Destino del Mensaje WhatsApp:
+                </label>
+                <select id="sos-destino-modo" class="form-select form-select-sedes">
+                  <option value="CENTRAL">Enviar a Central SUISD (+591 79107617)</option>
+                  <option value="REFERENCIA">Enviar al Celular de Referencia ingresado</option>
+                </select>
+              </div>
+
+              <!-- 7. Mensaje de Emergencia -->
+              <div class="col-12">
+                <label class="form-label small fw-bold mb-1">
+                  <i class="fa-solid fa-comment-dots me-1"></i>7. Mensaje Detallado de la Emergencia:
+                </label>
+                <textarea id="sos-detalle" class="form-control form-control-sedes" rows="3" placeholder="Escribe el mensaje detallado de la emergencia o requerimiento..."></textarea>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-4 pt-3 border-top">
+              <button type="button" class="btn btn-outline-secondary rounded-pill fw-bold px-4" data-bs-dismiss="modal">Cerrar</button>
+              <button type="submit" id="btn-submit-sos" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow">
+                <i class="fa-brands fa-whatsapp me-2"></i>Registrar en Sheet y Enviar Mensaje WhatsApp
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- OFFCANVAS FICHA TÉCNICA -->
   <div class="offcanvas offcanvas-end rounded-start-4" tabindex="-1" id="fichaOffcanvas">
@@ -732,30 +891,11 @@
     <div class="offcanvas-body" id="ficha-body"></div>
   </div>
 
-  <!-- =================================================
-       BOTÓN FLOTANTE DINÁMICO DE EMERGENCIA (+591 79107617)
-       ================================================= -->
+  <!-- BOTÓN FLOTANTE DINÁMICO DE EMERGENCIA (SOLO MENSAJE) -->
   <div class="emergency-fab-container">
-    <!-- Acciones rápidas desplegables -->
-    <div id="quick-sos-menu" class="quick-sos-actions">
-      <button onclick="enviarWhatsAppDirecto('EMERGENCIA SANITARIA / SOPORTE SUISD')" class="btn btn-success rounded-pill fw-bold shadow px-3 py-2 d-flex align-items-center gap-2">
-        <i class="fa-brands fa-whatsapp fs-5"></i>
-        <span>WhatsApp Dinámico</span>
-      </button>
-      <a href="tel:+59179107617" class="btn btn-danger rounded-pill fw-bold shadow px-3 py-2 d-flex align-items-center gap-2">
-        <i class="fa-solid fa-phone-volume fs-6"></i>
-        <span>Llamar +591 79107617</span>
-      </a>
-      <button onclick="abrirModalEmergencia()" class="btn btn-warning text-dark rounded-pill fw-bold shadow px-3 py-2 d-flex align-items-center gap-2">
-        <i class="fa-solid fa-pen-to-square fs-6"></i>
-        <span>Personalizar Mensaje</span>
-      </button>
-    </div>
-
-    <!-- Botón Principal Pulsante -->
-    <button onclick="toggleMenuEmergencia()" class="btn-emergency-fab" title="Contacto de Emergencia +591 79107617">
-      <i class="fa-solid fa-truck-medical fs-5"></i>
-      <span>SOS / WhatsApp</span>
+    <button onclick="abrirModalEmergencia()" class="btn-emergency-fab" title="Abrir ventana de Mensaje de Emergencia (+591 79107617)">
+      <i class="fa-brands fa-whatsapp fs-4"></i>
+      <span>Mensaje de Emergencia</span>
     </button>
   </div>
 
@@ -770,8 +910,8 @@
     <button onclick="switchTab('tab3')" id="m-btn-tab3" class="btn text-secondary fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
       <i class="fa-solid fa-screwdriver-wrench fs-5 mb-1"></i>Herramientas
     </button>
-    <button onclick="abrirModalEmergencia()" class="btn text-danger fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
-      <i class="fa-brands fa-whatsapp fs-5 mb-1"></i>Emergencia
+    <button onclick="abrirModalEmergencia()" class="btn text-success fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
+      <i class="fa-brands fa-whatsapp fs-5 mb-1"></i>Mensaje SOS
     </button>
   </div>
 
@@ -790,25 +930,29 @@
   <script>
     /**
      * =========================================================================
-     * CONFIGURACIÓN DE EMERGENCIA Y CONEXIÓN A GOOGLE SHEETS
+     * CONFIGURACIÓN DE MENSAJERÍA DE EMERGENCIA (+591 79107617) Y GOOGLE SHEETS
      * =========================================================================
      */
     const EMERGENCY_PHONE_CLEAN   = "59179107617";
     const EMERGENCY_PHONE_DISPLAY = "+591 79107617";
-    const DEFAULT_SOURCE_URL      = "https://script.google.com/macros/s/AKfycbxsd8lIXwsJx5fMqpUC9SynT2x9PgaX2H-fAJRq05bhUktQUojTX_ZGfloIk0oeu1vG/exec";
+    const DEFAULT_SOURCE_URL      = "https://script.google.com/macros/s/AKfycbzhIlmn1mq-UCoAXTLW6IrM9cte6dvgM-wfMrqQZ7UhM9rPKFkGXuZeAJIGOf4BsKRJ/exec"; // Puedes pegar aquí tu URL /exec de Apps Script
 
-    const STORAGE_URL_KEY = "SUISD_ACTIVE_SOURCE_URL_V12";
-    const CACHE_KEY_DATA  = "SUISD_CACHE_DATA_V12";
-    const CACHE_KEY_TIME  = "SUISD_CACHE_TIME_V12";
-    const CACHE_TTL_MS    = 6 * 60 * 60 * 1000;
+    const STORAGE_URL_KEY       = "SUISD_ACTIVE_SOURCE_URL_V14";
+    const CACHE_KEY_DATA        = "SUISD_CACHE_DATA_V14";
+    const CACHE_KEY_TIME        = "SUISD_CACHE_TIME_V14";
+    const CACHE_KEY_EMERGENCIAS = "SUISD_EMERGENCIAS_LOG_V14";
+    const CACHE_TTL_MS          = 6 * 60 * 60 * 1000;
 
     let rawData = [];
     let filteredData = [];
+    let emergenciasLog = [];
     let map = null;
     let canvasRenderer = null;
     let tileLayer = null;
     let markerClusterGroup = null;
     let directLayerGroup = null;
+    let tempClickMarker = null;
+    let modoCapturarClickMapa = false;
     let useClustering = true;
     let markersByCode = {};
     let dataTable = null;
@@ -834,111 +978,410 @@
     };
 
     // =========================================================
-    // SISTEMA DINÁMICO DE EMERGENCIA (WHATSAPP + LLAMADA)
+    // VENTANA MODAL AL FRENTE Y REGISTRO DINÁMICO (SOLO MENSAJE)
     // =========================================================
-    function toggleMenuEmergencia() {
-      const menu = document.getElementById('quick-sos-menu');
-      if (menu) menu.classList.toggle('show');
-    }
-
-    // Construye el resumen dinámico del estado actual de la aplicación o de un establecimiento específico
-    function construirTextoContexto(codSnis = null, motivoExtra = "") {
-      const fecha = new Date().toLocaleString('es-BO');
-      let Lineas = [
-        `🚨 *SEDES LA PAZ - SUISD | REPORTE DE EMERGENCIA / SOPORTE*`,
-        `📅 *Fecha/Hora:* ${fecha}`
-      ];
-
-      if (motivoExtra) {
-        Lineas.push(`📝 *Detalle:* ${motivoExtra}`);
+    function abrirModalEmergencia(codSnis = null, coordsPersonalizadas = null) {
+      // 1. Cerrar cualquier popup del mapa o panel lateral Offcanvas para que nada estorbe al modal
+      if (map) map.closePopup();
+      const offcanvasEl = document.getElementById('fichaOffcanvas');
+      if (offcanvasEl) {
+        const offInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+        if (offInstance) offInstance.hide();
       }
 
-      if (codSnis) {
-        const est = rawData.find(d => String(d.COD_SNIS) === String(codSnis));
-        if (est) {
-          Lineas.push(
-            `🏥 *Establecimiento:* ${est.NOMBRE}`,
-            `🔢 *COD_SNIS:* ${est.COD_SNIS}`,
-            `🌐 *Red:* ${est.RED}`,
-            `📍 *Ubicación:* ${est.PROVINCIA} - ${est.MUNICIPIO}`,
-            `🏢 *Nivel / Tipo:* ${est.NIVEL} (${est.TIPO})`
-          );
-          if (est.Latitud !== null && est.Longitud !== null) {
-            Lineas.push(`🗺️ *Mapa GPS:* https://www.google.com/maps?q=${est.Latitud},${est.Longitud}`);
-          }
-          return Lineas.join('\n');
+      // 2. Asegurar que el modal cuelgue directamente de document.body para estar siempre al frente
+      const modalEl = document.getElementById('modalEmergenciaSOS');
+      if (modalEl && modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
+      }
+
+      document.getElementById('sos-est-search').value = '';
+      poblarSelectorEstablecimientosSOS('', codSnis || '');
+
+      // 3. Cargar último Nombre de Contacto y Celular guardados
+      const savedNombre = localStorage.getItem('SUISD_LAST_CONTACT_NAME') || '';
+      const savedNumero = localStorage.getItem('SUISD_LAST_CONTACT_PHONE') || '';
+      if (savedNombre && !document.getElementById('sos-nombre-contacto').value) {
+        document.getElementById('sos-nombre-contacto').value = savedNombre;
+      }
+      if (savedNumero && !document.getElementById('sos-numero-referencia').value) {
+        document.getElementById('sos-numero-referencia').value = savedNumero;
+      }
+
+      // 4. Si se pasaron coordenadas personalizadas (ej. clic en el mapa), colocarlas dinámicamente
+      if (coordsPersonalizadas) {
+        document.getElementById('sos-coordenadas').value = coordsPersonalizadas;
+        document.getElementById('sos-coord-status').innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-location-dot me-1"></i>Coordenadas capturadas desde el mapa: ${coordsPersonalizadas}</span>`;
+      } else {
+        alCambiarEstablecimientoSOS();
+      }
+
+      // 5. Mostrar ventana modal al frente
+      const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modalInstance.show();
+
+      setTimeout(() => {
+        document.getElementById('sos-nombre-contacto')?.focus();
+      }, 300);
+    }
+
+    function poblarSelectorEstablecimientosSOS(filtroTexto = "", codSeleccionado = null) {
+      const sel = document.getElementById('sos-establecimiento');
+      if (!sel) return;
+      const valorActual = codSeleccionado !== null ? codSeleccionado : sel.value;
+      const q = filtroTexto.toLowerCase().trim();
+
+      const lista = rawData.filter(d => {
+        if (!q) return true;
+        return d.NOMBRE.toLowerCase().includes(q) ||
+               d.COD_SNIS.toLowerCase().includes(q) ||
+               d.MUNICIPIO.toLowerCase().includes(q) ||
+               d.RED.toLowerCase().includes(q);
+      }).slice(0, 250);
+
+      let html = `<option value="">-- Ubicación / Emergencia General (Coordenadas manuales o GPS actual) --</option>`;
+      lista.forEach(d => {
+        const selected = String(d.COD_SNIS) === String(valorActual) ? 'selected' : '';
+        html += `<option value="${d.COD_SNIS}" ${selected}>[${d.COD_SNIS}] ${d.NOMBRE} — ${d.MUNICIPIO} (${d.NIVEL})</option>`;
+      });
+
+      if (valorActual && !lista.some(d => String(d.COD_SNIS) === String(valorActual))) {
+        const encontrado = rawData.find(d => String(d.COD_SNIS) === String(valorActual));
+        if (encontrado) {
+          html += `<option value="${encontrado.COD_SNIS}" selected>[${encontrado.COD_SNIS}] ${encontrado.NOMBRE} — ${encontrado.MUNICIPIO} (${encontrado.NIVEL})</option>`;
         }
       }
 
-      // Si no se especificó un establecimiento, adjuntar el filtro dinámico activo en pantalla
-      const red  = document.getElementById('filter-red')?.value || 'Todas';
-      const prov = document.getElementById('filter-provincia')?.value || 'Todas';
-      const mun  = document.getElementById('filter-municipio')?.value || 'Todos';
-      const niv  = document.getElementById('filter-nivel')?.value || 'Todos';
+      sel.innerHTML = html;
+    }
 
-      Lineas.push(
-        `📊 *Filtro Activo en Geovisor:*`,
-        `• Red: ${red}`,
-        `• Provincia/Municipio: ${prov} / ${mun}`,
-        `• Nivel: ${niv}`,
-        `• Establecimientos en vista: ${filteredData.length}`
+    function filtrarSelectorEstablecimientosSOS() {
+      const texto = document.getElementById('sos-est-search')?.value || '';
+      poblarSelectorEstablecimientosSOS(texto);
+      alCambiarEstablecimientoSOS();
+    }
+
+    // Actualiza dinámicamente las coordenadas cuando el usuario elige un establecimiento
+    function alCambiarEstablecimientoSOS() {
+      const cod = document.getElementById('sos-establecimiento')?.value || '';
+      const infoEl = document.getElementById('sos-est-info');
+      const coordInput = document.getElementById('sos-coordenadas');
+      const coordStatus = document.getElementById('sos-coord-status');
+
+      if (!cod) {
+        if (infoEl) infoEl.innerHTML = `<i class="fa-solid fa-circle-info me-1"></i>Puedes usar el botón <strong>"Mi GPS Actual"</strong> o elegir un establecimiento de la lista.`;
+        if (coordInput && !coordInput.value && map) {
+          const center = map.getCenter();
+          coordInput.value = `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+          if (coordStatus) coordStatus.innerHTML = `<span class="text-muted">Coordenadas tomadas del centro actual del mapa.</span>`;
+        }
+        return;
+      }
+
+      const est = rawData.find(d => String(d.COD_SNIS) === String(cod));
+      if (est) {
+        if (est.Latitud !== null && est.Longitud !== null) {
+          const cStr = `${est.Latitud.toFixed(5)}, ${est.Longitud.toFixed(5)}`;
+          coordInput.value = cStr;
+          coordStatus.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-check-circle me-1"></i>Coordenadas cargadas automáticamente del establecimiento (${cStr}).</span>`;
+        } else {
+          coordInput.value = 'Sin GPS registrado';
+          coordStatus.innerHTML = `<span class="text-danger fw-bold">Este establecimiento no tiene coordenadas en la hoja. Usa "Mi GPS Actual" o "Elegir en Mapa".</span>`;
+        }
+        if (infoEl) {
+          infoEl.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-hospital me-1"></i>Establecimiento:</span> <strong>${est.NOMBRE}</strong> | Red: ${est.RED} | Municipio: ${est.MUNICIPIO}`;
+        }
+      }
+    }
+
+    // Captura el GPS real del celular o computadora del usuario
+    function obtenerMiGPSActualSOS() {
+      const coordInput = document.getElementById('sos-coordenadas');
+      const coordStatus = document.getElementById('sos-coord-status');
+
+      if (!navigator.geolocation) {
+        Swal.fire({ icon: 'warning', title: 'GPS no disponible', text: 'Tu navegador no soporta geolocalización.', confirmButtonColor: '#f59e0b' });
+        return;
+      }
+
+      coordStatus.innerHTML = `<span class="text-warning-emphasis fw-bold"><i class="fa-solid fa-spinner fa-spin me-1"></i>Obteniendo coordenadas GPS de tu dispositivo...</span>`;
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(5);
+          const lng = pos.coords.longitude.toFixed(5);
+          coordInput.value = `${lat}, ${lng}`;
+          coordStatus.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-location-crosshairs me-1"></i>GPS del dispositivo capturado con éxito (${lat}, ${lng}).</span>`;
+        },
+        (err) => {
+          coordStatus.innerHTML = `<span class="text-danger fw-bold">No se pudo leer el GPS (${err.message}). Puedes elegir un punto en el mapa.</span>`;
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
       );
-
-      return Lineas.join('\n');
     }
 
-    function enviarWhatsAppDirecto(motivo = "Solicitud de asistencia inmediata", codSnis = null) {
-      const mensaje = construirTextoContexto(codSnis, motivo);
-      const url = `https://wa.me/${EMERGENCY_PHONE_CLEAN}?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, '_blank');
-    }
+    // Permite hacer clic en cualquier lugar del mapa para capturar coordenadas y abrir el modal al frente
+    function activarSeleccionCoordenadasEnMapa() {
+      const modalEl = document.getElementById('modalEmergenciaSOS');
+      const modalInst = bootstrap.Modal.getInstance(modalEl);
+      if (modalInst) modalInst.hide();
 
-    function enviarReporteFiltroWhatsApp() {
-      enviarWhatsAppDirecto("Envío de reporte dinámico según filtros aplicados en el Geovisor SUISD");
-    }
-
-    function abrirModalEmergencia(codSnis = null) {
-      const menu = document.getElementById('quick-sos-menu');
-      if (menu) menu.classList.remove('show');
-
-      const est = codSnis ? rawData.find(d => String(d.COD_SNIS) === String(codSnis)) : null;
-      const subtitulo = est
-        ? `<div class="alert alert-warning py-2 px-3 small text-start mb-3"><strong>Establecimiento:</strong> ${est.NOMBRE} (SNIS: ${est.COD_SNIS})</div>`
-        : `<p class="small text-muted mb-3">Se adjuntará automáticamente el contexto actual del sistema SUISD al número <strong>${EMERGENCY_PHONE_DISPLAY}</strong>.</p>`;
+      switchTab('tab2');
+      modoCapturarClickMapa = true;
+      document.getElementById('map').style.cursor = 'crosshair';
 
       Swal.fire({
-        title: '<i class="fa-solid fa-truck-medical text-danger me-2"></i>Central de Emergencia SUISD',
+        toast: true,
+        position: 'top',
+        icon: 'info',
+        title: 'Haz clic en cualquier punto del mapa para capturar sus coordenadas de emergencia',
+        showConfirmButton: false,
+        timer: 4000
+      });
+    }
+
+    // Registra Nombre, Celular y Coordenadas en Google Sheets y envía el mensaje por WhatsApp
+    async function procesarYEnviarEmergencia(event) {
+      event.preventDefault();
+
+      const codSnis        = document.getElementById('sos-establecimiento').value;
+      const nombreContacto = document.getElementById('sos-nombre-contacto').value.trim();
+      const numeroCelular  = document.getElementById('sos-numero-referencia').value.trim();
+      const coordenadasStr = document.getElementById('sos-coordenadas').value.trim() || 'Sin GPS';
+      const tipoEmergencia = document.getElementById('sos-tipo').value;
+      const destinoModo    = document.getElementById('sos-destino-modo').value;
+      const detalle        = document.getElementById('sos-detalle').value.trim();
+
+      localStorage.setItem('SUISD_LAST_CONTACT_NAME', nombreContacto);
+      localStorage.setItem('SUISD_LAST_CONTACT_PHONE', numeroCelular);
+
+      const est = codSnis ? rawData.find(d => String(d.COD_SNIS) === String(codSnis)) : null;
+
+      // Destino del mensaje WhatsApp (Central +591 79107617 o Celular de Referencia)
+      let telefonoDestinoClean = EMERGENCY_PHONE_CLEAN;
+      if (destinoModo === 'REFERENCIA') {
+        let limpio = numeroCelular.replace(/[^0-9]/g, '');
+        if (limpio.length === 8) limpio = '591' + limpio;
+        if (limpio.length >= 8) telefonoDestinoClean = limpio;
+      }
+
+      const datosRegistro = {
+        action: 'registrarEmergencia',
+        nombre_contacto: nombreContacto,
+        numero_referencia: numeroCelular,
+        tipo_emergencia: tipoEmergencia,
+        cod_snis: est ? est.COD_SNIS : 'UBICACION-GPS',
+        establecimiento: est ? est.NOMBRE : 'Reporte con Coordenadas Dinámicas',
+        red: est ? est.RED : (document.getElementById('filter-red')?.value || 'Todas'),
+        municipio: est ? `${est.PROVINCIA} - ${est.MUNICIPIO}` : (document.getElementById('filter-municipio')?.value || 'Todos'),
+        nivel: est ? est.NIVEL : (document.getElementById('filter-nivel')?.value || 'Todos'),
+        coordenadas: coordenadasStr,
+        detalle: detalle || 'Notificación de emergencia vía mensaje',
+        destino_sos: '+' + telefonoDestinoClean
+      };
+
+      const btnSubmit = document.getElementById('btn-submit-sos');
+      const textoOriginal = btnSubmit.innerHTML;
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i>Guardando en Google Sheet...`;
+
+      let ticketId = 'SOS-' + Date.now().toString().slice(-6);
+      let estadoSheet = 'Guardado Local';
+
+      // 1. Guardar dinámicamente en la pestaña "EMERGENCIAS" de Google Sheets
+      const sourceUrl = getConfiguredUrl();
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        try {
+          await new Promise((resolve) => {
+            google.script.run
+              .withSuccessHandler(res => {
+                if (res && res.ticket) ticketId = res.ticket;
+                estadoSheet = 'Registrado en Sheet';
+                resolve();
+              })
+              .withFailureHandler(() => resolve())
+              .guardarEmergenciaEnSheet(datosRegistro);
+          });
+        } catch (e) {}
+      } else if (sourceUrl && sourceUrl.includes('script.google.com')) {
+        try {
+          const queryParams = new URLSearchParams(datosRegistro).toString();
+          const urlRegistro = `${sourceUrl}${sourceUrl.includes('?') ? '&' : '?'}${queryParams}`;
+          const resp = await cargarViaJSONP(urlRegistro, 8000);
+          if (resp && resp.status === 'ok') {
+            ticketId = resp.ticket || ticketId;
+            estadoSheet = 'Registrado en Sheet';
+          }
+        } catch (err) {
+          try {
+            fetch(sourceUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(datosRegistro)
+            });
+            estadoSheet = 'Enviado a Sheet';
+          } catch (e2) {}
+        }
+      }
+
+      // 2. Registrar en la bitácora visual
+      const nuevoItemBitacora = {
+        ID_TICKET: ticketId,
+        FECHA_HORA: new Date().toLocaleString('es-BO'),
+        NOMBRE_CONTACTO: nombreContacto,
+        NUMERO_REFERENCIA: numeroCelular,
+        TIPO_EMERGENCIA: tipoEmergencia,
+        COD_SNIS: datosRegistro.cod_snis,
+        ESTABLECIMIENTO: datosRegistro.establecimiento,
+        RED: datosRegistro.red,
+        MUNICIPIO: datosRegistro.municipio,
+        NIVEL: datosRegistro.nivel,
+        COORDENADAS_GPS: coordenadasStr,
+        MENSAJE_DETALLE: datosRegistro.detalle,
+        ESTADO: estadoSheet
+      };
+
+      emergenciasLog.unshift(nuevoItemBitacora);
+      localStorage.setItem(CACHE_KEY_EMERGENCIAS, JSON.stringify(emergenciasLog.slice(0, 100)));
+      renderizarBitacoraEmergencias();
+
+      // 3. Armar el Mensaje de WhatsApp con Nombre, Celular y Coordenadas Dinámicas
+      const coordsClean = coordenadasStr.replace(/\s+/g, '');
+      const tieneCoordsValidas = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(coordsClean);
+
+      const lineasWA = [
+        `🚨 *SEDES LA PAZ - SUISD | NOTIFICACIÓN DE EMERGENCIA*`,
+        `🎫 *Ticket:* ${ticketId}`,
+        `📅 *Fecha/Hora:* ${nuevoItemBitacora.FECHA_HORA}`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `👤 *Nombre Contacto:* ${nombreContacto}`,
+        `📱 *Celular Referencia:* ${numeroCelular}`,
+        `📍 *Coordenadas:* ${coordenadasStr}`,
+        `⚠️ *Tipo:* ${tipoEmergencia}`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `🏥 *Establecimiento:* ${datosRegistro.establecimiento}`,
+        `🔢 *COD_SNIS:* ${datosRegistro.cod_snis}`,
+        `🌐 *Red:* ${datosRegistro.red}`,
+        `🏙️ *Municipio:* ${datosRegistro.municipio}`,
+        `🏢 *Nivel:* ${datosRegistro.nivel}`
+      ];
+
+      if (tieneCoordsValidas) {
+        lineasWA.push(`🗺️ *Mapa Google:* https://www.google.com/maps?q=${coordsClean}`);
+      }
+      if (detalle) {
+        lineasWA.push(`📝 *Mensaje:* ${detalle}`);
+      }
+
+      const urlWhatsApp = `https://wa.me/${telefonoDestinoClean}?text=${encodeURIComponent(lineasWA.join('\n'))}`;
+      window.open(urlWhatsApp, '_blank');
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = textoOriginal;
+
+      const modalEl = document.getElementById('modalEmergenciaSOS');
+      const modalInst = bootstrap.Modal.getInstance(modalEl);
+      if (modalInst) modalInst.hide();
+
+      Swal.fire({
+        icon: 'success',
+        title: `Mensaje Registrado (${ticketId})`,
         html: `
-          ${subtitulo}
-          <div class="text-start mb-2">
-            <label class="form-label small fw-bold">Tipo de Emergencia / Solicitud:</label>
-            <select id="swal-sos-tipo" class="form-select form-select-sm mb-2 fw-semibold">
-              <option value="EMERGENCIA MÉDICA / REFERENCIA URGENTE">🚨 Emergencia Médica / Referencia Urgente</option>
-              <option value="SOPORTE TÉCNICO SISTEMA SUISD / SNIS">💻 Soporte Técnico Sistema SUISD / SNIS</option>
-              <option value="ACTUALIZACIÓN DE COORDENADAS / DATOS RUES">📍 Actualización de Coordenadas / Datos RUES</option>
-              <option value="REPORTE EPIDEMIOLÓGICO INMEDIATO">🦠 Reporte Epidemiológico Inmediato</option>
-            </select>
-            <label class="form-label small fw-bold">Mensaje o detalle adicional:</label>
-            <textarea id="swal-sos-msg" class="form-control form-control-sm" rows="3" placeholder="Escribe aquí el detalle o requerimiento..."></textarea>
-          </div>
-          <div class="d-grid gap-2 mt-3">
-            <a href="tel:+${EMERGENCY_PHONE_CLEAN}" class="btn btn-danger rounded-pill fw-bold py-2">
-              <i class="fa-solid fa-phone-volume me-2"></i>Llamar Ahora al ${EMERGENCY_PHONE_DISPLAY}
-            </a>
+          <div class="small text-start bg-body-tertiary p-3 rounded-3 border">
+            <div><strong>Contacto:</strong> ${nombreContacto}</div>
+            <div><strong>Celular:</strong> ${numeroCelular}</div>
+            <div><strong>Coordenadas:</strong> <code>${coordenadasStr}</code></div>
+            <div><strong>Estado Google Sheet:</strong> <span class="badge bg-success">${estadoSheet}</span></div>
           </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: '<i class="fa-brands fa-whatsapp me-2"></i>Enviar por WhatsApp',
-        cancelButtonText: 'Cerrar',
+        timer: 4000,
         confirmButtonColor: '#16a34a'
-      }).then(res => {
-        if (res.isConfirmed) {
-          const tipo = document.getElementById('swal-sos-tipo')?.value || 'EMERGENCIA';
-          const extra = document.getElementById('swal-sos-msg')?.value?.trim() || '';
-          const detalleFinal = extra ? `${tipo} - ${extra}` : tipo;
-          enviarWhatsAppDirecto(detalleFinal, codSnis);
-        }
       });
+    }
+
+    function renderizarBitacoraEmergencias() {
+      const tbody = document.getElementById('tabla-emergencias-body');
+      if (!tbody) return;
+
+      if (!emergenciasLog || emergenciasLog.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted py-3">Aún no se registraron mensajes de emergencia.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = emergenciasLog.map((item, idx) => {
+        const badgeClass = String(item.ESTADO).includes('Sheet') || String(item.ESTADO).includes('REGISTRADO')
+          ? 'bg-success'
+          : 'bg-warning text-dark';
+
+        return `
+          <tr>
+            <td class="font-monospace fw-bold text-success">${item.ID_TICKET || 'SOS'}</td>
+            <td>${item.FECHA_HORA || ''}</td>
+            <td class="fw-bold">${item.NOMBRE_CONTACTO || ''}</td>
+            <td class="font-monospace">${item.NUMERO_REFERENCIA || ''}</td>
+            <td><strong>${item.ESTABLECIMIENTO || ''}</strong><br><span class="text-muted">SNIS: ${item.COD_SNIS || ''}</span></td>
+            <td class="font-monospace small">${item.COORDENADAS_GPS || 'Sin GPS'}</td>
+            <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 mb-1">${item.TIPO_EMERGENCIA || ''}</span><br>${item.MENSAJE_DETALLE || ''}</td>
+            <td><span class="badge ${badgeClass}">${item.ESTADO || 'Registrado'}</span></td>
+            <td class="text-center">
+              <button onclick="reenviarEmergenciaBitacora(${idx})" class="btn btn-success btn-sm rounded-pill px-3 fw-bold" title="Reenviar mensaje por WhatsApp">
+                <i class="fa-brands fa-whatsapp me-1"></i>Mensaje
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function reenviarEmergenciaBitacora(index) {
+      const item = emergenciasLog[index];
+      if (!item) return;
+      const coordsClean = String(item.COORDENADAS_GPS || '').replace(/\s+/g, '');
+      const msg = [
+        `🚨 *REENVÍO DE EMERGENCIA SUISD (${item.ID_TICKET})*`,
+        `👤 *Nombre Contacto:* ${item.NOMBRE_CONTACTO}`,
+        `📱 *Celular:* ${item.NUMERO_REFERENCIA}`,
+        `📍 *Coordenadas:* ${item.COORDENADAS_GPS}`,
+        `🏥 *Establecimiento:* ${item.ESTABLECIMIENTO} (SNIS: ${item.COD_SNIS})`,
+        `⚠️ *Tipo:* ${item.TIPO_EMERGENCIA}`,
+        `📝 *Mensaje:* ${item.MENSAJE_DETALLE}`,
+        coordsClean && coordsClean !== 'SinGPS' ? `🗺️ *Mapa:* https://www.google.com/maps?q=${coordsClean}` : ''
+      ].filter(Boolean).join('\n');
+      window.open(`https://wa.me/${EMERGENCY_PHONE_CLEAN}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    async function cargarHistorialEmergenciasDesdeSheet() {
+      const sourceUrl = getConfiguredUrl();
+      if (!sourceUrl || !sourceUrl.includes('script.google.com')) {
+        Swal.fire({ icon: 'info', title: 'Conecta tu Web App (/exec)', text: 'Para sincronizar la pestaña EMERGENCIAS en tiempo real, vincula la URL /exec de tu Google Apps Script.', confirmButtonColor: '#f59e0b' });
+        return;
+      }
+      try {
+        const url = `${sourceUrl}${sourceUrl.includes('?') ? '&' : '?'}action=listarEmergencias`;
+        const resp = await cargarViaJSONP(url, 8000);
+        if (resp && resp.status === 'ok' && Array.isArray(resp.data)) {
+          emergenciasLog = resp.data;
+          localStorage.setItem(CACHE_KEY_EMERGENCIAS, JSON.stringify(emergenciasLog));
+          renderizarBitacoraEmergencias();
+          Swal.fire({ icon: 'success', title: 'Bitácora Sincronizada', text: `Se cargaron ${emergenciasLog.length} registros desde la hoja EMERGENCIAS.`, timer: 2000, showConfirmButton: false });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'warning', title: 'Aviso', text: 'Verifica haber publicado una Nueva Versión de tu Code.gs en Apps Script.', confirmButtonColor: '#f59e0b' });
+      }
+    }
+
+    function exportarEmergenciasCSV() {
+      if (!emergenciasLog || emergenciasLog.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Bitácora vacía', text: 'No hay emergencias registradas para exportar.', confirmButtonColor: '#f59e0b' });
+        return;
+      }
+      const cols = ["ID_TICKET", "FECHA_HORA", "NOMBRE_CONTACTO", "NUMERO_REFERENCIA", "TIPO_EMERGENCIA", "COD_SNIS", "ESTABLECIMIENTO", "RED", "MUNICIPIO", "NIVEL", "COORDENADAS_GPS", "MENSAJE_DETALLE", "ESTADO"];
+      const filas = [cols.join(','), ...emergenciasLog.map(r => cols.map(c => `"${String(r[c] ?? '').replace(/"/g, '""')}"`).join(','))];
+      const blob = new Blob(["\uFEFF" + filas.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `SEDES_EMERGENCIAS_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
     }
 
     // =========================================================
@@ -1085,7 +1528,7 @@
 
       const sourceUrl = getConfiguredUrl();
       if (!sourceUrl) {
-        mostrarFallbackDemo("Aún no vinculaste el enlace de tu Google Sheet o Apps Script. Haz clic en 'Conectar Sheet' arriba a la derecha.");
+        mostrarFallbackDemo("Aún no vinculaste el enlace de tu Google Apps Script (/exec). Haz clic en 'Conectar Sheet' arriba a la derecha.");
         return;
       }
 
@@ -1201,18 +1644,14 @@
         title: 'Conectar con Google Sheets',
         html: `
           <div class="text-start small">
-            <p class="mb-2">Puedes pegar <strong>cualquiera de estos 2 enlaces</strong>:</p>
-            <ol class="ps-3 mb-3 text-muted">
-              <li class="mb-1"><strong>Enlace directo de tu Google Sheet:</strong> (Con permiso <em>"Cualquier persona con el enlace"</em>).</li>
-              <li><strong>URL de tu Web App de Apps Script:</strong> Terminada en <code>/exec</code>.</li>
-            </ol>
+            <p class="mb-2">Pega el enlace de tu implementación de <strong>Google Apps Script</strong> terminada en <code>/exec</code> (permite leer los establecimientos y registrar emergencias en la hoja <code>EMERGENCIAS</code>):</p>
           </div>
         `,
         input: 'url',
         inputValue: actual,
-        inputPlaceholder: 'https://docs.google.com/spreadsheets/d/... o https://script.google.com/.../exec',
+        inputPlaceholder: 'https://script.google.com/macros/s/.../exec',
         showCancelButton: true,
-        confirmButtonText: '<i class="fa-solid fa-bolt me-1"></i>Conectar Ahora',
+        confirmButtonText: '<i class="fa-solid fa-bolt me-1"></i>Conectar y Sincronizar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#f59e0b'
       }).then(res => {
@@ -1389,16 +1828,21 @@
 
         const safeCod = String(item.COD_SNIS).replace(/'/g, "\\'");
         marker.bindPopup(`
-          <div style="min-width: 235px; font-family: system-ui, sans-serif;">
+          <div style="min-width: 240px; font-family: system-ui, sans-serif;">
             <div class="bg-warning text-dark fw-black px-2 py-1 rounded mb-2 small">${item.NOMBRE}</div>
             <div class="small mb-1"><strong>COD_SNIS:</strong> <span class="font-monospace">${item.COD_SNIS}</span></div>
             <div class="small mb-1"><strong>Red:</strong> ${item.RED}</div>
             <div class="small mb-1"><strong>Municipio:</strong> ${item.PROVINCIA} - ${item.MUNICIPIO}</div>
+            <div class="small mb-1"><strong>Coordenadas:</strong> <span class="font-monospace">${item.Latitud.toFixed(5)}, ${item.Longitud.toFixed(5)}</span></div>
             <div class="small mb-2"><strong>Nivel:</strong> <span class="badge bg-warning text-dark">${item.NIVEL}</span></div>
-            <div class="d-flex flex-wrap gap-1 justify-content-between pt-2 border-top">
-              <button onclick="abrirFicha('${safeCod}')" class="btn btn-warning btn-sm fw-bold py-0 px-2" style="font-size:0.72rem;">Ficha</button>
-              <button onclick="enviarWhatsAppDirecto('Reporte desde Geovisor SUISD', '${safeCod}')" class="btn btn-success btn-sm fw-bold py-0 px-2" style="font-size:0.72rem;" title="Reportar por WhatsApp"><i class="fa-brands fa-whatsapp me-1"></i>SOS</button>
-              <a href="https://www.google.com/maps?q=${item.Latitud},${item.Longitud}" target="_blank" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size:0.72rem;">Maps</a>
+            <div class="d-grid gap-1 pt-2 border-top">
+              <button onclick="abrirModalEmergencia('${safeCod}')" class="btn btn-success btn-sm fw-bold py-1">
+                <i class="fa-brands fa-whatsapp me-1"></i>Notificar Emergencia (Mensaje)
+              </button>
+              <div class="d-flex justify-content-between gap-1">
+                <button onclick="abrirFicha('${safeCod}')" class="btn btn-warning btn-sm fw-bold py-0 px-2 w-50" style="font-size:0.72rem;">Ficha</button>
+                <a href="https://www.google.com/maps?q=${item.Latitud},${item.Longitud}" target="_blank" class="btn btn-outline-secondary btn-sm py-0 px-2 w-50" style="font-size:0.72rem;">Maps</a>
+              </div>
             </div>
           </div>
         `);
@@ -1554,6 +1998,28 @@
       });
       directLayerGroup = L.layerGroup();
       map.addLayer(markerClusterGroup);
+
+      // Permitir capturar coordenadas dinámicamente haciendo clic en el mapa cuando se solicita
+      map.on('click', function(e) {
+        if (!modoCapturarClickMapa) return;
+        modoCapturarClickMapa = false;
+        document.getElementById('map').style.cursor = '';
+
+        const lat = e.latlng.lat.toFixed(5);
+        const lng = e.latlng.lng.toFixed(5);
+        const coordsStr = `${lat}, ${lng}`;
+
+        if (tempClickMarker) map.removeLayer(tempClickMarker);
+        tempClickMarker = L.circleMarker([e.latlng.lat, e.latlng.lng], {
+          radius: 10,
+          fillColor: '#16a34a',
+          color: '#ffffff',
+          weight: 3,
+          fillOpacity: 0.95
+        }).addTo(map);
+
+        abrirModalEmergencia('', coordsStr);
+      });
     }
 
     function toggleClusterMode() {
@@ -1600,7 +2066,7 @@
                 <div class="btn-group btn-group-sm">
                   ${btnGps}
                   <button onclick="abrirFicha('${safeCod}')" class="btn btn-outline-secondary" title="Ver Ficha"><i class="fa-solid fa-eye"></i></button>
-                  <button onclick="abrirModalEmergencia('${safeCod}')" class="btn btn-success" title="Emergencia / WhatsApp de este establecimiento"><i class="fa-brands fa-whatsapp"></i></button>
+                  <button onclick="abrirModalEmergencia('${safeCod}')" class="btn btn-success fw-bold" title="Notificar Emergencia por Mensaje de WhatsApp"><i class="fa-brands fa-whatsapp me-1"></i>Mensaje</button>
                 </div>`;
             }
           }
@@ -1687,12 +2153,9 @@
           <li class="list-group-item d-flex justify-content-between"><span>Coordenadas WGS84:</span><strong class="font-monospace">${item.Latitud ? item.Latitud.toFixed(5) + ', ' + item.Longitud.toFixed(5) : 'Sin GPS'}</strong></li>
         </ul>
         <div class="d-grid gap-2">
-          <button onclick="enviarWhatsAppDirecto('Emergencia / Soporte para Establecimiento', '${safeCod}')" class="btn btn-success rounded-pill fw-bold">
-            <i class="fa-brands fa-whatsapp me-2"></i>Reportar por WhatsApp (${EMERGENCY_PHONE_DISPLAY})
+          <button onclick="abrirModalEmergencia('${safeCod}');" class="btn btn-success rounded-pill fw-bold py-2">
+            <i class="fa-brands fa-whatsapp me-2"></i>Notificar Emergencia por Mensaje
           </button>
-          <a href="tel:+${EMERGENCY_PHONE_CLEAN}" class="btn btn-danger rounded-pill fw-bold">
-            <i class="fa-solid fa-phone-volume me-2"></i>Llamada de Emergencia (${EMERGENCY_PHONE_DISPLAY})
-          </a>
         </div>
       `;
       new bootstrap.Offcanvas(document.getElementById('fichaOffcanvas')).show();
@@ -1786,6 +2249,12 @@
       const savedTheme = localStorage.getItem('bs-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-bs-theme', savedTheme);
       document.getElementById('theme-icon').className = savedTheme === 'dark' ? 'fa-solid fa-sun text-warning' : 'fa-solid fa-moon text-secondary';
+
+      try {
+        const savedLog = localStorage.getItem(CACHE_KEY_EMERGENCIAS);
+        if (savedLog) emergenciasLog = JSON.parse(savedLog) || [];
+      } catch (e) {}
+      renderizarBitacoraEmergencias();
 
       initMap();
       initDataTable();
