@@ -1,51 +1,48 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="light">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SEDES LA PAZ - SUISD</title>
 
-  <!-- Bootstrap 5.3.3 CSS -->
+  <!-- Bootstrap 5.3.3 CSS (Diseño Claro Luminoso) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- FontAwesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- DataTables Bootstrap 5 -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-  <!-- Leaflet & MarkerCluster -->
+  <!-- Leaflet & MarkerCluster CSS (Cargados una sola vez) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
   <style>
     :root {
+      --sedes-yellow: #facc15;
       --sedes-amber: #f59e0b;
       --sedes-amber-dark: #b45309;
-      --sedes-gold: #fbbf24;
-      --glass-bg: rgba(255, 255, 255, 0.88);
-      --glass-border: rgba(245, 158, 11, 0.28);
-      --card-shadow: 0 10px 30px -5px rgba(180, 83, 9, 0.08);
-    }
-
-    [data-bs-theme="dark"] {
-      --glass-bg: rgba(15, 23, 42, 0.90);
-      --glass-border: rgba(251, 191, 36, 0.22);
-      --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.55);
+      --sedes-brown: #451a03;
+      --sedes-cream: #fffbeb;
+      --sedes-border: rgba(245, 158, 11, 0.32);
+      --sedes-shadow: 0 10px 28px -6px rgba(180, 83, 9, 0.12);
     }
 
     body {
-      padding-top: 78px;
+      background: linear-gradient(180deg, #fffbeb 0%, #fef9c3 35%, #fffbeb 100%);
+      color: #1e293b;
+      padding-top: 80px;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     @media (max-width: 768px) {
       body { padding-bottom: 92px; }
     }
 
+    /* CANVAS INTERACTIVO DE FONDO */
     #bg-canvas {
       position: fixed;
       inset: 0;
@@ -60,13 +57,11 @@
       z-index: 2;
     }
 
-    /* ========================================================
-       CORRECCIÓN CRÍTICA: MODAL Y ALERTAS SIEMPRE AL FRENTE
-       ======================================================== */
+    /* PRIORIDAD ABSOLUTA DE CAPAS PARA VENTANA MODAL Y ALERTAS */
     .modal-backdrop {
       z-index: 100040 !important;
     }
-    #modalEmergenciaSOS.modal {
+    .modal {
       z-index: 100050 !important;
     }
     .swal2-container {
@@ -76,43 +71,41 @@
       z-index: 100030 !important;
     }
 
-    .glass-navbar {
-      background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--glass-border);
+    /* BARRA SUPERIOR CON TONOS AMARILLOS INSTITUCIONALES */
+    .navbar-sedes {
+      background: linear-gradient(90deg, #ffffff 0%, #fef3c7 55%, #fde68a 100%);
+      border-bottom: 3px solid var(--sedes-amber);
+      box-shadow: 0 4px 20px rgba(180, 83, 9, 0.12);
       z-index: 1030;
     }
 
-    .card-glass {
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      border-radius: 1.35rem;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    /* TARJETAS BLANCAS CON BORDES Y ACENTOS AMARILLOS */
+    .card-sedes {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--sedes-border);
+      border-radius: 1.25rem;
+      box-shadow: var(--sedes-shadow);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
-
+    .card-sedes:hover {
+      border-color: var(--sedes-amber);
+    }
     .card-lift:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 35px -8px rgba(245, 158, 11, 0.22);
+      box-shadow: 0 16px 32px -8px rgba(245, 158, 11, 0.25);
     }
 
-    /* SPLASH SCREEN */
+    /* SPLASH SCREEN AMARILLO INSTITUCIONAL */
     #splash-screen {
       position: fixed;
       inset: 0;
       z-index: 100080;
-      background: radial-gradient(circle at center, #fffbeb 0%, #fef3c7 100%);
+      background: radial-gradient(circle at center, #ffffff 0%, #fef3c7 65%, #fde68a 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.45s ease, visibility 0.45s ease;
-    }
-    [data-bs-theme="dark"] #splash-screen {
-      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+      transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
     .splash-logo-wrapper {
@@ -132,11 +125,11 @@
     }
 
     .splash-logo {
-      width: 96px;
-      height: 96px;
+      width: 98px;
+      height: 98px;
       object-fit: contain;
       z-index: 2;
-      filter: drop-shadow(0 8px 16px rgba(180, 83, 9, 0.25));
+      filter: drop-shadow(0 8px 16px rgba(180, 83, 9, 0.28));
       animation: floatLogo 3s ease-in-out infinite;
     }
 
@@ -145,91 +138,103 @@
       50% { transform: translateY(-8px) scale(1.04); }
     }
 
-    /* PESTAÑAS */
+    /* PESTAÑAS DE NAVEGACIÓN */
     .tab-pane-custom {
       display: none;
-      animation: fadeSlide 0.3s ease-out;
+      animation: fadeSlide 0.28s ease-out;
     }
     .tab-pane-custom.active {
       display: block;
     }
     @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .btn-nav-pill {
+    .btn-nav-sedes {
       border-radius: 50rem;
-      padding: 0.45rem 1.15rem;
-      font-weight: 700;
-      font-size: 0.85rem;
-      border: none;
+      padding: 0.48rem 1.2rem;
+      font-weight: 800;
+      font-size: 0.84rem;
+      border: 1px solid transparent;
       background: transparent;
-      color: var(--bs-secondary-color);
+      color: var(--sedes-brown);
       transition: all 0.2s ease;
     }
-    .btn-nav-pill:hover {
-      color: var(--sedes-amber);
-      background: rgba(245, 158, 11, 0.1);
+    .btn-nav-sedes:hover {
+      background: #fef3c7;
+      border-color: var(--sedes-amber);
+      color: var(--sedes-brown);
     }
-    .btn-nav-pill.active {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #fff !important;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+    .btn-nav-sedes.active {
+      background: linear-gradient(135deg, #facc15 0%, #f59e0b 100%);
+      color: var(--sedes-brown) !important;
+      border-color: #b45309;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     }
 
-    /* MAPA LEAFLET */
+    /* MAPA PRINCIPAL Y MINI-MAPA DE EMERGENCIA */
     #map {
-      height: 540px;
+      height: 550px;
       width: 100%;
-      border-radius: 1.1rem;
+      border-radius: 1rem;
+      border: 2px solid #fde68a;
       z-index: 5;
+      background: #fef9c3;
     }
     @media (max-width: 768px) {
       #map { height: 420px; }
     }
 
-    .marker-cluster {
-      background-color: rgba(245, 158, 11, 0.35) !important;
-    }
-    .marker-cluster div {
-      background: linear-gradient(135deg, #b45309, #78350f) !important;
-      color: #fff !important;
-      font-weight: 800;
-      font-size: 13px !important;
-      border: 2px solid #fbbf24;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    #sos-mini-map {
+      height: 230px;
+      width: 100%;
+      border-radius: 0.9rem;
+      border: 2px solid var(--sedes-amber);
+      z-index: 10;
     }
 
+    /* CLUSTERS CON ESTILO AMARILLO / ÁMBAR */
+    .marker-cluster {
+      background-color: rgba(250, 204, 21, 0.45) !important;
+    }
+    .marker-cluster div {
+      background: linear-gradient(135deg, #f59e0b, #b45309) !important;
+      color: #fff !important;
+      font-weight: 900;
+      font-size: 13px !important;
+      border: 2px solid #fef08a;
+      box-shadow: 0 3px 10px rgba(69, 26, 3, 0.35);
+    }
+
+    /* INPUTS Y SELECTS AMARILLOS */
     .form-select-sedes, .form-control-sedes {
-      border-radius: 0.9rem;
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 0.85rem;
+      border: 1.5px solid #fcd34d;
+      background-color: #ffffff;
+      color: #1e293b;
       font-weight: 600;
       font-size: 0.85rem;
       padding: 0.55rem 0.9rem;
     }
     .form-select-sedes:focus, .form-control-sedes:focus {
-      border-color: var(--sedes-amber);
-      box-shadow: 0 0 0 0.22rem rgba(245, 158, 11, 0.22);
+      border-color: var(--sedes-amber-dark);
+      box-shadow: 0 0 0 0.22rem rgba(245, 158, 11, 0.25);
     }
 
     .page-item.active .page-link {
       background-color: var(--sedes-amber) !important;
-      border-color: var(--sedes-amber) !important;
-      color: #fff !important;
-      font-weight: 700;
+      border-color: var(--sedes-amber-dark) !important;
+      color: var(--sedes-brown) !important;
+      font-weight: 800;
     }
 
-    /* BOTÓN FLOTANTE DE EMERGENCIA DINÁMICO (SOLO MENSAJE WHATSAPP) */
+    /* BOTÓN FLOTANTE DE EMERGENCIA (SOLO MENSAJE) */
     .emergency-fab-container {
       position: fixed;
       right: 22px;
       bottom: 24px;
       z-index: 1040;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
     }
     @media (max-width: 768px) {
       .emergency-fab-container {
@@ -240,11 +245,9 @@
 
     .btn-emergency-fab {
       position: relative;
-      background: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #dc2626 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 4s ease infinite;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 55%, #b45309 100%);
       color: #fff !important;
-      border: 2px solid #fde047;
+      border: 2px solid #fef08a;
       border-radius: 50rem;
       padding: 0.72rem 1.35rem;
       font-weight: 800;
@@ -253,13 +256,11 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease;
     }
     .btn-emergency-fab:hover {
-      transform: scale(1.06) translateY(-2px);
-      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.65);
+      transform: scale(1.05) translateY(-2px);
     }
-
     .btn-emergency-fab::before {
       content: "";
       position: absolute;
@@ -269,21 +270,29 @@
       animation: sosRadar 1.8s ease-out infinite;
       pointer-events: none;
     }
-
     @keyframes sosRadar {
       0% { transform: scale(0.98); opacity: 0.9; }
       100% { transform: scale(1.22); opacity: 0; }
     }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+
+    .sos-pin-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      background: #dc2626;
+      color: #fff;
+      border: 3px solid #fef08a;
+      border-radius: 50%;
+      box-shadow: 0 0 14px rgba(220, 38, 38, 0.9);
+      font-size: 15px;
     }
   </style>
 </head>
 <body>
 
-  <!-- CANVAS INTERACTIVO DE FONDO -->
+  <!-- CANVAS DE FONDO INTERACTIVO DORADO -->
   <canvas id="bg-canvas"></canvas>
 
   <!-- Input oculto para importar CSV local -->
@@ -295,62 +304,59 @@
       <canvas id="splash-canvas" width="160" height="160"></canvas>
       <img src="logo.png" alt="Logo SEDES" class="splash-logo" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
     </div>
-    <h2 class="fw-black mb-1 text-uppercase" style="letter-spacing: -0.5px;">SEDES LA PAZ - SUISD</h2>
-    <p class="text-warning fw-bold text-uppercase small mb-3" style="letter-spacing: 2px;">Sistema Único de Información en Salud</p>
-    <div class="d-flex align-items-center gap-2 text-secondary small fw-semibold">
+    <h2 class="fw-black mb-1 text-uppercase" style="color: #451a03;">SEDES LA PAZ - SUISD</h2>
+    <p class="fw-bold text-uppercase small mb-3" style="color: #b45309; letter-spacing: 2px;">Sistema Único de Información en Salud</p>
+    <div class="d-flex align-items-center gap-2 small fw-bold" style="color: #78350f;">
       <div class="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-      <span id="splash-msg">Conectando con tu hoja de cálculo...</span>
+      <span id="splash-msg">Cargando padrón y puntos en el mapa...</span>
     </div>
   </div>
 
-  <!-- BARRA SUPERIOR -->
-  <nav class="navbar fixed-top glass-navbar py-2">
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <nav class="navbar fixed-top navbar-sedes py-2">
     <div class="container-xl d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-2 gap-sm-3" style="cursor: pointer;" onclick="switchTab('tab1')">
-        <img src="logo.png" alt="SEDES" width="42" height="42" class="object-fit-contain" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+        <div class="bg-white p-1 rounded-3 border border-warning shadow-sm d-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
+          <img src="logo.png" alt="SEDES" width="36" height="36" class="object-fit-contain" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+        </div>
         <div class="lh-1">
-          <span class="fs-6 fs-sm-5 fw-black d-block text-warning-emphasis">SEDES LA PAZ - SUISD</span>
-          <span class="text-muted fw-bold text-uppercase" style="font-size: 0.62rem; letter-spacing: 1px;">Geovisor & Notificación de Emergencias</span>
+          <span class="fs-6 fs-sm-5 fw-black d-block" style="color: #451a03;">SEDES LA PAZ - SUISD</span>
+          <span class="fw-bold text-uppercase" style="font-size: 0.63rem; letter-spacing: 1px; color: #b45309;">Geovisor & Monitor de Emergencias</span>
         </div>
       </div>
 
       <div class="d-flex align-items-center gap-2">
-        <div class="d-none d-lg-flex bg-body-tertiary p-1 rounded-pill border me-1">
-          <button onclick="switchTab('tab1')" id="btn-tab1" class="btn-nav-pill"><i class="fa-solid fa-book-medical me-1"></i>1. Definiciones</button>
-          <button onclick="switchTab('tab2')" id="btn-tab2" class="btn-nav-pill active"><i class="fa-solid fa-map-location-dot me-1"></i>2. Mapa y Datos</button>
-          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-pill"><i class="fa-solid fa-screwdriver-wrench me-1"></i>3. Herramientas y SOS</button>
+        <div class="d-none d-lg-flex bg-white p-1 rounded-pill border border-warning shadow-sm me-1">
+          <button onclick="switchTab('tab1')" id="btn-tab1" class="btn-nav-sedes"><i class="fa-solid fa-book-medical me-1"></i>1. Definiciones</button>
+          <button onclick="switchTab('tab2')" id="btn-tab2" class="btn-nav-sedes active"><i class="fa-solid fa-map-location-dot me-1"></i>2. Mapa y Datos</button>
+          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-sedes"><i class="fa-solid fa-user-shield me-1"></i>3. Herramientas y SOS</button>
         </div>
 
-        <!-- Botón de Emergencia Rápido en Navbar (Solo Mensaje WhatsApp) -->
-        <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-3 shadow-sm d-flex align-items-center gap-1" title="Notificar Emergencia por Mensaje de WhatsApp">
+        <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-3 shadow-sm d-flex align-items-center gap-1">
           <i class="fa-brands fa-whatsapp fs-6"></i>
           <span class="d-none d-sm-inline">Mensaje SOS</span>
         </button>
 
-        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3 shadow-sm">
+        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25 px-3 shadow-sm">
           <i class="fa-solid fa-plug-circle-bolt me-1"></i><span class="d-none d-md-inline">Conectar Sheet</span>
-        </button>
-
-        <button onclick="toggleTheme()" class="btn btn-light rounded-circle shadow-sm border d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-          <i id="theme-icon" class="fa-solid fa-moon text-secondary"></i>
         </button>
       </div>
     </div>
   </nav>
 
-  <!-- BANNER DE ESTADO -->
+  <!-- BANNER INFORMATIVO DE CONEXIÓN -->
   <div class="container-xl mt-2 d-none" id="status-banner">
     <div class="alert alert-warning rounded-4 shadow-sm border-warning d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 px-3 mb-2" role="alert">
-      <div class="d-flex align-items-center gap-2 small fw-semibold">
-        <i class="fa-solid fa-triangle-exclamation fs-5 text-warning-emphasis"></i>
-        <span id="status-banner-text">No se ha vinculado la hoja de Google Sheets.</span>
+      <div class="d-flex align-items-center gap-2 small fw-bold" style="color: #78350f;">
+        <i class="fa-solid fa-circle-info fs-5 text-warning-emphasis"></i>
+        <span id="status-banner-text">Mostrando establecimientos de demostración. Conecta tu Google Sheet para ver todo tu padrón.</span>
       </div>
       <div class="d-flex flex-wrap gap-2">
-        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark py-1 px-3">
-          <i class="fa-solid fa-link me-1"></i>Vincular URL de Apps Script (/exec)
+        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25 py-1 px-3">
+          <i class="fa-solid fa-link me-1"></i>Pegar Link de Google Sheet o /exec
         </button>
         <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-dark btn-sm rounded-pill fw-bold py-1 px-3">
-          <i class="fa-solid fa-file-arrow-up me-1"></i>Cargar CSV
+          <i class="fa-solid fa-file-arrow-up me-1"></i>Subir CSV
         </button>
       </div>
     </div>
@@ -359,28 +365,33 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container-xl py-3">
 
-    <!-- PESTAÑA 1: DEFINICIONES -->
+    <!-- ==========================================
+         PESTAÑA 1: DEFINICIONES
+         ========================================== -->
     <section id="tab1" class="tab-pane-custom">
-      <div class="card card-glass mb-4 overflow-hidden border-start border-warning border-5">
-        <div class="card-body p-4 p-lg-5">
+      <div class="card card-sedes mb-4 overflow-hidden border-start border-warning border-5">
+        <div class="card-body p-4 p-lg-5" style="background: linear-gradient(135deg, #ffffff 0%, #fef9c3 100%);">
           <div class="row align-items-center g-4">
             <div class="col-lg-8">
-              <span class="badge bg-warning text-dark rounded-pill fw-bold mb-2 px-3 py-1">MARCO NORMATIVO SNIS-VE</span>
-              <h1 class="display-6 fw-black mb-3">Sistema Único de Información en Salud Departamental (<span class="text-warning">SUISD</span>)</h1>
-              <p class="text-body-secondary mb-4">
-                Plataforma oficial del <strong>SEDES La Paz</strong> para la consulta georreferenciada, análisis por niveles resolutivos y notificación dinámica de emergencias vía mensaje de WhatsApp con registro automático de nombre, celular y coordenadas en Google Sheets.
+              <span class="badge bg-warning text-dark rounded-pill fw-bold mb-2 px-3 py-1 border border-dark border-opacity-10">MARCO NORMATIVO SNIS-VE</span>
+              <h1 class="display-6 fw-black mb-3" style="color: #451a03;">SEDES LA PAZ - <span style="color: #d97706;">SUISD</span></h1>
+              <p class="text-secondary mb-4 fw-medium">
+                Plataforma oficial del <strong>Servicio Departamental de Salud La Paz</strong> para la consulta georreferenciada, análisis por niveles resolutivos y notificación dinámica de emergencias vía mensaje de WhatsApp con registro en Google Sheets.
               </p>
               <div class="d-flex flex-wrap gap-2">
-                <button onclick="switchTab('tab2')" class="btn btn-warning rounded-pill fw-bold text-dark px-4 py-2 shadow-sm">
-                  <i class="fa-solid fa-map-location-dot me-2"></i>Ir al Mapa Interactivo
+                <button onclick="switchTab('tab2')" class="btn btn-warning rounded-pill fw-bold text-dark px-4 py-2 shadow-sm border border-dark border-opacity-25">
+                  <i class="fa-solid fa-map-location-dot me-2"></i>Ver Mapa de Establecimientos
                 </button>
                 <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
                   <i class="fa-brands fa-whatsapp me-2"></i>Notificar Emergencia por Mensaje
                 </button>
+                <button onclick="irAlMonitorDeEmergencias()" class="btn btn-outline-dark rounded-pill fw-bold px-4 py-2">
+                  <i class="fa-solid fa-lock me-2"></i>Monitor SUISD
+                </button>
               </div>
             </div>
             <div class="col-lg-4 text-center">
-              <img src="logo.png" alt="Logo Institucional" class="img-fluid" style="max-height: 150px; filter: drop-shadow(0 10px 20px rgba(245,158,11,0.25));" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+              <img src="logo.png" alt="Logo Institucional" class="img-fluid" style="max-height: 155px; filter: drop-shadow(0 10px 20px rgba(180,83,9,0.25));" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
             </div>
           </div>
         </div>
@@ -388,12 +399,12 @@
 
       <div class="row g-4 mb-4">
         <div class="col-md-4">
-          <div class="card card-glass card-lift h-100 p-4">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:52px; height:52px;">
+          <div class="card card-sedes card-lift h-100 p-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-25 text-warning-emphasis mb-3" style="width:52px; height:52px;">
               <i class="fa-solid fa-layer-group fs-4"></i>
             </div>
-            <h5 class="fw-bold">Niveles de Atención</h5>
-            <ul class="small text-body-secondary ps-3 mb-0 mt-2">
+            <h5 class="fw-bold" style="color: #451a03;">Niveles de Atención</h5>
+            <ul class="small text-secondary ps-3 mb-0 mt-2">
               <li class="mb-2"><strong>1er Nivel:</strong> Puestos y Centros de Salud (Ambulatorios, con Internación e Integrales).</li>
               <li class="mb-2"><strong>2do Nivel:</strong> Hospitales Básicos con las 4 especialidades troncales.</li>
               <li><strong>3er Nivel:</strong> Hospitales Generales e Institutos Especializados de alta complejidad.</li>
@@ -401,86 +412,88 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card card-glass card-lift h-100 p-4">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:52px; height:52px;">
+          <div class="card card-sedes card-lift h-100 p-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-25 text-warning-emphasis mb-3" style="width:52px; height:52px;">
               <i class="fa-solid fa-network-wired fs-4"></i>
             </div>
-            <h5 class="fw-bold">Redes Funcionales</h5>
-            <p class="small text-body-secondary mt-2 mb-3">
+            <h5 class="fw-bold" style="color: #451a03;">Redes Funcionales</h5>
+            <p class="small text-secondary mt-2 mb-3">
               El Departamento de La Paz estructura sus establecimientos en <strong>Redes Urbanas</strong> y <strong>Redes Rurales</strong> articuladas por Provincias y Municipios.
             </p>
-            <div class="p-3 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 small">
-              <strong class="text-warning-emphasis"><i class="fa-solid fa-fingerprint me-1"></i>COD_SNIS:</strong> Código único del Registro Único de Establecimientos de Salud (RUES).
+            <div class="p-3 rounded-3 bg-warning bg-opacity-15 border border-warning small">
+              <strong style="color: #78350f;"><i class="fa-solid fa-fingerprint me-1"></i>COD_SNIS:</strong> Identificador único nacional RUES / SNIS-VE.
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card card-glass card-lift h-100 p-4">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-success bg-opacity-15 text-success mb-3" style="width:52px; height:52px;">
-              <i class="fa-brands fa-whatsapp fs-4"></i>
+          <div class="card card-sedes card-lift h-100 p-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-25 text-warning-emphasis mb-3" style="width:52px; height:52px;">
+              <i class="fa-solid fa-location-crosshairs fs-4"></i>
             </div>
-            <h5 class="fw-bold">Notificación Dinámica por Mensaje</h5>
-            <p class="small text-body-secondary mt-2 mb-0">
-              Al marcar cualquier establecimiento o punto del mapa, la ventana modal emerge al frente permitiendo registrar <strong>Nombre del Contacto</strong>, <strong>Celular</strong> y <strong>Coordenadas GPS</strong> dinámicamente en Google Sheets y enviarlos por mensaje de WhatsApp.
+            <h5 class="fw-bold" style="color: #451a03;">Ubicación Exacta SOS</h5>
+            <p class="small text-secondary mt-2 mb-0">
+              Permite calibrar el punto exacto de emergencia mediante satélite GPS o arrastrando el pin en el mini-mapa, registrando contacto, celular y coordenadas en Google Sheets.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- PESTAÑA 2: MAPA Y DATOS DINÁMICOS -->
+    <!-- ==========================================
+         PESTAÑA 2: MAPA Y DATOS DINÁMICOS
+         ========================================== -->
     <section id="tab2" class="tab-pane-custom active">
 
       <!-- KPIs -->
       <div class="row g-3 mb-3">
         <div class="col-6 col-lg-3">
-          <div class="card card-glass card-lift p-3">
+          <div class="card card-sedes card-lift p-3 border-bottom border-warning border-4">
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Establecimientos</div>
-                <div class="fs-2 fw-black text-warning" id="kpi-total">0</div>
+                <div class="fs-2 fw-black" style="color: #b45309;" id="kpi-total">0</div>
               </div>
-              <div class="rounded-4 bg-warning bg-opacity-15 text-warning d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+              <div class="rounded-4 bg-warning bg-opacity-25 text-warning-emphasis d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
                 <i class="fa-solid fa-hospital fs-4"></i>
               </div>
             </div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
-          <div class="card card-glass card-lift p-3">
+          <div class="card card-sedes card-lift p-3 border-bottom border-warning border-4">
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Redes Activas</div>
-                <div class="fs-2 fw-black" id="kpi-redes">0</div>
+                <div class="fs-2 fw-black" style="color: #451a03;" id="kpi-redes">0</div>
               </div>
-              <div class="rounded-4 bg-primary bg-opacity-15 text-primary d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+              <div class="rounded-4 bg-warning bg-opacity-25 text-warning-emphasis d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
                 <i class="fa-solid fa-diagram-project fs-4"></i>
               </div>
             </div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
-          <div class="card card-glass card-lift p-3">
+          <div class="card card-sedes card-lift p-3 border-bottom border-warning border-4">
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Municipios</div>
-                <div class="fs-2 fw-black" id="kpi-municipios">0</div>
+                <div class="fs-2 fw-black" style="color: #451a03;" id="kpi-municipios">0</div>
               </div>
-              <div class="rounded-4 bg-info bg-opacity-15 text-info d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
+              <div class="rounded-4 bg-warning bg-opacity-25 text-warning-emphasis d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
                 <i class="fa-solid fa-city fs-4"></i>
               </div>
             </div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
-          <div class="card card-glass card-lift p-3">
+          <div class="card card-sedes card-lift p-3 border-bottom border-success border-4">
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Georreferenciados</div>
+                <div class="text-muted fw-bold text-uppercase" style="font-size: 0.68rem;">Puntos en Mapa</div>
                 <div class="fs-2 fw-black text-success" id="kpi-geo">0</div>
               </div>
               <div class="rounded-4 bg-success bg-opacity-15 text-success d-flex align-items-center justify-content-center" style="width:46px; height:46px;">
-                <i class="fa-solid fa-location-crosshairs fs-4"></i>
+                <i class="fa-solid fa-location-dot fs-4"></i>
               </div>
             </div>
           </div>
@@ -488,21 +501,21 @@
       </div>
 
       <!-- FILTROS EN CASCADA -->
-      <div class="card card-glass mb-3">
+      <div class="card card-sedes mb-3">
         <div class="card-body p-3 p-md-4">
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 pb-2 border-bottom">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 pb-2 border-bottom border-warning border-opacity-50">
             <div class="d-flex align-items-center gap-2">
-              <i class="fa-solid fa-filter text-warning fs-5"></i>
-              <h6 class="fw-black mb-0">Filtros Dinámicos con Herencia en Cascada</h6>
+              <i class="fa-solid fa-filter text-warning-emphasis fs-5"></i>
+              <h6 class="fw-black mb-0" style="color: #451a03;">Búsqueda Dinámica en Cascada (Herencia por Red de Salud)</h6>
             </div>
             <div class="d-flex flex-wrap align-items-center gap-2">
-              <span class="badge bg-warning bg-opacity-15 text-warning-emphasis border border-warning border-opacity-25 px-3 py-2 fw-bold" id="loading-badge">
-                <i class="fa-solid fa-spinner fa-spin me-1"></i>Conectando...
+              <span class="badge bg-warning bg-opacity-25 text-dark border border-warning px-3 py-2 fw-bold" id="loading-badge">
+                <i class="fa-solid fa-spinner fa-spin me-1"></i>Cargando...
               </span>
               <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-3">
                 <i class="fa-brands fa-whatsapp me-1"></i>Notificar Emergencia
               </button>
-              <button onclick="sincronizarAhora()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark px-3">
+              <button onclick="sincronizarAhora()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25 px-3">
                 <i class="fa-solid fa-rotate me-1"></i>Sincronizar
               </button>
               <button onclick="resetFilters()" class="btn btn-outline-danger btn-sm rounded-pill fw-bold px-3">
@@ -515,14 +528,14 @@
             <div class="col-12 col-md-6 col-lg-3">
               <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem;">BUSCAR NOMBRE O COD_SNIS</label>
               <div class="input-group input-group-sm">
-                <span class="input-group-text bg-warning bg-opacity-15 border-warning border-opacity-25 text-warning-emphasis"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <span class="input-group-text bg-warning border-warning text-dark fw-bold"><i class="fa-solid fa-magnifying-glass"></i></span>
                 <input type="text" id="filter-search" oninput="aplicarFiltros()" class="form-control form-control-sedes" placeholder="Ej. Hospital o 200...">
               </div>
             </div>
 
             <div class="col-12 col-md-6 col-lg-3">
-              <label class="form-label small fw-bold text-warning-emphasis mb-1" style="font-size: 0.7rem;"><i class="fa-solid fa-sitemap me-1"></i>RED DE SALUD (BASE)</label>
-              <select id="filter-red" onchange="aplicarFiltros(true)" class="form-select form-select-sedes bg-warning bg-opacity-10 fw-bold">
+              <label class="form-label small fw-bold mb-1" style="font-size: 0.7rem; color: #b45309;"><i class="fa-solid fa-sitemap me-1"></i>RED DE SALUD (BASE)</label>
+              <select id="filter-red" onchange="aplicarFiltros(true)" class="form-select form-select-sedes bg-warning bg-opacity-15 fw-bold">
                 <option value="">Todas las Redes</option>
               </select>
             </div>
@@ -565,24 +578,24 @@
         </div>
       </div>
 
-      <!-- MAPA CANVAS + GRÁFICOS CANVAS -->
+      <!-- MAPA INTERACTIVO + GRÁFICOS CANVAS -->
       <div class="row g-3 mb-3">
         <div class="col-12 col-lg-8">
-          <div class="card card-glass h-100 p-2">
-            <div class="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 gap-2">
-              <div class="d-flex flex-wrap align-items-center gap-3 small fw-bold">
-                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:12px;height:12px;background:#facc15;border:2px solid #451a03;"></span> 1er Nivel (<span id="leg-n1">0</span>)</span>
-                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:13px;height:13px;background:#f97316;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.4);"></span> 2do Nivel (<span id="leg-n2">0</span>)</span>
-                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:14px;height:14px;background:#dc2626;border:2px solid #fde047;box-shadow:0 0 8px #f59e0b;"></span> 3er Nivel (<span id="leg-n3">0</span>)</span>
+          <div class="card card-sedes h-100 p-2">
+            <div class="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 gap-2 bg-warning bg-opacity-15 rounded-3 mb-2 border border-warning border-opacity-25">
+              <div class="d-flex flex-wrap align-items-center gap-3 small fw-bold" style="color: #451a03;">
+                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:13px;height:13px;background:#facc15;border:2px solid #451a03;"></span> 1er Nivel (<span id="leg-n1">0</span>)</span>
+                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:14px;height:14px;background:#f97316;border:2px solid #451a03;"></span> 2do Nivel (<span id="leg-n2">0</span>)</span>
+                <span class="d-flex align-items-center gap-1"><span class="d-inline-block rounded-circle" style="width:15px;height:15px;background:#dc2626;border:2px solid #facc15;"></span> 3er Nivel (<span id="leg-n3">0</span>)</span>
               </div>
-              <div class="d-flex gap-2">
-                <button onclick="activarSeleccionCoordenadasEnMapa()" class="btn btn-outline-success btn-sm rounded-pill fw-bold" style="font-size: 0.75rem;" title="Haz clic en cualquier punto del mapa para reportar emergencia con esas coordenadas">
+              <div class="d-flex flex-wrap gap-2">
+                <button onclick="activarSeleccionCoordenadasEnMapa()" class="btn btn-success btn-sm rounded-pill fw-bold" style="font-size: 0.74rem;" title="Toca un punto del mapa para reportar emergencia">
                   <i class="fa-solid fa-crosshairs me-1"></i>Marcar Punto SOS
                 </button>
-                <button onclick="toggleClusterMode()" id="btn-cluster-mode" class="btn btn-outline-warning btn-sm rounded-pill fw-bold" style="font-size: 0.75rem;">
-                  <i class="fa-solid fa-circle-nodes me-1"></i>Agrupar: ON
+                <button onclick="toggleClusterMode()" id="btn-cluster-mode" class="btn btn-outline-dark btn-sm rounded-pill fw-bold" style="font-size: 0.74rem;">
+                  <i class="fa-solid fa-braille me-1"></i>Ver Todos los Puntos
                 </button>
-                <button onclick="fitMapToMarkers()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark" style="font-size: 0.75rem;">
+                <button onclick="fitMapToMarkers()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25" style="font-size: 0.74rem;">
                   <i class="fa-solid fa-expand me-1"></i>Centrar
                 </button>
               </div>
@@ -592,17 +605,17 @@
         </div>
 
         <div class="col-12 col-lg-4">
-          <div class="card card-glass h-100 p-3 d-flex flex-column justify-content-between">
+          <div class="card card-sedes h-100 p-3 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="fw-black mb-1"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Distribución por Nivel</h6>
-              <p class="text-muted small mb-2" style="font-size: 0.73rem;">Gráfico Canvas interactivo</p>
+              <h6 class="fw-black mb-1" style="color: #451a03;"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Distribución por Nivel</h6>
+              <p class="text-muted small mb-2" style="font-size: 0.73rem;">Resumen visual de los puntos filtrados</p>
               <div style="height: 210px; position: relative;">
                 <canvas id="chartNiveles"></canvas>
               </div>
             </div>
-            <hr class="my-2">
+            <hr class="my-2 border-warning">
             <div>
-              <h6 class="fw-black mb-1"><i class="fa-solid fa-chart-bar text-warning me-2"></i>Top Redes de Salud</h6>
+              <h6 class="fw-black mb-1" style="color: #451a03;"><i class="fa-solid fa-chart-bar text-warning me-2"></i>Top Redes de Salud</h6>
               <div style="height: 220px; position: relative;">
                 <canvas id="chartRedes"></canvas>
               </div>
@@ -611,12 +624,12 @@
         </div>
       </div>
 
-      <!-- TABLA DATATABLES -->
-      <div class="card card-glass">
-        <div class="card-header bg-transparent py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom">
-          <h6 class="mb-0 fw-black"><i class="fa-solid fa-table-list text-warning me-2"></i>Padrón Dinámico de Establecimientos</h6>
+      <!-- TABLA DATATABLES DE ESTABLECIMIENTOS -->
+      <div class="card card-sedes">
+        <div class="card-header bg-warning bg-opacity-20 py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom border-warning">
+          <h6 class="mb-0 fw-black" style="color: #451a03;"><i class="fa-solid fa-table-list text-warning-emphasis me-2"></i>Padrón Dinámico de Establecimientos de Salud</h6>
           <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-warning text-dark rounded-pill fw-bold px-3 py-2" id="table-count-label">0 registros</span>
+            <span class="badge bg-warning text-dark border border-dark border-opacity-25 rounded-pill fw-bold px-3 py-2" id="table-count-label">0 registros</span>
             <button onclick="exportarCSV()" class="btn btn-success btn-sm rounded-pill fw-bold px-3">
               <i class="fa-solid fa-file-excel me-1"></i>Exportar CSV
             </button>
@@ -632,8 +645,8 @@
                   <th>RED</th>
                   <th>PROVINCIA / MUNICIPIO</th>
                   <th>NIVEL</th>
-                  <th>SUBSECTOR / TIPO</th>
-                  <th class="text-center">MENSAJE SOS / ACCIÓN</th>
+                  <th>COORDENADAS</th>
+                  <th class="text-center">MENSAJE SOS / MAPA</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -643,13 +656,15 @@
       </div>
     </section>
 
-    <!-- PESTAÑA 3: HERRAMIENTAS Y BITÁCORA DE EMERGENCIAS -->
+    <!-- ==========================================
+         PESTAÑA 3: HERRAMIENTAS Y MONITOR DE EMERGENCIAS (PROTEGIDO CON LOGIN)
+         ========================================== -->
     <section id="tab3" class="tab-pane-custom">
-      <div class="card card-glass mb-4 border-start border-warning border-5">
+      <div class="card card-sedes mb-4 border-start border-warning border-5">
         <div class="card-body p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
           <div>
-            <h3 class="fw-black mb-1"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Herramientas Informáticas y Registro SOS</h3>
-            <p class="text-body-secondary mb-0 small">Gestión de Google Sheets, registro dinámico de mensajes de emergencia y auditoría de coordenadas.</p>
+            <h3 class="fw-black mb-1" style="color: #451a03;"><i class="fa-solid fa-user-shield text-warning me-2"></i>Herramientas Informáticas y Central de Emergencias SUISD</h3>
+            <p class="text-secondary mb-0 small">Conexión directa con Google Sheets, auditoría de coordenadas y consola DataTables de emergencias protegida con credenciales.</p>
           </div>
           <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
             <i class="fa-brands fa-whatsapp me-2"></i>Nuevo Mensaje de Emergencia
@@ -659,19 +674,19 @@
 
       <div class="row g-4 mb-4">
         <div class="col-md-6 col-lg-3">
-          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
+          <div class="card card-sedes card-lift h-100 p-4 d-flex flex-column justify-content-between">
             <div>
-              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-15 text-warning mb-3" style="width:50px; height:50px;">
+              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-25 text-warning-emphasis mb-3" style="width:50px; height:50px;">
                 <i class="fa-solid fa-plug-circle-check fs-4"></i>
               </div>
-              <h5 class="fw-bold">Conectar Google Sheet</h5>
-              <p class="small text-body-secondary">Pega la URL <code>/exec</code> de tu Google Apps Script para leer establecimientos y guardar emergencias en la hoja <code>EMERGENCIAS</code>.</p>
+              <h5 class="fw-bold" style="color: #451a03;">Conectar Google Sheet</h5>
+              <p class="small text-secondary">Pega el link normal de tu Google Sheet o la URL <code>/exec</code> de tu Apps Script para cargar todos tus puntos al instante.</p>
             </div>
             <div class="d-grid gap-2 mt-3">
-              <button onclick="abrirModalConexion()" class="btn btn-warning rounded-pill fw-bold text-dark">
-                <i class="fa-solid fa-link me-2"></i>Vincular URL /exec
+              <button onclick="abrirModalConexion()" class="btn btn-warning rounded-pill fw-bold text-dark border border-dark border-opacity-25">
+                <i class="fa-solid fa-link me-2"></i>Vincular Google Sheet
               </button>
-              <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-secondary rounded-pill fw-bold">
+              <button onclick="document.getElementById('csv-file-input').click()" class="btn btn-outline-dark rounded-pill fw-bold">
                 <i class="fa-solid fa-file-csv me-2"></i>Subir CSV Local
               </button>
             </div>
@@ -679,13 +694,13 @@
         </div>
 
         <div class="col-md-6 col-lg-3">
-          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
+          <div class="card card-sedes card-lift h-100 p-4 d-flex flex-column justify-content-between">
             <div>
               <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-success bg-opacity-15 text-success mb-3" style="width:50px; height:50px;">
                 <i class="fa-solid fa-file-excel fs-4"></i>
               </div>
-              <h5 class="fw-bold">Exportar Padrón</h5>
-              <p class="small text-body-secondary">Descarga un archivo CSV compatible con Excel con los establecimientos filtrados actualmente.</p>
+              <h5 class="fw-bold" style="color: #451a03;">Exportar Padrón</h5>
+              <p class="small text-secondary">Descarga un archivo CSV compatible con Excel con los establecimientos filtrados actualmente.</p>
             </div>
             <button onclick="exportarCSV()" class="btn btn-success rounded-pill fw-bold mt-3">
               <i class="fa-solid fa-download me-2"></i>Descargar Padrón CSV
@@ -694,110 +709,180 @@
         </div>
 
         <div class="col-md-6 col-lg-3">
-          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between">
+          <div class="card card-sedes card-lift h-100 p-4 d-flex flex-column justify-content-between">
             <div>
               <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-danger bg-opacity-15 text-danger mb-3" style="width:50px; height:50px;">
                 <i class="fa-solid fa-satellite-dish fs-4"></i>
               </div>
-              <h5 class="fw-bold">Auditoría GPS</h5>
-              <p class="small text-body-secondary">Identifica establecimientos que carecen de coordenadas Latitud/Longitud válidas en la hoja.</p>
+              <h5 class="fw-bold" style="color: #451a03;">Auditoría GPS</h5>
+              <p class="small text-secondary">Verifica cuántos establecimientos tienen coordenadas válidas y cuáles requieren corrección en la hoja.</p>
             </div>
             <button onclick="auditarGPS()" class="btn btn-danger rounded-pill fw-bold mt-3">
-              <i class="fa-solid fa-magnifying-glass-location me-2"></i>Auditar GPS
+              <i class="fa-solid fa-magnifying-glass-location me-2"></i>Auditar Coordenadas
             </button>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-3">
-          <div class="card card-glass card-lift h-100 p-4 d-flex flex-column justify-content-between border-success border-opacity-50">
+          <div class="card card-sedes card-lift h-100 p-4 d-flex flex-column justify-content-between border-warning">
             <div>
-              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-success bg-opacity-15 text-success mb-3" style="width:50px; height:50px;">
-                <i class="fa-brands fa-whatsapp fs-4"></i>
+              <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-25 text-warning-emphasis mb-3" style="width:50px; height:50px;">
+                <i class="fa-solid fa-lock fs-4"></i>
               </div>
-              <h5 class="fw-bold">Mensajería SOS</h5>
-              <p class="small text-body-secondary">Registra nombre del contacto, celular y coordenadas dinámicamente en Google Sheets y envía mensaje al <strong>+591 79107617</strong>.</p>
+              <h5 class="fw-bold" style="color: #451a03;">Monitor SUISD</h5>
+              <p class="small text-secondary">Acceso con usuario y contraseña para visualizar en un DataTables dinámico las emergencias registradas.</p>
             </div>
             <div class="d-grid gap-2 mt-3">
-              <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold">
-                <i class="fa-brands fa-whatsapp me-2"></i>Abrir Ventana de Mensaje
+              <button onclick="document.getElementById('seccion-monitor-sos').scrollIntoView({behavior:'smooth'})" class="btn btn-warning text-dark rounded-pill fw-bold border border-dark border-opacity-25">
+                <i class="fa-solid fa-table me-2"></i>Ir al Monitor SOS
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- BITÁCORA RECIENTE DE EMERGENCIAS REGISTRADAS -->
-      <div class="card card-glass">
-        <div class="card-header bg-transparent py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom">
-          <h6 class="mb-0 fw-black"><i class="fa-solid fa-clipboard-list text-success me-2"></i>Bitácora de Mensajes de Emergencia Registrados (Google Sheets)</h6>
-          <div class="d-flex gap-2">
-            <button onclick="cargarHistorialEmergenciasDesdeSheet()" class="btn btn-outline-warning btn-sm rounded-pill fw-bold">
-              <i class="fa-solid fa-rotate me-1"></i>Actualizar desde Hoja EMERGENCIAS
-            </button>
-            <button onclick="exportarEmergenciasCSV()" class="btn btn-outline-success btn-sm rounded-pill fw-bold">
-              <i class="fa-solid fa-download me-1"></i>Exportar Bitácora
-            </button>
+      <!-- =========================================================================
+           SECCIÓN PROTEGIDA POR LOGIN (USUARIO: suisd / CONTRASEÑA: suisd2006.)
+           ========================================================================= -->
+      <div id="seccion-monitor-sos">
+
+        <!-- TARJETA DE LOGIN -->
+        <div id="suisd-login-box" class="card card-sedes border-warning mx-auto my-2" style="max-width: 520px;">
+          <div class="card-body p-4 p-md-5 text-center">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-25 text-warning-emphasis mb-3 shadow-sm" style="width: 68px; height: 68px;">
+              <i class="fa-solid fa-user-lock fs-2"></i>
+            </div>
+            <h4 class="fw-black mb-1" style="color: #451a03;">Acceso Restringido - Monitor SUISD</h4>
+            <p class="text-muted small mb-4">Ingresa las credenciales institucionales para desbloquear el DataTables dinámico de emergencias.</p>
+
+            <form onsubmit="autenticarMonitorSUISD(event)" class="text-start">
+              <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-solid fa-user me-1 text-warning-emphasis"></i>Usuario:</label>
+                <input type="text" id="login-user" class="form-control form-control-sedes" placeholder="Usuario..." autocomplete="username" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold"><i class="fa-solid fa-key me-1 text-warning-emphasis"></i>Contraseña:</label>
+                <div class="input-group">
+                  <input type="password" id="login-pass" class="form-control form-control-sedes" placeholder="Contraseña..." autocomplete="current-password" required>
+                  <button type="button" onclick="toggleVerPassword()" class="btn btn-outline-secondary">
+                    <i id="eye-pass-icon" class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <div id="login-error-msg" class="alert alert-danger py-2 px-3 small fw-semibold d-none mb-3">
+                <i class="fa-solid fa-circle-xmark me-1"></i>Credenciales inválidas. Verifica usuario y contraseña.
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-warning rounded-pill fw-black text-dark py-2 shadow-sm border border-dark border-opacity-25">
+                  <i class="fa-solid fa-right-to-bracket me-2"></i>Desbloquear Monitor de Emergencias
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        <div class="card-body p-3">
-          <div class="table-responsive">
-            <table class="table table-sm table-hover align-middle mb-0 small">
-              <thead class="table-warning">
-                <tr>
-                  <th>TICKET</th>
-                  <th>FECHA / HORA</th>
-                  <th>NOMBRE CONTACTO</th>
-                  <th>CELULAR</th>
-                  <th>ESTABLECIMIENTO</th>
-                  <th>COORDENADAS</th>
-                  <th>TIPO / DETALLE</th>
-                  <th>ESTADO SHEET</th>
-                  <th class="text-center">REENVIAR MENSAJE</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-emergencias-body">
-                <tr><td colspan="9" class="text-center text-muted py-3">Aún no se registraron mensajes de emergencia en esta sesión.</td></tr>
-              </tbody>
-            </table>
+
+        <!-- PANEL DESBLOQUEADO CON DATATABLES DINÁMICO DE EMERGENCIAS -->
+        <div id="suisd-admin-panel" class="card card-sedes d-none">
+          <div class="card-header bg-warning bg-opacity-25 py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom border-warning">
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa-solid fa-unlock-keyhole me-1"></i>Usuario: suisd</span>
+              <h6 class="mb-0 fw-black" style="color: #451a03;"><i class="fa-solid fa-satellite-dish text-danger me-2"></i>DataTables Dinámico de Emergencias Recibidas</h6>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button onclick="cargarHistorialEmergenciasDesdeSheet(true)" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25">
+                <i class="fa-solid fa-rotate me-1"></i>Sincronizar Hoja EMERGENCIAS
+              </button>
+              <button onclick="exportarEmergenciasCSV()" class="btn btn-success btn-sm rounded-pill fw-bold">
+                <i class="fa-solid fa-file-excel me-1"></i>Exportar CSV
+              </button>
+              <button onclick="cerrarSesionMonitorSUISD()" class="btn btn-outline-danger btn-sm rounded-pill fw-bold">
+                <i class="fa-solid fa-power-off me-1"></i>Cerrar Sesión
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body p-3 p-md-4">
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-md-4">
+                <div class="p-3 rounded-4 bg-warning bg-opacity-15 border border-warning d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="small fw-bold text-uppercase" style="font-size: 0.68rem; color: #78350f;">Total Emergencias</div>
+                    <div class="fs-3 fw-black" style="color: #b45309;" id="kpi-sos-total">0</div>
+                  </div>
+                  <i class="fa-solid fa-truck-medical fs-2 text-warning-emphasis"></i>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="p-3 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-25 d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="small fw-bold text-success text-uppercase" style="font-size: 0.68rem;">Con Coordenadas Exactas</div>
+                    <div class="fs-3 fw-black text-success" id="kpi-sos-gps">0</div>
+                  </div>
+                  <i class="fa-solid fa-location-crosshairs fs-2 text-success"></i>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="p-3 rounded-4 bg-warning bg-opacity-10 border border-warning border-opacity-50 d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="small fw-bold text-uppercase" style="font-size: 0.68rem; color: #78350f;">Última Actualización</div>
+                    <div class="fw-black small" style="color: #451a03;" id="kpi-sos-last">Listo</div>
+                  </div>
+                  <i class="fa-solid fa-clock-rotate-left fs-2 text-warning-emphasis"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table id="tabla-emergencias-dt" class="table table-hover align-middle w-100" style="font-size: 0.83rem;">
+                <thead class="table-warning">
+                  <tr>
+                    <th>TICKET</th>
+                    <th>FECHA / HORA</th>
+                    <th>CONTACTO</th>
+                    <th>CELULAR</th>
+                    <th>ESTABLECIMIENTO / RED</th>
+                    <th>COORDENADAS EXACTAS</th>
+                    <th>TIPO / MENSAJE</th>
+                    <th>ESTADO</th>
+                    <th class="text-center">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
+
       </div>
     </section>
 
   </main>
 
   <!-- =========================================================================
-       VENTANA MODAL DE EMERGENCIA (SIEMPRE AL FRENTE - SOLO MENSAJE WHATSAPP)
+       VENTANA MODAL DE EMERGENCIA CON MINI-MAPA DE PRECISIÓN Y PIN ARRASTRABLE
        ========================================================================= -->
   <div class="modal fade" id="modalEmergenciaSOS" tabindex="-1" aria-labelledby="modalEmergenciaLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
-        <div class="modal-header bg-success text-white py-3">
+      <div class="modal-content rounded-4 border-2 border-warning shadow-lg overflow-hidden">
+        <div class="modal-header py-3" style="background: linear-gradient(90deg, #facc15 0%, #f59e0b 100%); color: #451a03;">
           <h5 class="modal-title fw-black d-flex align-items-center gap-2" id="modalEmergenciaLabel">
-            <i class="fa-brands fa-whatsapp fs-4"></i>
-            <span>Notificación de Emergencia por Mensaje - SEDES LA PAZ</span>
+            <i class="fa-brands fa-whatsapp fs-4 text-success"></i>
+            <span>Notificación de Emergencia de Alta Precisión - SEDES LA PAZ</span>
           </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
-        <div class="modal-body p-4">
-          <div class="alert alert-warning border-warning d-flex align-items-center gap-3 py-2 px-3 rounded-3 mb-3 small">
-            <i class="fa-solid fa-database fs-4 text-warning-emphasis"></i>
-            <div>
-              <strong>Registro Dinámico en Google Sheets + Mensaje de WhatsApp:</strong> Se guardará automáticamente el <strong>Nombre del Contacto</strong>, <strong>Celular</strong> y las <strong>Coordenadas</strong> en la hoja <code>EMERGENCIAS</code> y se enviará el mensaje al <strong>+591 79107617</strong>.
-            </div>
-          </div>
-
+        <div class="modal-body p-4 bg-white">
           <form id="form-emergencia-sos" onsubmit="procesarYEnviarEmergencia(event)">
             <div class="row g-3">
               <!-- 1. Selección de Establecimiento -->
               <div class="col-12">
-                <label class="form-label small fw-bold text-warning-emphasis mb-1">
-                  <i class="fa-solid fa-hospital me-1"></i>1. Establecimiento de Salud Marcado (Carga coordenadas automáticamente):
+                <label class="form-label small fw-bold mb-1" style="color: #78350f;">
+                  <i class="fa-solid fa-hospital me-1"></i>1. Establecimiento de Salud de Referencia (Opcional o auto-detectado por cercanía):
                 </label>
                 <input type="text" id="sos-est-search" oninput="filtrarSelectorEstablecimientosSOS()" class="form-control form-control-sm mb-1" placeholder="Buscar establecimiento por nombre, municipio o COD_SNIS...">
                 <select id="sos-establecimiento" class="form-select form-select-sedes fw-bold" onchange="alCambiarEstablecimientoSOS()">
-                  <option value="">-- Ubicación / Emergencia General (Usar coordenadas manuales o GPS actual) --</option>
+                  <option value="">-- Ubicación Exacta en Terreno / Emergencia General --</option>
                 </select>
                 <div id="sos-est-info" class="form-text small text-muted mt-1"></div>
               </div>
@@ -818,28 +903,39 @@
                 <input type="tel" id="sos-numero-referencia" class="form-control form-control-sedes" placeholder="Ej. 71234567" required>
               </div>
 
-              <!-- 4. Coordenadas Dinámicas (Del establecimiento, del Mapa o del GPS del dispositivo) -->
+              <!-- 4. Ubicación Exacta con Mini-Mapa Interactivo -->
               <div class="col-12">
-                <label class="form-label small fw-bold mb-1">
-                  <i class="fa-solid fa-location-crosshairs me-1 text-danger"></i>4. Coordenadas Dinámicas (Latitud, Longitud) <span class="text-danger">*</span>
-                </label>
-                <div class="input-group">
-                  <span class="input-group-text bg-warning bg-opacity-15 border-warning border-opacity-25 text-warning-emphasis font-monospace small">WGS84</span>
-                  <input type="text" id="sos-coordenadas" class="form-control form-control-sedes font-monospace" placeholder="-16.50970, -68.12150" required>
-                  <button type="button" onclick="obtenerMiGPSActualSOS()" class="btn btn-outline-warning fw-bold text-dark" title="Capturar ubicación GPS actual de este dispositivo">
-                    <i class="fa-solid fa-location-arrow me-1"></i>Mi GPS Actual
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
+                  <label class="form-label small fw-bold mb-0">
+                    <i class="fa-solid fa-location-crosshairs me-1 text-danger"></i>4. Coordenadas Exactas del Punto de Emergencia <span class="text-danger">*</span>
+                  </label>
+                  <span id="sos-accuracy-badge" class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem;">
+                    Arrastra el pin rojo o pulsa "GPS Exacto"
+                  </span>
+                </div>
+
+                <div class="input-group mb-2">
+                  <span class="input-group-text bg-warning border-warning text-dark font-monospace small fw-bold">LAT, LNG</span>
+                  <input type="text" id="sos-coordenadas" oninput="alEditarCoordenadasManualmente()" class="form-control form-control-sedes font-monospace fw-bold" placeholder="-16.509700, -68.121500" required>
+                  <button type="button" onclick="calibrarGPSAltaPrecision()" class="btn btn-warning fw-bold text-dark border border-dark border-opacity-25">
+                    <i class="fa-solid fa-satellite-dish me-1"></i>GPS Exacto
                   </button>
-                  <button type="button" onclick="activarSeleccionCoordenadasEnMapa()" class="btn btn-outline-secondary fw-bold" title="Marcar un punto haciendo clic en el mapa">
-                    <i class="fa-solid fa-map-pin me-1"></i>Elegir en Mapa
+                  <button type="button" onclick="activarSeleccionCoordenadasEnMapa()" class="btn btn-outline-dark fw-bold">
+                    <i class="fa-solid fa-expand me-1"></i>Mapa Grande
                   </button>
                 </div>
-                <div class="form-text small" id="sos-coord-status">Las coordenadas se actualizan dinámicamente al elegir un establecimiento o usar tu GPS.</div>
+
+                <div id="sos-mini-map" class="mb-1 shadow-sm"></div>
+                <div class="d-flex flex-wrap justify-content-between align-items-center small text-muted" style="font-size: 0.75rem;">
+                  <span id="sos-coord-status"><i class="fa-solid fa-hand-pointer me-1 text-warning-emphasis"></i>Toca cualquier parte de este mini-mapa o arrastra el marcador rojo para afinar la posición exacta.</span>
+                  <span id="sos-nearest-est" class="fw-bold text-success"></span>
+                </div>
               </div>
 
               <!-- 5. Tipo de Emergencia -->
               <div class="col-md-6">
                 <label class="form-label small fw-bold mb-1">
-                  <i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i>5. Tipo de Emergencia / Reporte:
+                  <i class="fa-solid fa-triangle-exclamation me-1 text-warning-emphasis"></i>5. Tipo de Emergencia / Reporte:
                 </label>
                 <select id="sos-tipo" class="form-select form-select-sedes">
                   <option value="EMERGENCIA MÉDICA / REFERENCIA URGENTE">🚨 Emergencia Médica / Referencia Urgente</option>
@@ -866,11 +962,11 @@
                 <label class="form-label small fw-bold mb-1">
                   <i class="fa-solid fa-comment-dots me-1"></i>7. Mensaje Detallado de la Emergencia:
                 </label>
-                <textarea id="sos-detalle" class="form-control form-control-sedes" rows="3" placeholder="Escribe el mensaje detallado de la emergencia o requerimiento..."></textarea>
+                <textarea id="sos-detalle" class="form-control form-control-sedes" rows="2" placeholder="Escribe el mensaje detallado de la emergencia, referencia o requerimiento..."></textarea>
               </div>
             </div>
 
-            <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-4 pt-3 border-top">
+            <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3 pt-3 border-top">
               <button type="button" class="btn btn-outline-secondary rounded-pill fw-bold px-4" data-bs-dismiss="modal">Cerrar</button>
               <button type="submit" id="btn-submit-sos" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow">
                 <i class="fa-brands fa-whatsapp me-2"></i>Registrar en Sheet y Enviar Mensaje WhatsApp
@@ -900,22 +996,24 @@
   </div>
 
   <!-- BARRA INFERIOR MÓVIL -->
-  <div class="d-md-none fixed-bottom glass-navbar d-flex justify-content-around py-2 border-top shadow-lg">
+  <div class="d-md-none fixed-bottom navbar-sedes d-flex justify-content-around py-2 border-top shadow-lg">
     <button onclick="switchTab('tab1')" id="m-btn-tab1" class="btn text-secondary fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
       <i class="fa-solid fa-book-medical fs-5 mb-1"></i>Definiciones
     </button>
-    <button onclick="switchTab('tab2')" id="m-btn-tab2" class="btn text-warning fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
-      <i class="fa-solid fa-map-location-dot fs-5 mb-1"></i>Mapa y Datos
+    <button onclick="switchTab('tab2')" id="m-btn-tab2" class="btn text-dark fw-black d-flex flex-column align-items-center" style="font-size: 0.65rem;">
+      <i class="fa-solid fa-map-location-dot fs-5 mb-1 text-warning-emphasis"></i>Mapa y Datos
     </button>
     <button onclick="switchTab('tab3')" id="m-btn-tab3" class="btn text-secondary fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
-      <i class="fa-solid fa-screwdriver-wrench fs-5 mb-1"></i>Herramientas
+      <i class="fa-solid fa-user-shield fs-5 mb-1"></i>Monitor SOS
     </button>
     <button onclick="abrirModalEmergencia()" class="btn text-success fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
       <i class="fa-brands fa-whatsapp fs-5 mb-1"></i>Mensaje SOS
     </button>
   </div>
 
-  <!-- SCRIPTS -->
+  <!-- =========================================================================
+       SCRIPTS EXTERNOS (CARGADOS UNA SOLA VEZ PARA EVITAR BLOQUEOS)
+       ========================================================================= -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -930,34 +1028,47 @@
   <script>
     /**
      * =========================================================================
-     * CONFIGURACIÓN DE MENSAJERÍA DE EMERGENCIA (+591 79107617) Y GOOGLE SHEETS
+     * CONFIGURACIÓN PRINCIPAL: PUEDES PEGAR AQUÍ TU LINK DE GOOGLE SHEET O /exec
+     * (O pegarlo desde el botón amarillo "Conectar Sheet" en la esquina superior derecha)
      * =========================================================================
      */
+    const DEFAULT_SOURCE_URL      = "https://script.google.com/macros/s/AKfycbzhIlmn1mq-UCoAXTLW6IrM9cte6dvgM-wfMrqQZ7UhM9rPKFkGXuZeAJIGOf4BsKRJ/exec"; 
     const EMERGENCY_PHONE_CLEAN   = "59179107617";
     const EMERGENCY_PHONE_DISPLAY = "+591 79107617";
-    const DEFAULT_SOURCE_URL      = "https://script.google.com/macros/s/AKfycbzhIlmn1mq-UCoAXTLW6IrM9cte6dvgM-wfMrqQZ7UhM9rPKFkGXuZeAJIGOf4BsKRJ/exec"; // Puedes pegar aquí tu URL /exec de Apps Script
 
-    const STORAGE_URL_KEY       = "SUISD_ACTIVE_SOURCE_URL_V14";
-    const CACHE_KEY_DATA        = "SUISD_CACHE_DATA_V14";
-    const CACHE_KEY_TIME        = "SUISD_CACHE_TIME_V14";
-    const CACHE_KEY_EMERGENCIAS = "SUISD_EMERGENCIAS_LOG_V14";
+    // Credenciales requeridas para el Monitor DataTables de Emergencias
+    const ADMIN_USER_REQ = "suisd";
+    const ADMIN_PASS_REQ = "suisd2006.";
+
+    const STORAGE_URL_KEY       = "SUISD_ACTIVE_SOURCE_URL_V16";
+    const CACHE_KEY_DATA        = "SUISD_CACHE_DATA_V16";
+    const CACHE_KEY_TIME        = "SUISD_CACHE_TIME_V16";
+    const CACHE_KEY_EMERGENCIAS = "SUISD_EMERGENCIAS_LOG_V16";
+    const SESSION_AUTH_KEY      = "SUISD_ADMIN_AUTH_ACTIVE";
     const CACHE_TTL_MS          = 6 * 60 * 60 * 1000;
 
     let rawData = [];
     let filteredData = [];
     let emergenciasLog = [];
     let map = null;
-    let canvasRenderer = null;
-    let tileLayer = null;
     let markerClusterGroup = null;
     let directLayerGroup = null;
     let tempClickMarker = null;
     let modoCapturarClickMapa = false;
-    let useClustering = true;
+    let useClustering = false; // Inicia mostrando TODOS los puntos directamente en el mapa para visualización inmediata
     let markersByCode = {};
     let dataTable = null;
+    let emergenciasDataTable = null;
     let chartNiveles = null;
     let chartRedes = null;
+
+    // Mini-mapa de precisión para emergencias
+    let sosMiniMap = null;
+    let sosMiniMarker = null;
+    let sosAccuracyCircle = null;
+    let gpsWatchId = null;
+    let currentAccuracyMeters = null;
+    let nearestEstablishmentInfo = "";
 
     const filterKeys = ['RED', 'PROVINCIA', 'MUNICIPIO', 'NIVEL', 'SUBSECTOR', 'TIPO'];
     const filterIds  = {
@@ -978,10 +1089,387 @@
     };
 
     // =========================================================
-    // VENTANA MODAL AL FRENTE Y REGISTRO DINÁMICO (SOLO MENSAJE)
+    // REPARADOR AUTOMÁTICO DE COORDENADAS DE GOOGLE SHEETS (BOLIVIA)
+    // =========================================================
+    function normalizarNumeroCoordenada(val) {
+      if (val === null || val === undefined || val === '') return NaN;
+      if (typeof val === 'number') return val;
+      let s = String(val).trim().replace(/\s+/g, '');
+      if (!s) return NaN;
+
+      // Si tiene coma como separador decimal: "-16,5097"
+      if (s.includes(',') && !s.includes('.')) {
+        s = s.replace(',', '.');
+      } else if (s.includes(',') && s.includes('.')) {
+        s = s.replace(/\./g, '').replace(',', '.');
+      } else {
+        // Si tiene múltiples puntos por formato de miles: "-16.509.712" -> "-16.509712"
+        const parts = s.split('.');
+        if (parts.length > 2) {
+          s = parts[0] + '.' + parts.slice(1).join('');
+        }
+      }
+
+      let num = parseFloat(s);
+      if (isNaN(num) || num === 0) return NaN;
+
+      // Si Google Sheets exportó el número sin punto decimal (ej. -16509712 en lugar de -16.509712)
+      while (Math.abs(num) > 180) {
+        num = num / 10;
+      }
+      return num;
+    }
+
+    function extraerCoordenadasValidasDeFila(normObj, originalRow) {
+      let lat = normalizarNumeroCoordenada(normObj.LATITUD ?? normObj.LAT ?? normObj.LATITUDE ?? normObj.COORD_LAT ?? normObj.Y);
+      let lng = normalizarNumeroCoordenada(normObj.LONGITUD ?? normObj.LNG ?? normObj.LON ?? normObj.LONG ?? normObj.LONGITUDE ?? normObj.COORD_LNG ?? normObj.X);
+
+      // Si no encontró por nombre de columna estándar, buscar en todas las celdas de la fila dos números que caigan en Bolivia
+      if (isNaN(lat) || isNaN(lng)) {
+        const candidatosLat = [];
+        const candidatosLng = [];
+        Object.values(originalRow).forEach(v => {
+          const n = normalizarNumeroCoordenada(v);
+          if (!isNaN(n)) {
+            if (n <= -9 && n >= -24) candidatosLat.push(n);
+            else if (n <= -56 && n >= -71) candidatosLng.push(n);
+          }
+        });
+        if (isNaN(lat) && candidatosLat.length > 0) lat = candidatosLat[0];
+        if (isNaN(lng) && candidatosLng.length > 0) lng = candidatosLng[0];
+      }
+
+      // Si Latitud y Longitud están invertidas (ej. Latitud = -68.12, Longitud = -16.50), corregirlas automáticamente
+      if (!isNaN(lat) && !isNaN(lng) && lat < -45 && lng > -35) {
+        const tmp = lat; lat = lng; lng = tmp;
+      }
+
+      // Si olvidaron el signo negativo en Bolivia (ej. 16.5097, 68.1215), convertir a negativo
+      if (!isNaN(lat) && lat > 9 && lat < 24) lat = -lat;
+      if (!isNaN(lng) && lng > 56 && lng < 71) lng = -lng;
+
+      const esValido = !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+      return {
+        lat: esValido ? lat : null,
+        lng: esValido ? lng : null
+      };
+    }
+
+    // =========================================================
+    // AUTENTICACIÓN MONITOR DE EMERGENCIAS (suisd / suisd2006.)
+    // =========================================================
+    function toggleVerPassword() {
+      const inp = document.getElementById('login-pass');
+      const icon = document.getElementById('eye-pass-icon');
+      if (!inp) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        inp.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    }
+
+    function autenticarMonitorSUISD(event) {
+      if (event) event.preventDefault();
+      const u = document.getElementById('login-user')?.value?.trim() || '';
+      const p = document.getElementById('login-pass')?.value || '';
+      const errBox = document.getElementById('login-error-msg');
+
+      if (u.toLowerCase() === ADMIN_USER_REQ && (p === ADMIN_PASS_REQ || p === "suisd2006")) {
+        sessionStorage.setItem(SESSION_AUTH_KEY, "1");
+        if (errBox) errBox.classList.add('d-none');
+        mostrarPanelMonitorDesbloqueado();
+        cargarHistorialEmergenciasDesdeSheet(false);
+      } else {
+        if (errBox) errBox.classList.remove('d-none');
+      }
+    }
+
+    function mostrarPanelMonitorDesbloqueado() {
+      document.getElementById('suisd-login-box')?.classList.add('d-none');
+      document.getElementById('suisd-admin-panel')?.classList.remove('d-none');
+      if (!emergenciasDataTable) {
+        initEmergenciasDataTable();
+      }
+      renderizarBitacoraEmergencias();
+      setTimeout(() => {
+        if (emergenciasDataTable) emergenciasDataTable.columns.adjust().responsive.recalc();
+      }, 150);
+    }
+
+    function cerrarSesionMonitorSUISD() {
+      sessionStorage.removeItem(SESSION_AUTH_KEY);
+      document.getElementById('login-user').value = '';
+      document.getElementById('login-pass').value = '';
+      document.getElementById('suisd-admin-panel')?.classList.add('d-none');
+      document.getElementById('suisd-login-box')?.classList.remove('d-none');
+    }
+
+    function irAlMonitorDeEmergencias() {
+      switchTab('tab3');
+      setTimeout(() => {
+        document.getElementById('seccion-monitor-sos')?.scrollIntoView({ behavior: 'smooth' });
+      }, 200);
+    }
+
+    function initEmergenciasDataTable() {
+      if (emergenciasDataTable) return;
+      emergenciasDataTable = $('#tabla-emergencias-dt').DataTable({
+        responsive: true,
+        pageLength: 10,
+        order: [[1, 'desc']],
+        lengthMenu: [10, 25, 50, 100],
+        language: {
+          search: "Buscar emergencia:",
+          lengthMenu: "Mostrar _MENU_",
+          info: "Mostrando _START_ a _END_ de _TOTAL_ emergencias",
+          infoEmpty: "0 emergencias",
+          emptyTable: "No hay registros de emergencia todavía",
+          paginate: { first: "Primero", last: "Último", next: "Sig.", previous: "Ant." }
+        },
+        columns: [
+          { data: 'ID_TICKET', className: 'font-monospace fw-bold text-success' },
+          { data: 'FECHA_HORA', className: 'small' },
+          { data: 'NOMBRE_CONTACTO', className: 'fw-bold' },
+          { data: 'NUMERO_REFERENCIA', className: 'font-monospace fw-semibold' },
+          { data: null, className: 'small', render: r => `<strong>${r.ESTABLECIMIENTO || 'Ubicación GPS'}</strong><br><span class="text-muted">SNIS: ${r.COD_SNIS || 'N/A'} | ${r.RED || ''}</span>` },
+          { data: 'COORDENADAS_GPS', className: 'font-monospace small', render: d => {
+              const clean = String(d || '').split('(')[0].replace(/\s+/g, '');
+              if (/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(clean)) {
+                return `<a href="https://www.google.com/maps?q=${clean}" target="_blank" class="text-decoration-none fw-bold text-danger"><i class="fa-solid fa-location-dot me-1"></i>${d}</a>`;
+              }
+              return `<span class="text-muted">${d || 'Sin GPS'}</span>`;
+            }
+          },
+          { data: null, className: 'small', render: r => `<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 mb-1">${r.TIPO_EMERGENCIA || 'SOS'}</span><br>${r.MENSAJE_DETALLE || ''}` },
+          { data: 'ESTADO', render: d => {
+              const ok = String(d || '').includes('Sheet') || String(d || '').includes('REGISTRADO');
+              return `<span class="badge ${ok ? 'bg-success' : 'bg-warning text-dark'}">${d || 'Registrado'}</span>`;
+            }
+          },
+          { data: null, orderable: false, className: 'text-center', render: (data, type, row, meta) => {
+              const clean = String(row.COORDENADAS_GPS || '').split('(')[0].replace(/\s+/g, '');
+              const hasValidGps = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(clean);
+              return `
+                <div class="btn-group btn-group-sm">
+                  ${hasValidGps ? `<button onclick="verEmergenciaEnMapaPrincipal('${clean}', '${String(row.NOMBRE_CONTACTO || '').replace(/'/g, "\\'")}')" class="btn btn-warning text-dark fw-bold" title="Ver punto exacto en el Mapa"><i class="fa-solid fa-crosshairs"></i></button>` : ''}
+                  <button onclick="reenviarEmergenciaBitacora(${meta.row})" class="btn btn-success fw-bold" title="Reenviar Mensaje por WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                </div>
+              `;
+            }
+          }
+        ]
+      });
+    }
+
+    function verEmergenciaEnMapaPrincipal(coordsClean, contacto) {
+      const parts = coordsClean.split(',');
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+      if (isNaN(lat) || isNaN(lng)) return;
+
+      switchTab('tab2');
+      setTimeout(() => {
+        map.invalidateSize();
+        if (tempClickMarker) map.removeLayer(tempClickMarker);
+        tempClickMarker = L.circleMarker([lat, lng], {
+          radius: 12,
+          fillColor: '#dc2626',
+          color: '#fde047',
+          weight: 4,
+          fillOpacity: 0.95
+        }).addTo(map);
+        tempClickMarker.bindPopup(`<div class="small fw-bold text-danger">🚨 Punto de Emergencia<br>Contacto: ${contacto}<br><code>${lat.toFixed(6)}, ${lng.toFixed(6)}</code></div>`).openPopup();
+        map.setView([lat, lng], 17);
+        document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+
+    // =========================================================
+    // CÁLCULO DE UBICACIÓN EXACTA Y MINI-MAPA DE EMERGENCIA
+    // =========================================================
+    function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function encontrarEstablecimientoMasCercano(lat, lng) {
+      let mejor = null;
+      let minMetros = Infinity;
+      for (let i = 0; i < rawData.length; i++) {
+        const d = rawData[i];
+        if (d.Latitud === null || d.Longitud === null) continue;
+        const dist = calcularDistanciaMetros(lat, lng, d.Latitud, d.Longitud);
+        if (dist < minMetros) {
+          minMetros = dist;
+          mejor = d;
+        }
+      }
+      if (!mejor) return null;
+      return { establecimiento: mejor, metros: Math.round(minMetros) };
+    }
+
+    function initOrUpdateSosMiniMap(lat, lng, accuracyMeters = null) {
+      const container = document.getElementById('sos-mini-map');
+      if (!container) return;
+
+      if (!sosMiniMap) {
+        sosMiniMap = L.map('sos-mini-map', { zoomControl: true }).setView([lat, lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(sosMiniMap);
+
+        const pinIcon = L.divIcon({
+          className: '',
+          html: `<div class="sos-pin-icon"><i class="fa-solid fa-crosshairs"></i></div>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+
+        sosMiniMarker = L.marker([lat, lng], { draggable: true, icon: pinIcon }).addTo(sosMiniMap);
+
+        sosMiniMarker.on('dragend', function(e) {
+          const pos = e.target.getLatLng();
+          fijarCoordenadasExactasEnModal(pos.lat, pos.lng, null, "Ajustado manualmente arrastrando el pin");
+        });
+
+        sosMiniMap.on('click', function(e) {
+          fijarCoordenadasExactasEnModal(e.latlng.lat, e.latlng.lng, null, "Punto exacto marcado en el mini-mapa");
+        });
+      } else {
+        sosMiniMap.invalidateSize();
+        sosMiniMap.setView([lat, lng], 16);
+        sosMiniMarker.setLatLng([lat, lng]);
+      }
+
+      if (sosAccuracyCircle) {
+        sosMiniMap.removeLayer(sosAccuracyCircle);
+        sosAccuracyCircle = null;
+      }
+
+      if (accuracyMeters && accuracyMeters > 0) {
+        sosAccuracyCircle = L.circle([lat, lng], {
+          radius: accuracyMeters,
+          color: '#16a34a',
+          fillColor: '#22c55e',
+          fillOpacity: 0.18,
+          weight: 2
+        }).addTo(sosMiniMap);
+      }
+    }
+
+    function fijarCoordenadasExactasEnModal(lat, lng, accuracy = null, origenTexto = "") {
+      const latNum = parseFloat(lat);
+      const lngNum = parseFloat(lng);
+      if (isNaN(latNum) || isNaN(lngNum)) return;
+
+      currentAccuracyMeters = accuracy ? Math.round(accuracy) : null;
+      const coordsFormatted = `${latNum.toFixed(6)}, ${lngNum.toFixed(6)}`;
+      document.getElementById('sos-coordenadas').value = coordsFormatted;
+
+      const badge = document.getElementById('sos-accuracy-badge');
+      if (currentAccuracyMeters !== null) {
+        const colorBadge = currentAccuracyMeters <= 25 ? 'bg-success text-white' : 'bg-warning text-dark';
+        badge.className = `badge ${colorBadge} rounded-pill`;
+        badge.innerHTML = `<i class="fa-solid fa-satellite me-1"></i>Precisión GPS: ±${currentAccuracyMeters} m`;
+      } else {
+        badge.className = `badge bg-success text-white rounded-pill`;
+        badge.innerHTML = `<i class="fa-solid fa-map-pin me-1"></i>Coordenada Exacta Fijada`;
+      }
+
+      if (origenTexto) {
+        document.getElementById('sos-coord-status').innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-check-circle me-1"></i>${origenTexto} (${coordsFormatted})</span>`;
+      }
+
+      const cercano = encontrarEstablecimientoMasCercano(latNum, lngNum);
+      const nearEl = document.getElementById('sos-nearest-est');
+      if (cercano) {
+        const distTxt = cercano.metros >= 1000
+          ? `${(cercano.metros / 1000).toFixed(2)} km`
+          : `${cercano.metros} m`;
+        nearestEstablishmentInfo = `${cercano.establecimiento.NOMBRE} (a ${distTxt})`;
+        if (nearEl) nearEl.innerHTML = `<i class="fa-solid fa-hospital me-1"></i>Más cercano: ${nearestEstablishmentInfo}`;
+      } else {
+        nearestEstablishmentInfo = "";
+        if (nearEl) nearEl.textContent = "";
+      }
+
+      initOrUpdateSosMiniMap(latNum, lngNum, currentAccuracyMeters);
+    }
+
+    function alEditarCoordenadasManualmente() {
+      const val = document.getElementById('sos-coordenadas')?.value || '';
+      const parts = val.split(',');
+      if (parts.length === 2) {
+        const lat = parseFloat(parts[0].trim());
+        const lng = parseFloat(parts[1].trim());
+        if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          initOrUpdateSosMiniMap(lat, lng, null);
+        }
+      }
+    }
+
+    function calibrarGPSAltaPrecision() {
+      const coordStatus = document.getElementById('sos-coord-status');
+      const badge = document.getElementById('sos-accuracy-badge');
+
+      if (!navigator.geolocation) {
+        Swal.fire({ icon: 'warning', title: 'GPS no disponible', text: 'Tu navegador no dispone de geolocalización.', confirmButtonColor: '#f59e0b' });
+        return;
+      }
+
+      if (gpsWatchId !== null) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+      }
+
+      badge.className = 'badge bg-warning text-dark rounded-pill';
+      badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i>Calibrando satélites GPS...`;
+      coordStatus.innerHTML = `<span class="text-warning-emphasis fw-bold">Buscando la señal GPS más exacta posible...</span>`;
+
+      let mejorPrecision = Infinity;
+      let lecturas = 0;
+
+      gpsWatchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          lecturas++;
+          const acc = pos.coords.accuracy;
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          if (acc < mejorPrecision || lecturas === 1) {
+            mejorPrecision = acc;
+            fijarCoordenadasExactasEnModal(lat, lng, acc, `GPS de alta precisión capturado`);
+          }
+
+          if (acc <= 15 || lecturas >= 4) {
+            navigator.geolocation.clearWatch(gpsWatchId);
+            gpsWatchId = null;
+          }
+        },
+        (err) => {
+          if (gpsWatchId !== null) {
+            navigator.geolocation.clearWatch(gpsWatchId);
+            gpsWatchId = null;
+          }
+          coordStatus.innerHTML = `<span class="text-danger fw-bold">No se pudo leer GPS automático (${err.message}). Arrastra el pin rojo en el mini-mapa para ubicar tu punto exacto.</span>`;
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    // =========================================================
+    // APERTURA DEL MODAL DE EMERGENCIA SIEMPRE AL FRENTE
     // =========================================================
     function abrirModalEmergencia(codSnis = null, coordsPersonalizadas = null) {
-      // 1. Cerrar cualquier popup del mapa o panel lateral Offcanvas para que nada estorbe al modal
       if (map) map.closePopup();
       const offcanvasEl = document.getElementById('fichaOffcanvas');
       if (offcanvasEl) {
@@ -989,7 +1477,6 @@
         if (offInstance) offInstance.hide();
       }
 
-      // 2. Asegurar que el modal cuelgue directamente de document.body para estar siempre al frente
       const modalEl = document.getElementById('modalEmergenciaSOS');
       if (modalEl && modalEl.parentElement !== document.body) {
         document.body.appendChild(modalEl);
@@ -998,7 +1485,6 @@
       document.getElementById('sos-est-search').value = '';
       poblarSelectorEstablecimientosSOS('', codSnis || '');
 
-      // 3. Cargar último Nombre de Contacto y Celular guardados
       const savedNombre = localStorage.getItem('SUISD_LAST_CONTACT_NAME') || '';
       const savedNumero = localStorage.getItem('SUISD_LAST_CONTACT_PHONE') || '';
       if (savedNombre && !document.getElementById('sos-nombre-contacto').value) {
@@ -1008,21 +1494,22 @@
         document.getElementById('sos-numero-referencia').value = savedNumero;
       }
 
-      // 4. Si se pasaron coordenadas personalizadas (ej. clic en el mapa), colocarlas dinámicamente
-      if (coordsPersonalizadas) {
-        document.getElementById('sos-coordenadas').value = coordsPersonalizadas;
-        document.getElementById('sos-coord-status').innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-location-dot me-1"></i>Coordenadas capturadas desde el mapa: ${coordsPersonalizadas}</span>`;
-      } else {
-        alCambiarEstablecimientoSOS();
-      }
-
-      // 5. Mostrar ventana modal al frente
       const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
       modalInstance.show();
 
       setTimeout(() => {
-        document.getElementById('sos-nombre-contacto')?.focus();
-      }, 300);
+        if (coordsPersonalizadas) {
+          const parts = coordsPersonalizadas.split(',');
+          fijarCoordenadasExactasEnModal(parseFloat(parts[0]), parseFloat(parts[1]), null, "Punto exacto capturado desde el mapa principal");
+        } else if (codSnis) {
+          alCambiarEstablecimientoSOS();
+        } else {
+          const c = map ? map.getCenter() : { lat: -16.5000, lng: -68.1500 };
+          fijarCoordenadasExactasEnModal(c.lat, c.lng, null, "Posición inicial lista para ajustar");
+          calibrarGPSAltaPrecision();
+        }
+        if (sosMiniMap) sosMiniMap.invalidateSize();
+      }, 280);
     }
 
     function poblarSelectorEstablecimientosSOS(filtroTexto = "", codSeleccionado = null) {
@@ -1039,7 +1526,7 @@
                d.RED.toLowerCase().includes(q);
       }).slice(0, 250);
 
-      let html = `<option value="">-- Ubicación / Emergencia General (Coordenadas manuales o GPS actual) --</option>`;
+      let html = `<option value="">-- Ubicación Exacta en Terreno / Emergencia General --</option>`;
       lista.forEach(d => {
         const selected = String(d.COD_SNIS) === String(valorActual) ? 'selected' : '';
         html += `<option value="${d.COD_SNIS}" ${selected}>[${d.COD_SNIS}] ${d.NOMBRE} — ${d.MUNICIPIO} (${d.NIVEL})</option>`;
@@ -1061,32 +1548,19 @@
       alCambiarEstablecimientoSOS();
     }
 
-    // Actualiza dinámicamente las coordenadas cuando el usuario elige un establecimiento
     function alCambiarEstablecimientoSOS() {
       const cod = document.getElementById('sos-establecimiento')?.value || '';
       const infoEl = document.getElementById('sos-est-info');
-      const coordInput = document.getElementById('sos-coordenadas');
-      const coordStatus = document.getElementById('sos-coord-status');
 
       if (!cod) {
-        if (infoEl) infoEl.innerHTML = `<i class="fa-solid fa-circle-info me-1"></i>Puedes usar el botón <strong>"Mi GPS Actual"</strong> o elegir un establecimiento de la lista.`;
-        if (coordInput && !coordInput.value && map) {
-          const center = map.getCenter();
-          coordInput.value = `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
-          if (coordStatus) coordStatus.innerHTML = `<span class="text-muted">Coordenadas tomadas del centro actual del mapa.</span>`;
-        }
+        if (infoEl) infoEl.innerHTML = `<i class="fa-solid fa-circle-info me-1"></i>Usa el botón <strong>"GPS Exacto"</strong> o mueve el pin rojo en el mini-mapa para fijar el punto exacto.`;
         return;
       }
 
       const est = rawData.find(d => String(d.COD_SNIS) === String(cod));
       if (est) {
         if (est.Latitud !== null && est.Longitud !== null) {
-          const cStr = `${est.Latitud.toFixed(5)}, ${est.Longitud.toFixed(5)}`;
-          coordInput.value = cStr;
-          coordStatus.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-check-circle me-1"></i>Coordenadas cargadas automáticamente del establecimiento (${cStr}).</span>`;
-        } else {
-          coordInput.value = 'Sin GPS registrado';
-          coordStatus.innerHTML = `<span class="text-danger fw-bold">Este establecimiento no tiene coordenadas en la hoja. Usa "Mi GPS Actual" o "Elegir en Mapa".</span>`;
+          fijarCoordenadasExactasEnModal(est.Latitud, est.Longitud, null, `Coordenadas oficiales de ${est.NOMBRE}`);
         }
         if (infoEl) {
           infoEl.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-hospital me-1"></i>Establecimiento:</span> <strong>${est.NOMBRE}</strong> | Red: ${est.RED} | Municipio: ${est.MUNICIPIO}`;
@@ -1094,32 +1568,6 @@
       }
     }
 
-    // Captura el GPS real del celular o computadora del usuario
-    function obtenerMiGPSActualSOS() {
-      const coordInput = document.getElementById('sos-coordenadas');
-      const coordStatus = document.getElementById('sos-coord-status');
-
-      if (!navigator.geolocation) {
-        Swal.fire({ icon: 'warning', title: 'GPS no disponible', text: 'Tu navegador no soporta geolocalización.', confirmButtonColor: '#f59e0b' });
-        return;
-      }
-
-      coordStatus.innerHTML = `<span class="text-warning-emphasis fw-bold"><i class="fa-solid fa-spinner fa-spin me-1"></i>Obteniendo coordenadas GPS de tu dispositivo...</span>`;
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude.toFixed(5);
-          const lng = pos.coords.longitude.toFixed(5);
-          coordInput.value = `${lat}, ${lng}`;
-          coordStatus.innerHTML = `<span class="text-success fw-bold"><i class="fa-solid fa-location-crosshairs me-1"></i>GPS del dispositivo capturado con éxito (${lat}, ${lng}).</span>`;
-        },
-        (err) => {
-          coordStatus.innerHTML = `<span class="text-danger fw-bold">No se pudo leer el GPS (${err.message}). Puedes elegir un punto en el mapa.</span>`;
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    }
-
-    // Permite hacer clic en cualquier lugar del mapa para capturar coordenadas y abrir el modal al frente
     function activarSeleccionCoordenadasEnMapa() {
       const modalEl = document.getElementById('modalEmergenciaSOS');
       const modalInst = bootstrap.Modal.getInstance(modalEl);
@@ -1133,15 +1581,19 @@
         toast: true,
         position: 'top',
         icon: 'info',
-        title: 'Haz clic en cualquier punto del mapa para capturar sus coordenadas de emergencia',
+        title: 'Toca el punto exacto en el mapa para capturar sus coordenadas de emergencia',
         showConfirmButton: false,
         timer: 4000
       });
     }
 
-    // Registra Nombre, Celular y Coordenadas en Google Sheets y envía el mensaje por WhatsApp
     async function procesarYEnviarEmergencia(event) {
       event.preventDefault();
+
+      if (gpsWatchId !== null) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+      }
 
       const codSnis        = document.getElementById('sos-establecimiento').value;
       const nombreContacto = document.getElementById('sos-nombre-contacto').value.trim();
@@ -1149,14 +1601,13 @@
       const coordenadasStr = document.getElementById('sos-coordenadas').value.trim() || 'Sin GPS';
       const tipoEmergencia = document.getElementById('sos-tipo').value;
       const destinoModo    = document.getElementById('sos-destino-modo').value;
-      const detalle        = document.getElementById('sos-detalle').value.trim();
+      const detalleUsuario = document.getElementById('sos-detalle').value.trim();
 
       localStorage.setItem('SUISD_LAST_CONTACT_NAME', nombreContacto);
       localStorage.setItem('SUISD_LAST_CONTACT_PHONE', numeroCelular);
 
       const est = codSnis ? rawData.find(d => String(d.COD_SNIS) === String(codSnis)) : null;
 
-      // Destino del mensaje WhatsApp (Central +591 79107617 o Celular de Referencia)
       let telefonoDestinoClean = EMERGENCY_PHONE_CLEAN;
       if (destinoModo === 'REFERENCIA') {
         let limpio = numeroCelular.replace(/[^0-9]/g, '');
@@ -1164,18 +1615,24 @@
         if (limpio.length >= 8) telefonoDestinoClean = limpio;
       }
 
+      const infoPrecision = currentAccuracyMeters ? ` (±${currentAccuracyMeters}m)` : '';
+      const detalleConCercania = [
+        detalleUsuario || 'Notificación de emergencia vía mensaje',
+        nearestEstablishmentInfo ? `[Ref. cercana: ${nearestEstablishmentInfo}]` : ''
+      ].filter(Boolean).join(' ');
+
       const datosRegistro = {
         action: 'registrarEmergencia',
         nombre_contacto: nombreContacto,
         numero_referencia: numeroCelular,
         tipo_emergencia: tipoEmergencia,
-        cod_snis: est ? est.COD_SNIS : 'UBICACION-GPS',
-        establecimiento: est ? est.NOMBRE : 'Reporte con Coordenadas Dinámicas',
+        cod_snis: est ? est.COD_SNIS : 'GPS-EXACTO',
+        establecimiento: est ? est.NOMBRE : (nearestEstablishmentInfo ? `Punto GPS cercano a ${nearestEstablishmentInfo}` : 'Punto Exacto GPS'),
         red: est ? est.RED : (document.getElementById('filter-red')?.value || 'Todas'),
         municipio: est ? `${est.PROVINCIA} - ${est.MUNICIPIO}` : (document.getElementById('filter-municipio')?.value || 'Todos'),
         nivel: est ? est.NIVEL : (document.getElementById('filter-nivel')?.value || 'Todos'),
-        coordenadas: coordenadasStr,
-        detalle: detalle || 'Notificación de emergencia vía mensaje',
+        coordenadas: coordenadasStr + infoPrecision,
+        detalle: detalleConCercania,
         destino_sos: '+' + telefonoDestinoClean
       };
 
@@ -1187,7 +1644,6 @@
       let ticketId = 'SOS-' + Date.now().toString().slice(-6);
       let estadoSheet = 'Guardado Local';
 
-      // 1. Guardar dinámicamente en la pestaña "EMERGENCIAS" de Google Sheets
       const sourceUrl = getConfiguredUrl();
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         try {
@@ -1224,7 +1680,6 @@
         }
       }
 
-      // 2. Registrar en la bitácora visual
       const nuevoItemBitacora = {
         ID_TICKET: ticketId,
         FECHA_HORA: new Date().toLocaleString('es-BO'),
@@ -1237,15 +1692,14 @@
         MUNICIPIO: datosRegistro.municipio,
         NIVEL: datosRegistro.nivel,
         COORDENADAS_GPS: coordenadasStr,
-        MENSAJE_DETALLE: datosRegistro.detalle,
+        MENSAJE_DETALLE: detalleConCercania,
         ESTADO: estadoSheet
       };
 
       emergenciasLog.unshift(nuevoItemBitacora);
-      localStorage.setItem(CACHE_KEY_EMERGENCIAS, JSON.stringify(emergenciasLog.slice(0, 100)));
+      localStorage.setItem(CACHE_KEY_EMERGENCIAS, JSON.stringify(emergenciasLog.slice(0, 200)));
       renderizarBitacoraEmergencias();
 
-      // 3. Armar el Mensaje de WhatsApp con Nombre, Celular y Coordenadas Dinámicas
       const coordsClean = coordenadasStr.replace(/\s+/g, '');
       const tieneCoordsValidas = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(coordsClean);
 
@@ -1256,22 +1710,17 @@
         `━━━━━━━━━━━━━━━━━━━━`,
         `👤 *Nombre Contacto:* ${nombreContacto}`,
         `📱 *Celular Referencia:* ${numeroCelular}`,
-        `📍 *Coordenadas:* ${coordenadasStr}`,
+        `📍 *Coordenadas Exactas:* ${coordenadasStr}${infoPrecision}`,
+        nearestEstablishmentInfo ? `🏥 *Estab. Más Cercano:* ${nearestEstablishmentInfo}` : '',
         `⚠️ *Tipo:* ${tipoEmergencia}`,
         `━━━━━━━━━━━━━━━━━━━━`,
-        `🏥 *Establecimiento:* ${datosRegistro.establecimiento}`,
+        `🏢 *Ref. Establecimiento:* ${datosRegistro.establecimiento}`,
         `🔢 *COD_SNIS:* ${datosRegistro.cod_snis}`,
         `🌐 *Red:* ${datosRegistro.red}`,
         `🏙️ *Municipio:* ${datosRegistro.municipio}`,
-        `🏢 *Nivel:* ${datosRegistro.nivel}`
-      ];
-
-      if (tieneCoordsValidas) {
-        lineasWA.push(`🗺️ *Mapa Google:* https://www.google.com/maps?q=${coordsClean}`);
-      }
-      if (detalle) {
-        lineasWA.push(`📝 *Mensaje:* ${detalle}`);
-      }
+        tieneCoordsValidas ? `🗺️ *Ubicación Exacta Google Maps:* https://www.google.com/maps?q=${coordsClean}` : '',
+        detalleUsuario ? `📝 *Mensaje:* ${detalleUsuario}` : ''
+      ].filter(Boolean);
 
       const urlWhatsApp = `https://wa.me/${telefonoDestinoClean}?text=${encodeURIComponent(lineasWA.join('\n'))}`;
       window.open(urlWhatsApp, '_blank');
@@ -1285,12 +1734,12 @@
 
       Swal.fire({
         icon: 'success',
-        title: `Mensaje Registrado (${ticketId})`,
+        title: `Emergencia Registrada (${ticketId})`,
         html: `
-          <div class="small text-start bg-body-tertiary p-3 rounded-3 border">
+          <div class="small text-start bg-warning bg-opacity-10 p-3 rounded-3 border border-warning">
             <div><strong>Contacto:</strong> ${nombreContacto}</div>
             <div><strong>Celular:</strong> ${numeroCelular}</div>
-            <div><strong>Coordenadas:</strong> <code>${coordenadasStr}</code></div>
+            <div><strong>Coordenadas Exactas:</strong> <code>${coordenadasStr}${infoPrecision}</code></div>
             <div><strong>Estado Google Sheet:</strong> <span class="badge bg-success">${estadoSheet}</span></div>
           </div>
         `,
@@ -1300,60 +1749,43 @@
     }
 
     function renderizarBitacoraEmergencias() {
-      const tbody = document.getElementById('tabla-emergencias-body');
-      if (!tbody) return;
+      const kpiTotal = document.getElementById('kpi-sos-total');
+      const kpiGps = document.getElementById('kpi-sos-gps');
+      const kpiLast = document.getElementById('kpi-sos-last');
 
-      if (!emergenciasLog || emergenciasLog.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted py-3">Aún no se registraron mensajes de emergencia.</td></tr>`;
-        return;
+      if (kpiTotal) kpiTotal.textContent = emergenciasLog.length;
+      const conGps = emergenciasLog.filter(d => /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(String(d.COORDENADAS_GPS || '').replace(/\s+/g, '').replace(/\(.*\)/, ''))).length;
+      if (kpiGps) kpiGps.textContent = conGps;
+      if (kpiLast) kpiLast.textContent = new Date().toLocaleTimeString('es-BO');
+
+      if (emergenciasDataTable) {
+        emergenciasDataTable.clear().rows.add(emergenciasLog).draw();
       }
-
-      tbody.innerHTML = emergenciasLog.map((item, idx) => {
-        const badgeClass = String(item.ESTADO).includes('Sheet') || String(item.ESTADO).includes('REGISTRADO')
-          ? 'bg-success'
-          : 'bg-warning text-dark';
-
-        return `
-          <tr>
-            <td class="font-monospace fw-bold text-success">${item.ID_TICKET || 'SOS'}</td>
-            <td>${item.FECHA_HORA || ''}</td>
-            <td class="fw-bold">${item.NOMBRE_CONTACTO || ''}</td>
-            <td class="font-monospace">${item.NUMERO_REFERENCIA || ''}</td>
-            <td><strong>${item.ESTABLECIMIENTO || ''}</strong><br><span class="text-muted">SNIS: ${item.COD_SNIS || ''}</span></td>
-            <td class="font-monospace small">${item.COORDENADAS_GPS || 'Sin GPS'}</td>
-            <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 mb-1">${item.TIPO_EMERGENCIA || ''}</span><br>${item.MENSAJE_DETALLE || ''}</td>
-            <td><span class="badge ${badgeClass}">${item.ESTADO || 'Registrado'}</span></td>
-            <td class="text-center">
-              <button onclick="reenviarEmergenciaBitacora(${idx})" class="btn btn-success btn-sm rounded-pill px-3 fw-bold" title="Reenviar mensaje por WhatsApp">
-                <i class="fa-brands fa-whatsapp me-1"></i>Mensaje
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
     }
 
     function reenviarEmergenciaBitacora(index) {
       const item = emergenciasLog[index];
       if (!item) return;
-      const coordsClean = String(item.COORDENADAS_GPS || '').replace(/\s+/g, '');
+      const coordsClean = String(item.COORDENADAS_GPS || '').split('(')[0].replace(/\s+/g, '');
       const msg = [
         `🚨 *REENVÍO DE EMERGENCIA SUISD (${item.ID_TICKET})*`,
         `👤 *Nombre Contacto:* ${item.NOMBRE_CONTACTO}`,
         `📱 *Celular:* ${item.NUMERO_REFERENCIA}`,
-        `📍 *Coordenadas:* ${item.COORDENADAS_GPS}`,
+        `📍 *Coordenadas Exactas:* ${item.COORDENADAS_GPS}`,
         `🏥 *Establecimiento:* ${item.ESTABLECIMIENTO} (SNIS: ${item.COD_SNIS})`,
         `⚠️ *Tipo:* ${item.TIPO_EMERGENCIA}`,
         `📝 *Mensaje:* ${item.MENSAJE_DETALLE}`,
-        coordsClean && coordsClean !== 'SinGPS' ? `🗺️ *Mapa:* https://www.google.com/maps?q=${coordsClean}` : ''
+        coordsClean && coordsClean !== 'SinGPS' ? `🗺️ *Mapa Exacto:* https://www.google.com/maps?q=${coordsClean}` : ''
       ].filter(Boolean).join('\n');
       window.open(`https://wa.me/${EMERGENCY_PHONE_CLEAN}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    async function cargarHistorialEmergenciasDesdeSheet() {
+    async function cargarHistorialEmergenciasDesdeSheet(mostrarAlerta = false) {
       const sourceUrl = getConfiguredUrl();
       if (!sourceUrl || !sourceUrl.includes('script.google.com')) {
-        Swal.fire({ icon: 'info', title: 'Conecta tu Web App (/exec)', text: 'Para sincronizar la pestaña EMERGENCIAS en tiempo real, vincula la URL /exec de tu Google Apps Script.', confirmButtonColor: '#f59e0b' });
+        if (mostrarAlerta) {
+          Swal.fire({ icon: 'info', title: 'Conecta tu Web App (/exec)', text: 'Para sincronizar la hoja EMERGENCIAS desde Google Sheets, vincula tu URL /exec.', confirmButtonColor: '#f59e0b' });
+        }
         return;
       }
       try {
@@ -1363,16 +1795,20 @@
           emergenciasLog = resp.data;
           localStorage.setItem(CACHE_KEY_EMERGENCIAS, JSON.stringify(emergenciasLog));
           renderizarBitacoraEmergencias();
-          Swal.fire({ icon: 'success', title: 'Bitácora Sincronizada', text: `Se cargaron ${emergenciasLog.length} registros desde la hoja EMERGENCIAS.`, timer: 2000, showConfirmButton: false });
+          if (mostrarAlerta) {
+            Swal.fire({ icon: 'success', title: 'Monitor Sincronizado', text: `Se cargaron ${emergenciasLog.length} registros de emergencia desde Google Sheets.`, timer: 2000, showConfirmButton: false });
+          }
         }
       } catch (err) {
-        Swal.fire({ icon: 'warning', title: 'Aviso', text: 'Verifica haber publicado una Nueva Versión de tu Code.gs en Apps Script.', confirmButtonColor: '#f59e0b' });
+        if (mostrarAlerta) {
+          Swal.fire({ icon: 'warning', title: 'Aviso', text: 'Mostrando registros almacenados en este navegador.', confirmButtonColor: '#f59e0b' });
+        }
       }
     }
 
     function exportarEmergenciasCSV() {
       if (!emergenciasLog || emergenciasLog.length === 0) {
-        Swal.fire({ icon: 'info', title: 'Bitácora vacía', text: 'No hay emergencias registradas para exportar.', confirmButtonColor: '#f59e0b' });
+        Swal.fire({ icon: 'info', title: 'Sin registros', text: 'No hay emergencias registradas para exportar.', confirmButtonColor: '#f59e0b' });
         return;
       }
       const cols = ["ID_TICKET", "FECHA_HORA", "NOMBRE_CONTACTO", "NUMERO_REFERENCIA", "TIPO_EMERGENCIA", "COD_SNIS", "ESTABLECIMIENTO", "RED", "MUNICIPIO", "NIVEL", "COORDENADAS_GPS", "MENSAJE_DETALLE", "ESTADO"];
@@ -1385,7 +1821,7 @@
     }
 
     // =========================================================
-    // 1. MOTOR DE CONEXIÓN TRIPLE (GVIZ + JSONP + FETCH)
+    // MOTOR DE CONEXIÓN TRIPLE (GVIZ + JSONP + FETCH)
     // =========================================================
     function getConfiguredUrl() {
       const saved = localStorage.getItem(STORAGE_URL_KEY);
@@ -1496,19 +1932,21 @@
 
     async function cargarDatosIniciales(forzarDescarga = false) {
       const badge = document.getElementById('loading-badge');
-      badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i>Conectando con Sheet...`;
+      badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i>Sincronizando...`;
 
+      // 1. Si corre dentro de Apps Script nativo
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => {
             const lista = Array.isArray(res) ? res : (res.data || []);
-            guardarEnCacheYRenderizar(lista, "Google Apps Script Nativo");
+            guardarEnCacheYRenderizar(lista, "Google Sheet Nativo");
           })
           .withFailureHandler(err => mostrarFallbackDemo(err.message))
           .obtenerEstablecimientos();
         return;
       }
 
+      // 2. Leer caché local si es válido
       if (!forzarDescarga) {
         const cData = localStorage.getItem(CACHE_KEY_DATA);
         const cTime = localStorage.getItem(CACHE_KEY_TIME);
@@ -1528,7 +1966,7 @@
 
       const sourceUrl = getConfiguredUrl();
       if (!sourceUrl) {
-        mostrarFallbackDemo("Aún no vinculaste el enlace de tu Google Apps Script (/exec). Haz clic en 'Conectar Sheet' arriba a la derecha.");
+        mostrarFallbackDemo("Mostrando 15 establecimientos reales del SEDES La Paz (Modo Demo). Haz clic en 'Conectar Sheet' para vincular tu hoja completa.");
         return;
       }
 
@@ -1545,7 +1983,7 @@
             const fRes = await fetch(sourceUrl, { method: 'GET', redirect: 'follow' });
             const text = await fRes.text();
             if (text.trim().startsWith('<')) {
-              throw new Error("El Apps Script devolvió una página de login. Cambia 'Quién tiene acceso' a 'Cualquier persona'.");
+              throw new Error("El Apps Script devolvió login. Cambia 'Quién tiene acceso' a 'Cualquier persona'.");
             }
             rawResp = JSON.parse(text);
           }
@@ -1557,7 +1995,7 @@
         }
 
         if (!Array.isArray(registros) || registros.length === 0) {
-          throw new Error("La conexión fue exitosa pero la hoja no devolvió filas válidas.");
+          throw new Error("La hoja no devolvió filas válidas.");
         }
 
         guardarEnCacheYRenderizar(registros, "Google Sheets Sincronizado");
@@ -1586,7 +2024,7 @@
     }
 
     // =========================================================
-    // 2. NORMALIZADOR INTELIGENTE DE COLUMNAS Y COORDENADAS
+    // PROCESAMIENTO UNIVERSAL DE FILAS Y COORDENADAS
     // =========================================================
     function procesarDatos(filas, origenLabel) {
       rawData = [];
@@ -1597,25 +2035,15 @@
         Object.keys(r).forEach(k => {
           const cleanKey = String(k).trim().toUpperCase()
             .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            .replace(/\s+/g, "_");
+            .replace(/[^A-Z0-9_]/g, "_");
           norm[cleanKey] = r[k];
         });
 
-        const nombre = String(norm.NOMBRE || norm.ESTABLECIMIENTO || norm.NOMBRE_ESTABLECIMIENTO || '').trim();
+        const nombre = String(norm.NOMBRE || norm.ESTABLECIMIENTO || norm.NOMBRE_ESTABLECIMIENTO || norm.CENTRO || '').trim();
         const cod    = String(norm.COD_SNIS || norm.CODIGO_SNIS || norm.SNIS || norm.CODIGO || '').trim();
         if (!nombre && !cod) return;
 
-        const rawLat = norm.LATITUD ?? norm.LAT ?? norm.LATITUDE ?? norm.Y ?? '';
-        const rawLng = norm.LONGITUD ?? norm.LNG ?? norm.LON ?? norm.LONG ?? norm.LONGITUDE ?? norm.X ?? '';
-
-        let lat = parseFloat(String(rawLat).trim().replace(',', '.'));
-        let lng = parseFloat(String(rawLng).trim().replace(',', '.'));
-
-        if (!isNaN(lat) && !isNaN(lng) && lat < -50 && lng > -30) {
-          const tmp = lat; lat = lng; lng = tmp;
-        }
-
-        const validCoords = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+        const coords = extraerCoordenadasValidasDeFila(norm, r);
 
         rawData.push({
           COD_SNIS:  cod || `LP-${idx + 1}`,
@@ -1626,32 +2054,34 @@
           SUBSECTOR: String(norm.SUBSECTOR || norm.SECTOR || 'PÚBLICO').trim(),
           TIPO:      String(norm.TIPO || norm.TIPO_ESTABLECIMIENTO || norm.TIPO_DE_ESTABLECIMIENTO || 'CENTRO DE SALUD').trim(),
           NOMBRE:    nombre || 'Sin Nombre',
-          Latitud:   validCoords ? lat : null,
-          Longitud:  validCoords ? lng : null
+          Latitud:   coords.lat,
+          Longitud:  coords.lng
         });
       });
 
-      document.getElementById('loading-badge').innerHTML = `<i class="fa-solid fa-circle-check text-success me-1"></i>${rawData.length} reg. (${origenLabel})`;
+      const conGpsCount = rawData.filter(d => d.Latitud !== null && d.Longitud !== null).length;
+      document.getElementById('loading-badge').innerHTML = `<i class="fa-solid fa-circle-check text-success me-1"></i>${rawData.length} reg. / ${conGpsCount} GPS (${origenLabel})`;
       aplicarFiltros(true);
     }
 
-    // =========================================================
-    // 3. MODAL DE CONEXIÓN E IMPORTACIÓN CSV
-    // =========================================================
     function abrirModalConexion() {
       const actual = getConfiguredUrl();
       Swal.fire({
-        title: 'Conectar con Google Sheets',
+        title: 'Conectar con tu Google Sheet',
         html: `
           <div class="text-start small">
-            <p class="mb-2">Pega el enlace de tu implementación de <strong>Google Apps Script</strong> terminada en <code>/exec</code> (permite leer los establecimientos y registrar emergencias en la hoja <code>EMERGENCIAS</code>):</p>
+            <p class="mb-2">Pega aquí <strong>cualquiera de estos dos enlaces</strong>:</p>
+            <ul class="ps-3 mb-2 text-secondary">
+              <li class="mb-1"><strong>Opción 1 (Directa):</strong> El link normal de tu Google Sheet (en <em>Compartir</em> debe estar como <em>"Cualquier persona con el enlace"</em>).</li>
+              <li><strong>Opción 2 (Apps Script):</strong> La URL terminada en <code>/exec</code> de tu implementación.</li>
+            </ul>
           </div>
         `,
         input: 'url',
         inputValue: actual,
-        inputPlaceholder: 'https://script.google.com/macros/s/.../exec',
+        inputPlaceholder: 'https://docs.google.com/spreadsheets/d/... o https://script.google.com/.../exec',
         showCancelButton: true,
-        confirmButtonText: '<i class="fa-solid fa-bolt me-1"></i>Conectar y Sincronizar',
+        confirmButtonText: '<i class="fa-solid fa-bolt me-1"></i>Conectar y Cargar Puntos',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#f59e0b'
       }).then(res => {
@@ -1694,14 +2124,14 @@
           headers.forEach((h, idx) => obj[h] = vals[idx] ?? '');
           objetos.push(obj);
         }
-        guardarEnCacheYRenderizar(objetos, "Archivo CSV Local");
-        Swal.fire({ icon: 'success', title: 'CSV Cargado', text: `Se importaron ${objetos.length} establecimientos.`, timer: 2000, showConfirmButton: false });
+        guardarEnCacheYRenderizar(objetos, "CSV Local");
+        Swal.fire({ icon: 'success', title: 'CSV Cargado', text: `Se cargaron ${objetos.length} establecimientos.`, timer: 2000, showConfirmButton: false });
       };
       reader.readAsText(file, 'UTF-8');
     }
 
     // =========================================================
-    // 4. FILTROS EN CASCADA, MAPA CANVAS, DATATABLES Y GRÁFICOS
+    // FILTROS EN CASCADA Y DIBUJADO DE PUNTOS EN EL MAPA
     // =========================================================
     function aplicarFiltros(centrarMapa = false) {
       const searchEl = document.getElementById('filter-search');
@@ -1774,7 +2204,7 @@
       document.getElementById('kpi-total').textContent = filteredData.length;
       document.getElementById('kpi-redes').textContent = new Set(filteredData.map(d => d.RED)).size;
       document.getElementById('kpi-municipios').textContent = new Set(filteredData.map(d => d.MUNICIPIO)).size;
-      document.getElementById('kpi-geo').textContent = filteredData.filter(d => d.Latitud !== null).length;
+      document.getElementById('kpi-geo').textContent = filteredData.filter(d => d.Latitud !== null && d.Longitud !== null).length;
       document.getElementById('table-count-label').textContent = `${filteredData.length} registros`;
 
       if (dataTable) {
@@ -1794,8 +2224,9 @@
 
     function dibujarPuntosEnMapa(centrar = false) {
       if (!map) return;
-      markerClusterGroup.clearLayers();
-      directLayerGroup.clearLayers();
+      map.invalidateSize();
+      if (markerClusterGroup) markerClusterGroup.clearLayers();
+      if (directLayerGroup) directLayerGroup.clearLayers();
       markersByCode = {};
 
       let c1 = 0, c2 = 0, c3 = 0;
@@ -1809,31 +2240,30 @@
 
         if (item.Latitud === null || item.Longitud === null) return;
 
-        let fillColor = '#facc15', borderColor = '#451a03', radius = 7, weight = 2;
+        let fillColor = '#facc15', borderColor = '#451a03', radius = 8, weight = 2;
         if (niv === 2) {
-          fillColor = '#f97316'; borderColor = '#ffffff'; radius = 9; weight = 2.5;
+          fillColor = '#f97316'; borderColor = '#451a03'; radius = 9.5; weight = 2.5;
         } else if (niv === 3) {
-          fillColor = '#dc2626'; borderColor = '#fde047'; radius = 11; weight = 3;
+          fillColor = '#dc2626'; borderColor = '#facc15'; radius = 11.5; weight = 3;
         }
 
         const marker = L.circleMarker([item.Latitud, item.Longitud], {
-          renderer: canvasRenderer,
           radius: radius,
           fillColor: fillColor,
           color: borderColor,
           weight: weight,
           opacity: 1,
-          fillOpacity: 0.92
+          fillOpacity: 0.95
         });
 
         const safeCod = String(item.COD_SNIS).replace(/'/g, "\\'");
         marker.bindPopup(`
           <div style="min-width: 240px; font-family: system-ui, sans-serif;">
-            <div class="bg-warning text-dark fw-black px-2 py-1 rounded mb-2 small">${item.NOMBRE}</div>
+            <div class="bg-warning text-dark fw-black px-2 py-1 rounded mb-2 small border border-dark border-opacity-25">${item.NOMBRE}</div>
             <div class="small mb-1"><strong>COD_SNIS:</strong> <span class="font-monospace">${item.COD_SNIS}</span></div>
             <div class="small mb-1"><strong>Red:</strong> ${item.RED}</div>
             <div class="small mb-1"><strong>Municipio:</strong> ${item.PROVINCIA} - ${item.MUNICIPIO}</div>
-            <div class="small mb-1"><strong>Coordenadas:</strong> <span class="font-monospace">${item.Latitud.toFixed(5)}, ${item.Longitud.toFixed(5)}</span></div>
+            <div class="small mb-1"><strong>Coordenadas:</strong> <span class="font-monospace">${item.Latitud.toFixed(6)}, ${item.Longitud.toFixed(6)}</span></div>
             <div class="small mb-2"><strong>Nivel:</strong> <span class="badge bg-warning text-dark">${item.NIVEL}</span></div>
             <div class="d-grid gap-1 pt-2 border-top">
               <button onclick="abrirModalEmergencia('${safeCod}')" class="btn btn-success btn-sm fw-bold py-1">
@@ -1855,14 +2285,14 @@
       document.getElementById('leg-n2').textContent = c2;
       document.getElementById('leg-n3').textContent = c3;
 
-      if (useClustering) {
+      if (useClustering && markerClusterGroup) {
         markerClusterGroup.addLayers(listaMarcadores);
       } else {
         listaMarcadores.forEach(m => directLayerGroup.addLayer(m));
       }
 
       if (centrar && listaMarcadores.length > 0) {
-        fitMapToMarkers();
+        setTimeout(() => fitMapToMarkers(), 100);
       }
     }
 
@@ -1889,7 +2319,7 @@
     }
 
     // =========================================================
-    // 5. INICIALIZACIÓN DE COMPONENTES Y ANIMACIONES CANVAS
+    // INICIALIZACIÓN DE COMPONENTES Y ANIMACIONES CANVAS
     // =========================================================
     function initSplashCanvas() {
       const c = document.getElementById('splash-canvas');
@@ -1912,7 +2342,7 @@
         ctx.rotate(-angle * 2);
         ctx.beginPath();
         ctx.arc(0, 0, 56, 0, Math.PI * 1.1);
-        ctx.strokeStyle = '#fbbf24';
+        ctx.strokeStyle = '#b45309';
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         ctx.stroke();
@@ -1934,19 +2364,16 @@
         height = canvas.height = window.innerHeight;
       });
 
-      const nodes = Array.from({ length: 36 }, () => ({
+      const nodes = Array.from({ length: 32 }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
         r: Math.random() * 2.2 + 1.2
       }));
 
       function animateBg() {
         ctx.clearRect(0, 0, width, height);
-        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-        const dotColor = isDark ? 'rgba(251, 191, 36, 0.35)' : 'rgba(217, 119, 6, 0.28)';
-
         for (let i = 0; i < nodes.length; i++) {
           const n = nodes[i];
           n.x += n.vx; n.y += n.vy;
@@ -1955,7 +2382,7 @@
 
           ctx.beginPath();
           ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-          ctx.fillStyle = dotColor;
+          ctx.fillStyle = 'rgba(217, 119, 6, 0.25)';
           ctx.fill();
 
           for (let j = i + 1; j < nodes.length; j++) {
@@ -1965,9 +2392,7 @@
               ctx.beginPath();
               ctx.moveTo(n.x, n.y);
               ctx.lineTo(n2.x, n2.y);
-              ctx.strokeStyle = isDark
-                ? `rgba(251, 191, 36, ${(1 - dist / 130) * 0.14})`
-                : `rgba(245, 158, 11, ${(1 - dist / 130) * 0.14})`;
+              ctx.strokeStyle = `rgba(245, 158, 11, ${(1 - dist / 130) * 0.15})`;
               ctx.lineWidth = 1;
               ctx.stroke();
             }
@@ -1979,34 +2404,32 @@
     }
 
     function initMap() {
-      canvasRenderer = L.canvas({ padding: 0.5 });
-      map = L.map('map', { zoomControl: false, preferCanvas: true, renderer: canvasRenderer }).setView([-16.5000, -68.1500], 9);
+      map = L.map('map', { zoomControl: false }).setView([-16.5000, -68.1500], 9);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-      const url = isDark
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      tileLayer = L.tileLayer(url, { maxZoom: 19, attribution: '&copy; OpenStreetMap | SEDES La Paz - SUISD' }).addTo(map);
+      tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap | SEDES La Paz - SUISD'
+      }).addTo(map);
 
-      markerClusterGroup = L.markerClusterGroup({
-        maxClusterRadius: 42,
-        disableClusteringAtZoom: 16,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        chunkedLoading: true
-      });
-      directLayerGroup = L.layerGroup();
-      map.addLayer(markerClusterGroup);
+      directLayerGroup = L.layerGroup().addTo(map);
 
-      // Permitir capturar coordenadas dinámicamente haciendo clic en el mapa cuando se solicita
+      if (typeof L.markerClusterGroup === 'function') {
+        markerClusterGroup = L.markerClusterGroup({
+          maxClusterRadius: 40,
+          disableClusteringAtZoom: 15,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false
+        });
+      }
+
       map.on('click', function(e) {
         if (!modoCapturarClickMapa) return;
         modoCapturarClickMapa = false;
         document.getElementById('map').style.cursor = '';
 
-        const lat = e.latlng.lat.toFixed(5);
-        const lng = e.latlng.lng.toFixed(5);
+        const lat = e.latlng.lat.toFixed(6);
+        const lng = e.latlng.lng.toFixed(6);
         const coordsStr = `${lat}, ${lng}`;
 
         if (tempClickMarker) map.removeLayer(tempClickMarker);
@@ -2023,6 +2446,7 @@
     }
 
     function toggleClusterMode() {
+      if (!markerClusterGroup) return;
       useClustering = !useClustering;
       const btn = document.getElementById('btn-cluster-mode');
       if (useClustering) {
@@ -2032,9 +2456,9 @@
       } else {
         map.removeLayer(markerClusterGroup);
         map.addLayer(directLayerGroup);
-        btn.innerHTML = `<i class="fa-solid fa-braille me-1"></i>Puntos Canvas: ON`;
+        btn.innerHTML = `<i class="fa-solid fa-braille me-1"></i>Ver Todos los Puntos`;
       }
-      dibujarPuntosEnMapa();
+      dibujarPuntosEnMapa(false);
     }
 
     function initDataTable() {
@@ -2055,18 +2479,18 @@
           { data: 'NOMBRE', className: 'fw-bold' },
           { data: 'RED', className: 'small' },
           { data: null, className: 'small', render: r => `<strong>${r.PROVINCIA}</strong><br><span class="text-muted">${r.MUNICIPIO}</span>` },
-          { data: 'NIVEL', render: d => `<span class="badge bg-warning bg-opacity-20 text-warning-emphasis border border-warning border-opacity-50">${d}</span>` },
-          { data: null, className: 'small', render: r => `<strong>${r.SUBSECTOR}</strong><br><span class="text-muted">${r.TIPO}</span>` },
+          { data: 'NIVEL', render: d => `<span class="badge bg-warning text-dark border border-dark border-opacity-25">${d}</span>` },
+          { data: null, className: 'font-monospace small', render: r => (r.Latitud !== null && r.Longitud !== null) ? `<span class="text-success fw-bold">${r.Latitud.toFixed(5)}, ${r.Longitud.toFixed(5)}</span>` : `<span class="text-danger">Sin GPS</span>` },
           { data: null, orderable: false, className: 'text-center', render: r => {
               const safeCod = String(r.COD_SNIS).replace(/'/g, "\\'");
               const btnGps = (r.Latitud !== null && r.Longitud !== null)
-                ? `<button onclick="focusMap('${safeCod}')" class="btn btn-warning text-dark fw-bold" title="Ubicar en Mapa"><i class="fa-solid fa-location-dot"></i></button>`
+                ? `<button onclick="focusMap('${safeCod}')" class="btn btn-warning text-dark fw-bold" title="Ubicar Punto en el Mapa"><i class="fa-solid fa-location-dot"></i></button>`
                 : '';
               return `
                 <div class="btn-group btn-group-sm">
                   ${btnGps}
-                  <button onclick="abrirFicha('${safeCod}')" class="btn btn-outline-secondary" title="Ver Ficha"><i class="fa-solid fa-eye"></i></button>
-                  <button onclick="abrirModalEmergencia('${safeCod}')" class="btn btn-success fw-bold" title="Notificar Emergencia por Mensaje de WhatsApp"><i class="fa-brands fa-whatsapp me-1"></i>Mensaje</button>
+                  <button onclick="abrirFicha('${safeCod}')" class="btn btn-outline-dark" title="Ver Ficha"><i class="fa-solid fa-eye"></i></button>
+                  <button onclick="abrirModalEmergencia('${safeCod}')" class="btn btn-success fw-bold" title="Notificar Emergencia por Mensaje"><i class="fa-brands fa-whatsapp me-1"></i>SOS</button>
                 </div>`;
             }
           }
@@ -2114,6 +2538,7 @@
     function fitMapToMarkers() {
       const valid = filteredData.filter(d => d.Latitud !== null && d.Longitud !== null);
       if (valid.length > 0 && map) {
+        map.invalidateSize();
         const bounds = L.latLngBounds(valid.map(d => [d.Latitud, d.Longitud]));
         map.fitBounds(bounds, { padding: [35, 35], maxZoom: 15 });
       }
@@ -2127,8 +2552,12 @@
         map.invalidateSize();
         const marker = markersByCode[codSnis];
         if (marker) {
-          if (useClustering) markerClusterGroup.zoomToShowLayer(marker, () => marker.openPopup());
-          else { map.setView([item.Latitud, item.Longitud], 16); marker.openPopup(); }
+          if (useClustering && markerClusterGroup) {
+            markerClusterGroup.zoomToShowLayer(marker, () => marker.openPopup());
+          } else {
+            map.setView([item.Latitud, item.Longitud], 16);
+            marker.openPopup();
+          }
         }
         document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 200);
@@ -2150,7 +2579,7 @@
           <li class="list-group-item d-flex justify-content-between"><span>Municipio:</span><strong>${item.MUNICIPIO}</strong></li>
           <li class="list-group-item d-flex justify-content-between"><span>Subsector:</span><strong>${item.SUBSECTOR}</strong></li>
           <li class="list-group-item d-flex justify-content-between"><span>Tipo:</span><strong>${item.TIPO}</strong></li>
-          <li class="list-group-item d-flex justify-content-between"><span>Coordenadas WGS84:</span><strong class="font-monospace">${item.Latitud ? item.Latitud.toFixed(5) + ', ' + item.Longitud.toFixed(5) : 'Sin GPS'}</strong></li>
+          <li class="list-group-item d-flex justify-content-between"><span>Coordenadas WGS84:</span><strong class="font-monospace">${item.Latitud ? item.Latitud.toFixed(6) + ', ' + item.Longitud.toFixed(6) : 'Sin GPS'}</strong></li>
         </ul>
         <div class="d-grid gap-2">
           <button onclick="abrirModalEmergencia('${safeCod}');" class="btn btn-success rounded-pill fw-bold py-2">
@@ -2167,34 +2596,25 @@
       ['tab1', 'tab2', 'tab3'].forEach(id => {
         document.getElementById('btn-' + id)?.classList.remove('active');
         const mBtn = document.getElementById('m-btn-' + id);
-        if (mBtn) { mBtn.classList.remove('text-warning'); mBtn.classList.add('text-secondary'); }
+        if (mBtn) { mBtn.classList.remove('text-dark', 'fw-black'); mBtn.classList.add('text-secondary'); }
       });
       document.getElementById('btn-' + tabId)?.classList.add('active');
       const activeMob = document.getElementById('m-btn-' + tabId);
-      if (activeMob) { activeMob.classList.add('text-warning'); activeMob.classList.remove('text-secondary'); }
+      if (activeMob) { activeMob.classList.add('text-dark', 'fw-black'); activeMob.classList.remove('text-secondary'); }
 
       if (tabId === 'tab2') {
         setTimeout(() => {
-          if (map) map.invalidateSize();
+          if (map) {
+            map.invalidateSize();
+            fitMapToMarkers();
+          }
           if (dataTable) dataTable.columns.adjust().responsive.recalc();
         }, 150);
+      } else if (tabId === 'tab3') {
+        setTimeout(() => {
+          if (emergenciasDataTable) emergenciasDataTable.columns.adjust().responsive.recalc();
+        }, 150);
       }
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', next);
-      localStorage.setItem('bs-theme', next);
-      document.getElementById('theme-icon').className = next === 'dark' ? 'fa-solid fa-sun text-warning' : 'fa-solid fa-moon text-secondary';
-      if (map && tileLayer) {
-        map.removeLayer(tileLayer);
-        const url = next === 'dark'
-          ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-          : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        tileLayer = L.tileLayer(url, { maxZoom: 19 }).addTo(map);
-      }
-      actualizarGraficosCanvas();
     }
 
     function ocultarSplash() {
@@ -2222,7 +2642,7 @@
     function auditarGPS() {
       const sinGps = rawData.filter(d => d.Latitud === null || d.Longitud === null);
       if (sinGps.length === 0) {
-        Swal.fire({ icon: 'success', title: '¡Padrón 100% Georreferenciado!', text: `Todos los ${rawData.length} establecimientos tienen GPS válido.`, confirmButtonColor: '#f59e0b' });
+        Swal.fire({ icon: 'success', title: '¡Padrón 100% Georreferenciado!', text: `Todos los ${rawData.length} establecimientos tienen GPS válido en el mapa.`, confirmButtonColor: '#f59e0b' });
       } else {
         const listaHtml = sinGps.slice(0, 30).map(d => `<li class="text-start small"><strong>${d.COD_SNIS}</strong> - ${d.NOMBRE} (${d.MUNICIPIO})</li>`).join('');
         Swal.fire({ icon: 'warning', title: `${sinGps.length} Establecimientos sin GPS`, html: `<ul class="ps-3 mb-0" style="max-height:220px;overflow-y:auto;">${listaHtml}</ul>`, confirmButtonColor: '#f59e0b' });
@@ -2233,34 +2653,41 @@
       const demo = [
         { COD_SNIS: "200001", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL DE CLÍNICAS", Latitud: -16.5097, Longitud: -68.1215 },
         { COD_SNIS: "200002", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL ESPECIALIZADO", NOMBRE: "HOSPITAL DEL NIÑO DR. OVIDIO ALIAGA URÍA", Latitud: -16.5089, Longitud: -68.1211 },
-        { COD_SNIS: "200003", RED: "RED 1 SUR OESTE", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL COTAHUMA", Latitud: -16.5165, Longitud: -68.1412 },
-        { COD_SNIS: "200004", RED: "RED 5 SUR", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL LOS PINOS", Latitud: -16.5441, Longitud: -68.0745 },
-        { COD_SNIS: "200005", RED: "RED COREA", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL DEL NORTE", Latitud: -16.4942, Longitud: -68.1965 },
-        { COD_SNIS: "200006", RED: "RED HOLANDÉS", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL BOLIVIANO HOLANDÉS", Latitud: -16.5208, Longitud: -68.1652 },
-        { COD_SNIS: "200007", RED: "RED RURAL 4 OMASUYOS", PROVINCIA: "OMASUYOS", MUNICIPIO: "ACHACACHI", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL ACHACACHI", Latitud: -16.0528, Longitud: -68.6861 },
-        { COD_SNIS: "200008", RED: "RED RURAL 8 NOR YUNGAS", PROVINCIA: "NOR YUNGAS", MUNICIPIO: "COROICO", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL GENERAL DE LOS YUNGAS COROICO", Latitud: -16.1889, Longitud: -67.7275 }
+        { COD_SNIS: "200003", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "INSTITUTO ESPECIALIZADO", NOMBRE: "INSTITUTO GASTROENTEROLÓGICO BOLIVIANO JAPONÉS", Latitud: -16.5082, Longitud: -68.1220 },
+        { COD_SNIS: "200004", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL ESPECIALIZADO", NOMBRE: "HOSPITAL DE LA MUJER", Latitud: -16.5105, Longitud: -68.1208 },
+        { COD_SNIS: "200005", RED: "RED 1 SUR OESTE", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL COTAHUMA", Latitud: -16.5165, Longitud: -68.1412 },
+        { COD_SNIS: "200006", RED: "RED 2 NOR OESTE", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL LA PORTADA", Latitud: -16.4852, Longitud: -68.1524 },
+        { COD_SNIS: "200007", RED: "RED 4 ESTE", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL LA MERCED", Latitud: -16.4735, Longitud: -68.1182 },
+        { COD_SNIS: "200008", RED: "RED 5 SUR", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL LOS PINOS", Latitud: -16.5441, Longitud: -68.0745 },
+        { COD_SNIS: "200009", RED: "RED COREA", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL DEL NORTE", Latitud: -16.4942, Longitud: -68.1965 },
+        { COD_SNIS: "200010", RED: "RED HOLANDÉS", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL BOLIVIANO HOLANDÉS", Latitud: -16.5208, Longitud: -68.1652 },
+        { COD_SNIS: "200011", RED: "RED SENKATA", PROVINCIA: "MURILLO", MUNICIPIO: "EL ALTO", NIVEL: "3ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL EL ALTO SUR", Latitud: -16.5621, Longitud: -68.1812 },
+        { COD_SNIS: "200012", RED: "RED RURAL 4 OMASUYOS", PROVINCIA: "OMASUYOS", MUNICIPIO: "ACHACACHI", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL MUNICIPAL ACHACACHI", Latitud: -16.0528, Longitud: -68.6861 },
+        { COD_SNIS: "200013", RED: "RED RURAL 8 NOR YUNGAS", PROVINCIA: "NOR YUNGAS", MUNICIPIO: "COROICO", NIVEL: "2DO NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "HOSPITAL BÁSICO", NOMBRE: "HOSPITAL GENERAL DE LOS YUNGAS COROICO", Latitud: -16.1889, Longitud: -67.7275 },
+        { COD_SNIS: "200014", RED: "RED RURAL 7 SUD YUNGAS", PROVINCIA: "SUD YUNGAS", MUNICIPIO: "CHULUMANI", NIVEL: "1ER NIVEL", SUBSECTOR: "PÚBLICO", TIPO: "CENTRO DE SALUD CON INTERNACIÓN", NOMBRE: "C.S. CHULUMANI", Latitud: -16.4092, Longitud: -67.5264 },
+        { COD_SNIS: "200015", RED: "RED 3 NORTE CENTRAL", PROVINCIA: "MURILLO", MUNICIPIO: "LA PAZ", NIVEL: "3ER NIVEL", SUBSECTOR: "SEGURIDAD SOCIAL", TIPO: "HOSPITAL GENERAL", NOMBRE: "HOSPITAL OBRERO N° 1 (CNS)", Latitud: -16.5074, Longitud: -68.1201 }
       ];
-      procesarDatos(demo, "Modo Demo");
+      procesarDatos(demo, "Demo Local");
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       initSplashCanvas();
       initBackgroundCanvas();
-      const savedTheme = localStorage.getItem('bs-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-bs-theme', savedTheme);
-      document.getElementById('theme-icon').className = savedTheme === 'dark' ? 'fa-solid fa-sun text-warning' : 'fa-solid fa-moon text-secondary';
 
       try {
         const savedLog = localStorage.getItem(CACHE_KEY_EMERGENCIAS);
         if (savedLog) emergenciasLog = JSON.parse(savedLog) || [];
       } catch (e) {}
-      renderizarBitacoraEmergencias();
+
+      if (sessionStorage.getItem(SESSION_AUTH_KEY) === "1") {
+        mostrarPanelMonitorDesbloqueado();
+      }
 
       initMap();
       initDataTable();
       initCharts();
       cargarDatosIniciales();
-      setTimeout(ocultarSplash, 3500);
+      setTimeout(ocultarSplash, 3000);
     });
   </script>
 </body>
