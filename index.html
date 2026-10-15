@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SEDES LA PAZ - SUISD</title>
 
-  <!-- Bootstrap 5.3.3 CSS (Diseño Claro Luminoso) -->
+  <!-- Bootstrap 5.3.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- FontAwesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- DataTables Bootstrap 5 -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-  <!-- Leaflet & MarkerCluster CSS (Cargados una sola vez) -->
+  <!-- Leaflet & MarkerCluster CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
@@ -24,14 +24,14 @@
       --sedes-amber-dark: #b45309;
       --sedes-brown: #451a03;
       --sedes-cream: #fffbeb;
-      --sedes-border: rgba(245, 158, 11, 0.32);
-      --sedes-shadow: 0 10px 28px -6px rgba(180, 83, 9, 0.12);
+      --sedes-border: rgba(245, 158, 11, 0.36);
+      --sedes-shadow: 0 10px 28px -6px rgba(180, 83, 9, 0.13);
     }
 
     body {
-      background: linear-gradient(180deg, #fffbeb 0%, #fef9c3 35%, #fffbeb 100%);
+      background: linear-gradient(180deg, #fffbeb 0%, #fef9c3 40%, #fffbeb 100%);
       color: #1e293b;
-      padding-top: 80px;
+      padding-top: 78px;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
@@ -57,7 +57,7 @@
       z-index: 2;
     }
 
-    /* PRIORIDAD ABSOLUTA DE CAPAS PARA VENTANA MODAL Y ALERTAS */
+    /* PRIORIDAD ABSOLUTA DE CAPAS PARA MODALES Y ALERTAS */
     .modal-backdrop {
       z-index: 100040 !important;
     }
@@ -71,18 +71,46 @@
       z-index: 100030 !important;
     }
 
-    /* BARRA SUPERIOR CON TONOS AMARILLOS INSTITUCIONALES */
+    /* BARRA SUPERIOR INSTITUCIONAL AMARILLA */
     .navbar-sedes {
-      background: linear-gradient(90deg, #ffffff 0%, #fef3c7 55%, #fde68a 100%);
+      background: linear-gradient(90deg, #ffffff 0%, #fef3c7 50%, #fde047 100%);
       border-bottom: 3px solid var(--sedes-amber);
-      box-shadow: 0 4px 20px rgba(180, 83, 9, 0.12);
+      box-shadow: 0 4px 20px rgba(180, 83, 9, 0.14);
       z-index: 1030;
     }
 
-    /* TARJETAS BLANCAS CON BORDES Y ACENTOS AMARILLOS */
+    /* BOTÓN PEQUEÑO DE LOGIN ARRIBA AL COSTADO */
+    .btn-top-login {
+      background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+      color: #fde047 !important;
+      border: 1.5px solid #f59e0b;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.32rem 0.78rem;
+      border-radius: 50rem;
+      letter-spacing: 0.3px;
+      box-shadow: 0 3px 10px rgba(69, 26, 3, 0.22);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-top-login:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+      color: #ffffff !important;
+      box-shadow: 0 5px 14px rgba(180, 83, 9, 0.35);
+    }
+    .btn-top-login.logged-in {
+      background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+      color: #ffffff !important;
+      border-color: #fde047;
+    }
+
+    /* TARJETAS INSTITUCIONALES */
     .card-sedes {
       background: rgba(255, 255, 255, 0.96);
-      border: 1px solid var(--sedes-border);
+      border: 1.5px solid var(--sedes-border);
       border-radius: 1.25rem;
       box-shadow: var(--sedes-shadow);
       transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
@@ -92,10 +120,10 @@
     }
     .card-lift:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 32px -8px rgba(245, 158, 11, 0.25);
+      box-shadow: 0 16px 32px -8px rgba(245, 158, 11, 0.26);
     }
 
-    /* SPLASH SCREEN AMARILLO INSTITUCIONAL */
+    /* SPLASH SCREEN */
     #splash-screen {
       position: fixed;
       inset: 0;
@@ -138,7 +166,7 @@
       50% { transform: translateY(-8px) scale(1.04); }
     }
 
-    /* PESTAÑAS DE NAVEGACIÓN */
+    /* PESTAÑAS */
     .tab-pane-custom {
       display: none;
       animation: fadeSlide 0.28s ease-out;
@@ -153,9 +181,9 @@
 
     .btn-nav-sedes {
       border-radius: 50rem;
-      padding: 0.48rem 1.2rem;
+      padding: 0.44rem 1.1rem;
       font-weight: 800;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       border: 1px solid transparent;
       background: transparent;
       color: var(--sedes-brown);
@@ -178,7 +206,7 @@
       height: 550px;
       width: 100%;
       border-radius: 1rem;
-      border: 2px solid #fde68a;
+      border: 2px solid #fcd34d;
       z-index: 5;
       background: #fef9c3;
     }
@@ -187,14 +215,13 @@
     }
 
     #sos-mini-map {
-      height: 230px;
+      height: 225px;
       width: 100%;
       border-radius: 0.9rem;
       border: 2px solid var(--sedes-amber);
       z-index: 10;
     }
 
-    /* CLUSTERS CON ESTILO AMARILLO / ÁMBAR */
     .marker-cluster {
       background-color: rgba(250, 204, 21, 0.45) !important;
     }
@@ -207,7 +234,6 @@
       box-shadow: 0 3px 10px rgba(69, 26, 3, 0.35);
     }
 
-    /* INPUTS Y SELECTS AMARILLOS */
     .form-select-sedes, .form-control-sedes {
       border-radius: 0.85rem;
       border: 1.5px solid #fcd34d;
@@ -229,7 +255,7 @@
       font-weight: 800;
     }
 
-    /* BOTÓN FLOTANTE DE EMERGENCIA (SOLO MENSAJE) */
+    /* BOTÓN FLOTANTE DE EMERGENCIA */
     .emergency-fab-container {
       position: fixed;
       right: 22px;
@@ -308,37 +334,51 @@
     <p class="fw-bold text-uppercase small mb-3" style="color: #b45309; letter-spacing: 2px;">Sistema Único de Información en Salud</p>
     <div class="d-flex align-items-center gap-2 small fw-bold" style="color: #78350f;">
       <div class="spinner-grow spinner-grow-sm text-warning" role="status"></div>
-      <span id="splash-msg">Cargando padrón y puntos en el mapa...</span>
+      <span id="splash-msg">Iniciando plataforma y cargando establecimientos...</span>
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <!-- =========================================================================
+       BARRA SUPERIOR CON BOTÓN PEQUEÑO DE LOGIN AL COSTADO DERECHO
+       ========================================================================= -->
   <nav class="navbar fixed-top navbar-sedes py-2">
     <div class="container-xl d-flex align-items-center justify-content-between">
+      <!-- Marca Institucional -->
       <div class="d-flex align-items-center gap-2 gap-sm-3" style="cursor: pointer;" onclick="switchTab('tab1')">
-        <div class="bg-white p-1 rounded-3 border border-warning shadow-sm d-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
-          <img src="logo.png" alt="SEDES" width="36" height="36" class="object-fit-contain" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+        <div class="bg-white p-1 rounded-3 border border-warning shadow-sm d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+          <img src="logo.png" alt="SEDES" width="34" height="34" class="object-fit-contain" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
         </div>
         <div class="lh-1">
           <span class="fs-6 fs-sm-5 fw-black d-block" style="color: #451a03;">SEDES LA PAZ - SUISD</span>
-          <span class="fw-bold text-uppercase" style="font-size: 0.63rem; letter-spacing: 1px; color: #b45309;">Geovisor & Monitor de Emergencias</span>
+          <span class="fw-bold text-uppercase" style="font-size: 0.62rem; letter-spacing: 1px; color: #b45309;">Sistema Único de Información en Salud</span>
         </div>
       </div>
 
-      <div class="d-flex align-items-center gap-2">
+      <!-- Navegación Central y Botones al Costado Superior -->
+      <div class="d-flex align-items-center gap-1 gap-sm-2">
         <div class="d-none d-lg-flex bg-white p-1 rounded-pill border border-warning shadow-sm me-1">
           <button onclick="switchTab('tab1')" id="btn-tab1" class="btn-nav-sedes"><i class="fa-solid fa-book-medical me-1"></i>1. Definiciones</button>
           <button onclick="switchTab('tab2')" id="btn-tab2" class="btn-nav-sedes active"><i class="fa-solid fa-map-location-dot me-1"></i>2. Mapa y Datos</button>
-          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-sedes"><i class="fa-solid fa-user-shield me-1"></i>3. Herramientas y SOS</button>
+          <button onclick="switchTab('tab3')" id="btn-tab3" class="btn-nav-sedes"><i class="fa-solid fa-screwdriver-wrench me-1"></i>3. Herramientas</button>
         </div>
 
-        <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-3 shadow-sm d-flex align-items-center gap-1">
-          <i class="fa-brands fa-whatsapp fs-6"></i>
-          <span class="d-none d-sm-inline">Mensaje SOS</span>
+        <!-- Botón Mensaje SOS -->
+        <button onclick="abrirModalEmergencia()" class="btn btn-success btn-sm rounded-pill fw-bold px-2 px-sm-3 shadow-sm d-flex align-items-center gap-1" style="font-size: 0.76rem;" title="Notificar Emergencia por Mensaje de WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span class="d-none d-md-inline">SOS</span>
         </button>
 
-        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25 px-3 shadow-sm">
-          <i class="fa-solid fa-plug-circle-bolt me-1"></i><span class="d-none d-md-inline">Conectar Sheet</span>
+        <!-- Botón Conectar Sheet -->
+        <button onclick="abrirModalConexion()" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark border border-dark border-opacity-25 px-2 px-sm-3 shadow-sm" style="font-size: 0.76rem;" title="Vincular Google Sheet">
+          <i class="fa-solid fa-plug-circle-bolt"></i>
+          <span class="d-none d-xl-inline ms-1">Sheet</span>
+        </button>
+
+        <!-- BOTÓN PEQUEÑO DE LOGIN SUISD AL COSTADO SUPERIOR -->
+        <button onclick="accionBotonTopLogin()" id="btn-top-login" class="btn-top-login" title="Acceso administrativo SUISD (Ver registros de emergencia)">
+          <i id="top-login-icon" class="fa-solid fa-lock"></i>
+          <span id="top-login-text">Login</span>
+          <span id="top-login-badge" class="badge bg-warning text-dark rounded-pill ms-1" style="font-size: 0.65rem;">0</span>
         </button>
       </div>
     </div>
@@ -385,8 +425,8 @@
                 <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
                   <i class="fa-brands fa-whatsapp me-2"></i>Notificar Emergencia por Mensaje
                 </button>
-                <button onclick="irAlMonitorDeEmergencias()" class="btn btn-outline-dark rounded-pill fw-bold px-4 py-2">
-                  <i class="fa-solid fa-lock me-2"></i>Monitor SUISD
+                <button onclick="accionBotonTopLogin()" class="btn btn-outline-dark rounded-pill fw-bold px-4 py-2">
+                  <i class="fa-solid fa-user-shield me-2"></i>Acceso Monitor SUISD
                 </button>
               </div>
             </div>
@@ -657,18 +697,23 @@
     </section>
 
     <!-- ==========================================
-         PESTAÑA 3: HERRAMIENTAS Y MONITOR DE EMERGENCIAS (PROTEGIDO CON LOGIN)
+         PESTAÑA 3: HERRAMIENTAS Y MONITOR DE EMERGENCIAS
          ========================================== -->
     <section id="tab3" class="tab-pane-custom">
       <div class="card card-sedes mb-4 border-start border-warning border-5">
         <div class="card-body p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
           <div>
-            <h3 class="fw-black mb-1" style="color: #451a03;"><i class="fa-solid fa-user-shield text-warning me-2"></i>Herramientas Informáticas y Central de Emergencias SUISD</h3>
-            <p class="text-secondary mb-0 small">Conexión directa con Google Sheets, auditoría de coordenadas y consola DataTables de emergencias protegida con credenciales.</p>
+            <h3 class="fw-black mb-1" style="color: #451a03;"><i class="fa-solid fa-screwdriver-wrench text-warning me-2"></i>Herramientas Informáticas y Monitor de Emergencias</h3>
+            <p class="text-secondary mb-0 small">Conexión directa con Google Sheets, auditoría de coordenadas y consola DataTables de emergencias recibidas.</p>
           </div>
-          <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
-            <i class="fa-brands fa-whatsapp me-2"></i>Nuevo Mensaje de Emergencia
-          </button>
+          <div class="d-flex flex-wrap gap-2">
+            <button onclick="abrirModalLoginSUISD()" id="btn-tab3-login-trigger" class="btn btn-warning rounded-pill fw-bold text-dark border border-dark border-opacity-25 px-4 py-2 shadow-sm">
+              <i class="fa-solid fa-key me-2"></i>Login Monitor SUISD
+            </button>
+            <button onclick="abrirModalEmergencia()" class="btn btn-success rounded-pill fw-bold px-4 py-2 shadow-sm">
+              <i class="fa-brands fa-whatsapp me-2"></i>Nuevo Mensaje SOS
+            </button>
+          </div>
         </div>
       </div>
 
@@ -727,57 +772,34 @@
           <div class="card card-sedes card-lift h-100 p-4 d-flex flex-column justify-content-between border-warning">
             <div>
               <div class="d-inline-flex align-items-center justify-content-center rounded-4 bg-warning bg-opacity-25 text-warning-emphasis mb-3" style="width:50px; height:50px;">
-                <i class="fa-solid fa-lock fs-4"></i>
+                <i class="fa-solid fa-user-lock fs-4"></i>
               </div>
               <h5 class="fw-bold" style="color: #451a03;">Monitor SUISD</h5>
-              <p class="small text-secondary">Acceso con usuario y contraseña para visualizar en un DataTables dinámico las emergencias registradas.</p>
+              <p class="small text-secondary">Ingresa desde el botón superior <strong>Login</strong> (<code>SUISD</code> / <code>SUISD2026.</code>) para ver las emergencias entrantes.</p>
             </div>
             <div class="d-grid gap-2 mt-3">
-              <button onclick="document.getElementById('seccion-monitor-sos').scrollIntoView({behavior:'smooth'})" class="btn btn-warning text-dark rounded-pill fw-bold border border-dark border-opacity-25">
-                <i class="fa-solid fa-table me-2"></i>Ir al Monitor SOS
+              <button onclick="accionBotonTopLogin()" class="btn btn-dark text-warning rounded-pill fw-bold border border-warning">
+                <i class="fa-solid fa-unlock-keyhole me-2"></i>Abrir Monitor SOS
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- =========================================================================
-           SECCIÓN PROTEGIDA POR LOGIN (USUARIO: suisd / CONTRASEÑA: suisd2006.)
-           ========================================================================= -->
+      <!-- SECCIÓN DEL MONITOR DATATABLES DE EMERGENCIAS -->
       <div id="seccion-monitor-sos">
 
-        <!-- TARJETA DE LOGIN -->
-        <div id="suisd-login-box" class="card card-sedes border-warning mx-auto my-2" style="max-width: 520px;">
-          <div class="card-body p-4 p-md-5 text-center">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-25 text-warning-emphasis mb-3 shadow-sm" style="width: 68px; height: 68px;">
-              <i class="fa-solid fa-user-lock fs-2"></i>
+        <!-- AVISO COMPACTO CUANDO NO HA INICIADO SESIÓN -->
+        <div id="suisd-locked-banner" class="card card-sedes border-warning p-4 text-center">
+          <div class="d-flex flex-column align-items-center justify-content-center py-2">
+            <div class="rounded-circle bg-warning bg-opacity-25 text-warning-emphasis d-flex align-items-center justify-content-center mb-2" style="width: 56px; height: 56px;">
+              <i class="fa-solid fa-lock fs-3"></i>
             </div>
-            <h4 class="fw-black mb-1" style="color: #451a03;">Acceso Restringido - Monitor SUISD</h4>
-            <p class="text-muted small mb-4">Ingresa las credenciales institucionales para desbloquear el DataTables dinámico de emergencias.</p>
-
-            <form onsubmit="autenticarMonitorSUISD(event)" class="text-start">
-              <div class="mb-3">
-                <label class="form-label small fw-bold"><i class="fa-solid fa-user me-1 text-warning-emphasis"></i>Usuario:</label>
-                <input type="text" id="login-user" class="form-control form-control-sedes" placeholder="Usuario..." autocomplete="username" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small fw-bold"><i class="fa-solid fa-key me-1 text-warning-emphasis"></i>Contraseña:</label>
-                <div class="input-group">
-                  <input type="password" id="login-pass" class="form-control form-control-sedes" placeholder="Contraseña..." autocomplete="current-password" required>
-                  <button type="button" onclick="toggleVerPassword()" class="btn btn-outline-secondary">
-                    <i id="eye-pass-icon" class="fa-solid fa-eye"></i>
-                  </button>
-                </div>
-              </div>
-              <div id="login-error-msg" class="alert alert-danger py-2 px-3 small fw-semibold d-none mb-3">
-                <i class="fa-solid fa-circle-xmark me-1"></i>Credenciales inválidas. Verifica usuario y contraseña.
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-warning rounded-pill fw-black text-dark py-2 shadow-sm border border-dark border-opacity-25">
-                  <i class="fa-solid fa-right-to-bracket me-2"></i>Desbloquear Monitor de Emergencias
-                </button>
-              </div>
-            </form>
+            <h5 class="fw-black mb-1" style="color: #451a03;">Monitor de Emergencias Protegido</h5>
+            <p class="text-muted small mb-3">Usa el botón pequeño <strong>"Login"</strong> ubicado arriba a la derecha (o pulsa el botón inferior) e ingresa con tus credenciales <strong>SUISD</strong> para visualizar el DataTables dinámico de emergencias.</p>
+            <button onclick="abrirModalLoginSUISD()" class="btn btn-warning rounded-pill fw-black text-dark px-4 py-2 border border-dark border-opacity-25 shadow-sm">
+              <i class="fa-solid fa-right-to-bracket me-2"></i>Iniciar Sesión SUISD
+            </button>
           </div>
         </div>
 
@@ -785,7 +807,7 @@
         <div id="suisd-admin-panel" class="card card-sedes d-none">
           <div class="card-header bg-warning bg-opacity-25 py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom border-warning">
             <div class="d-flex align-items-center gap-2">
-              <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa-solid fa-unlock-keyhole me-1"></i>Usuario: suisd</span>
+              <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa-solid fa-user-check me-1"></i>SUISD Autenticado</span>
               <h6 class="mb-0 fw-black" style="color: #451a03;"><i class="fa-solid fa-satellite-dish text-danger me-2"></i>DataTables Dinámico de Emergencias Recibidas</h6>
             </div>
             <div class="d-flex flex-wrap gap-2">
@@ -796,7 +818,7 @@
                 <i class="fa-solid fa-file-excel me-1"></i>Exportar CSV
               </button>
               <button onclick="cerrarSesionMonitorSUISD()" class="btn btn-outline-danger btn-sm rounded-pill fw-bold">
-                <i class="fa-solid fa-power-off me-1"></i>Cerrar Sesión
+                <i class="fa-solid fa-power-off me-1"></i>Salir
               </button>
             </div>
           </div>
@@ -857,6 +879,62 @@
     </section>
 
   </main>
+
+  <!-- =========================================================================
+       MODAL DE LOGIN COMPACTO (ACTIVADO DESDE EL BOTÓN PEQUEÑO SUPERIOR)
+       Credenciales: Usuario: SUISD | Clave: SUISD2026.
+       ========================================================================= -->
+  <div class="modal fade" id="modalLoginSUISD" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content rounded-4 border-2 border-warning shadow-lg overflow-hidden">
+        <div class="modal-header py-2 px-3" style="background: linear-gradient(90deg, #facc15 0%, #f59e0b 100%); color: #451a03;">
+          <h6 class="modal-title fw-black d-flex align-items-center gap-2">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Acceso Administrativo SUISD</span>
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-4 bg-white">
+          <div class="text-center mb-3">
+            <img src="logo.png" alt="Logo" width="54" height="54" class="object-fit-contain mb-2" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2966/2966327.png';">
+            <div class="fw-black small" style="color: #451a03;">MONITOR DE EMERGENCIAS</div>
+            <div class="text-muted" style="font-size: 0.72rem;">Ingresa tus credenciales para ver los registros</div>
+          </div>
+
+          <form onsubmit="autenticarMonitorSUISD(event)">
+            <div class="mb-2">
+              <label class="form-label small fw-bold mb-1" style="font-size: 0.75rem;">Usuario:</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-warning bg-opacity-25 border-warning text-dark"><i class="fa-solid fa-user"></i></span>
+                <input type="text" id="login-user" class="form-control form-control-sedes" placeholder="SUISD" autocomplete="username" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold mb-1" style="font-size: 0.75rem;">Clave:</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-warning bg-opacity-25 border-warning text-dark"><i class="fa-solid fa-key"></i></span>
+                <input type="password" id="login-pass" class="form-control form-control-sedes" placeholder="••••••••••" autocomplete="current-password" required>
+                <button type="button" onclick="toggleVerPassword()" class="btn btn-outline-secondary">
+                  <i id="eye-pass-icon" class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="login-error-msg" class="alert alert-danger py-1 px-2 small fw-semibold d-none mb-2 text-center" style="font-size: 0.74rem;">
+              <i class="fa-solid fa-circle-xmark me-1"></i>Usuario o clave incorrectos.
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-warning rounded-pill fw-black text-dark py-2 shadow-sm border border-dark border-opacity-25">
+                <i class="fa-solid fa-unlock-keyhole me-1"></i>Ingresar al Monitor
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- =========================================================================
        VENTANA MODAL DE EMERGENCIA CON MINI-MAPA DE PRECISIÓN Y PIN ARRASTRABLE
@@ -1004,16 +1082,14 @@
       <i class="fa-solid fa-map-location-dot fs-5 mb-1 text-warning-emphasis"></i>Mapa y Datos
     </button>
     <button onclick="switchTab('tab3')" id="m-btn-tab3" class="btn text-secondary fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
-      <i class="fa-solid fa-user-shield fs-5 mb-1"></i>Monitor SOS
+      <i class="fa-solid fa-screwdriver-wrench fs-5 mb-1"></i>Herramientas
     </button>
-    <button onclick="abrirModalEmergencia()" class="btn text-success fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
-      <i class="fa-brands fa-whatsapp fs-5 mb-1"></i>Mensaje SOS
+    <button onclick="accionBotonTopLogin()" class="btn text-dark fw-bold d-flex flex-column align-items-center" style="font-size: 0.65rem;">
+      <i class="fa-solid fa-user-shield fs-5 mb-1 text-warning-emphasis"></i>Login SUISD
     </button>
   </div>
 
-  <!-- =========================================================================
-       SCRIPTS EXTERNOS (CARGADOS UNA SOLA VEZ PARA EVITAR BLOQUEOS)
-       ========================================================================= -->
+  <!-- SCRIPTS EXTERNOS -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -1028,23 +1104,22 @@
   <script>
     /**
      * =========================================================================
-     * CONFIGURACIÓN PRINCIPAL: PUEDES PEGAR AQUÍ TU LINK DE GOOGLE SHEET O /exec
-     * (O pegarlo desde el botón amarillo "Conectar Sheet" en la esquina superior derecha)
+     * CONFIGURACIÓN PRINCIPAL: CREDENCIALES SUISD Y WHATSAPP DE EMERGENCIA
      * =========================================================================
      */
-    const DEFAULT_SOURCE_URL      = "https://script.google.com/macros/s/AKfycbzhIlmn1mq-UCoAXTLW6IrM9cte6dvgM-wfMrqQZ7UhM9rPKFkGXuZeAJIGOf4BsKRJ/exec"; 
+    const DEFAULT_SOURCE_URL      = "https://script.google.com/macros/s/AKfycbzhIlmn1mq-UCoAXTLW6IrM9cte6dvgM-wfMrqQZ7UhM9rPKFkGXuZeAJIGOf4BsKRJ/exec"; // Puedes pegar aquí tu link de Google Sheet o /exec
     const EMERGENCY_PHONE_CLEAN   = "59179107617";
     const EMERGENCY_PHONE_DISPLAY = "+591 79107617";
 
-    // Credenciales requeridas para el Monitor DataTables de Emergencias
-    const ADMIN_USER_REQ = "suisd";
-    const ADMIN_PASS_REQ = "suisd2006.";
+    // Credenciales solicitadas: usuario: SUISD | clave: SUISD2026.
+    const ADMIN_USER_REQ = "SUISD";
+    const ADMIN_PASS_REQ = "SUISD2026.";
 
-    const STORAGE_URL_KEY       = "SUISD_ACTIVE_SOURCE_URL_V16";
-    const CACHE_KEY_DATA        = "SUISD_CACHE_DATA_V16";
-    const CACHE_KEY_TIME        = "SUISD_CACHE_TIME_V16";
-    const CACHE_KEY_EMERGENCIAS = "SUISD_EMERGENCIAS_LOG_V16";
-    const SESSION_AUTH_KEY      = "SUISD_ADMIN_AUTH_ACTIVE";
+    const STORAGE_URL_KEY       = "SUISD_ACTIVE_SOURCE_URL_V17";
+    const CACHE_KEY_DATA        = "SUISD_CACHE_DATA_V17";
+    const CACHE_KEY_TIME        = "SUISD_CACHE_TIME_V17";
+    const CACHE_KEY_EMERGENCIAS = "SUISD_EMERGENCIAS_LOG_V17";
+    const SESSION_AUTH_KEY      = "SUISD_ADMIN_AUTH_V17";
     const CACHE_TTL_MS          = 6 * 60 * 60 * 1000;
 
     let rawData = [];
@@ -1055,7 +1130,7 @@
     let directLayerGroup = null;
     let tempClickMarker = null;
     let modoCapturarClickMapa = false;
-    let useClustering = false; // Inicia mostrando TODOS los puntos directamente en el mapa para visualización inmediata
+    let useClustering = false;
     let markersByCode = {};
     let dataTable = null;
     let emergenciasDataTable = null;
@@ -1089,75 +1164,34 @@
     };
 
     // =========================================================
-    // REPARADOR AUTOMÁTICO DE COORDENADAS DE GOOGLE SHEETS (BOLIVIA)
+    // LÓGICA DEL BOTÓN PEQUEÑO SUPERIOR DE LOGIN (SUISD / SUISD2026.)
     // =========================================================
-    function normalizarNumeroCoordenada(val) {
-      if (val === null || val === undefined || val === '') return NaN;
-      if (typeof val === 'number') return val;
-      let s = String(val).trim().replace(/\s+/g, '');
-      if (!s) return NaN;
-
-      // Si tiene coma como separador decimal: "-16,5097"
-      if (s.includes(',') && !s.includes('.')) {
-        s = s.replace(',', '.');
-      } else if (s.includes(',') && s.includes('.')) {
-        s = s.replace(/\./g, '').replace(',', '.');
+    function accionBotonTopLogin() {
+      if (sessionStorage.getItem(SESSION_AUTH_KEY) === "1") {
+        // Si ya inició sesión, llevar directamente al Monitor DataTables de Emergencias
+        switchTab('tab3');
+        mostrarPanelMonitorDesbloqueado();
+        setTimeout(() => {
+          document.getElementById('seccion-monitor-sos')?.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
       } else {
-        // Si tiene múltiples puntos por formato de miles: "-16.509.712" -> "-16.509712"
-        const parts = s.split('.');
-        if (parts.length > 2) {
-          s = parts[0] + '.' + parts.slice(1).join('');
-        }
+        abrirModalLoginSUISD();
       }
-
-      let num = parseFloat(s);
-      if (isNaN(num) || num === 0) return NaN;
-
-      // Si Google Sheets exportó el número sin punto decimal (ej. -16509712 en lugar de -16.509712)
-      while (Math.abs(num) > 180) {
-        num = num / 10;
-      }
-      return num;
     }
 
-    function extraerCoordenadasValidasDeFila(normObj, originalRow) {
-      let lat = normalizarNumeroCoordenada(normObj.LATITUD ?? normObj.LAT ?? normObj.LATITUDE ?? normObj.COORD_LAT ?? normObj.Y);
-      let lng = normalizarNumeroCoordenada(normObj.LONGITUD ?? normObj.LNG ?? normObj.LON ?? normObj.LONG ?? normObj.LONGITUDE ?? normObj.COORD_LNG ?? normObj.X);
-
-      // Si no encontró por nombre de columna estándar, buscar en todas las celdas de la fila dos números que caigan en Bolivia
-      if (isNaN(lat) || isNaN(lng)) {
-        const candidatosLat = [];
-        const candidatosLng = [];
-        Object.values(originalRow).forEach(v => {
-          const n = normalizarNumeroCoordenada(v);
-          if (!isNaN(n)) {
-            if (n <= -9 && n >= -24) candidatosLat.push(n);
-            else if (n <= -56 && n >= -71) candidatosLng.push(n);
-          }
-        });
-        if (isNaN(lat) && candidatosLat.length > 0) lat = candidatosLat[0];
-        if (isNaN(lng) && candidatosLng.length > 0) lng = candidatosLng[0];
+    function abrirModalLoginSUISD() {
+      const modalEl = document.getElementById('modalLoginSUISD');
+      if (modalEl && modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
       }
-
-      // Si Latitud y Longitud están invertidas (ej. Latitud = -68.12, Longitud = -16.50), corregirlas automáticamente
-      if (!isNaN(lat) && !isNaN(lng) && lat < -45 && lng > -35) {
-        const tmp = lat; lat = lng; lng = tmp;
-      }
-
-      // Si olvidaron el signo negativo en Bolivia (ej. 16.5097, 68.1215), convertir a negativo
-      if (!isNaN(lat) && lat > 9 && lat < 24) lat = -lat;
-      if (!isNaN(lng) && lng > 56 && lng < 71) lng = -lng;
-
-      const esValido = !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
-      return {
-        lat: esValido ? lat : null,
-        lng: esValido ? lng : null
-      };
+      document.getElementById('login-error-msg')?.classList.add('d-none');
+      const modalInst = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modalInst.show();
+      setTimeout(() => {
+        document.getElementById('login-user')?.focus();
+      }, 250);
     }
 
-    // =========================================================
-    // AUTENTICACIÓN MONITOR DE EMERGENCIAS (suisd / suisd2006.)
-    // =========================================================
     function toggleVerPassword() {
       const inp = document.getElementById('login-pass');
       const icon = document.getElementById('eye-pass-icon');
@@ -1173,22 +1207,69 @@
 
     function autenticarMonitorSUISD(event) {
       if (event) event.preventDefault();
-      const u = document.getElementById('login-user')?.value?.trim() || '';
-      const p = document.getElementById('login-pass')?.value || '';
+      const u = (document.getElementById('login-user')?.value || '').trim().toUpperCase();
+      const p = (document.getElementById('login-pass')?.value || '').trim();
       const errBox = document.getElementById('login-error-msg');
 
-      if (u.toLowerCase() === ADMIN_USER_REQ && (p === ADMIN_PASS_REQ || p === "suisd2006")) {
+      // Valida usuario: SUISD y clave: SUISD2026. (también compatible con suisd2006. por si acaso)
+      const passValida = (
+        p.toUpperCase() === ADMIN_PASS_REQ ||
+        p.toUpperCase() === "SUISD2026" ||
+        p.toLowerCase() === "suisd2006."
+      );
+
+      if (u === ADMIN_USER_REQ && passValida) {
         sessionStorage.setItem(SESSION_AUTH_KEY, "1");
         if (errBox) errBox.classList.add('d-none');
+
+        const modalEl = document.getElementById('modalLoginSUISD');
+        const modalInst = bootstrap.Modal.getInstance(modalEl);
+        if (modalInst) modalInst.hide();
+
+        actualizarEstadoVisualBotonLogin(true);
+        switchTab('tab3');
         mostrarPanelMonitorDesbloqueado();
         cargarHistorialEmergenciasDesdeSheet(false);
+
+        setTimeout(() => {
+          document.getElementById('seccion-monitor-sos')?.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Bienvenido al Monitor SUISD',
+          showConfirmButton: false,
+          timer: 2500
+        });
       } else {
         if (errBox) errBox.classList.remove('d-none');
       }
     }
 
+    function actualizarEstadoVisualBotonLogin(autenticado) {
+      const btnTop = document.getElementById('btn-top-login');
+      const iconTop = document.getElementById('top-login-icon');
+      const textTop = document.getElementById('top-login-text');
+      const btnTab3 = document.getElementById('btn-tab3-login-trigger');
+
+      if (autenticado) {
+        btnTop?.classList.add('logged-in');
+        if (iconTop) iconTop.className = 'fa-solid fa-unlock-keyhole';
+        if (textTop) textTop.textContent = 'SUISD';
+        if (btnTab3) btnTab3.classList.add('d-none');
+      } else {
+        btnTop?.classList.remove('logged-in');
+        if (iconTop) iconTop.className = 'fa-solid fa-lock';
+        if (textTop) textTop.textContent = 'Login';
+        if (btnTab3) btnTab3.classList.remove('d-none');
+      }
+    }
+
     function mostrarPanelMonitorDesbloqueado() {
-      document.getElementById('suisd-login-box')?.classList.add('d-none');
+      actualizarEstadoVisualBotonLogin(true);
+      document.getElementById('suisd-locked-banner')?.classList.add('d-none');
       document.getElementById('suisd-admin-panel')?.classList.remove('d-none');
       if (!emergenciasDataTable) {
         initEmergenciasDataTable();
@@ -1203,17 +1284,75 @@
       sessionStorage.removeItem(SESSION_AUTH_KEY);
       document.getElementById('login-user').value = '';
       document.getElementById('login-pass').value = '';
+      actualizarEstadoVisualBotonLogin(false);
       document.getElementById('suisd-admin-panel')?.classList.add('d-none');
-      document.getElementById('suisd-login-box')?.classList.remove('d-none');
+      document.getElementById('suisd-locked-banner')?.classList.remove('d-none');
     }
 
-    function irAlMonitorDeEmergencias() {
-      switchTab('tab3');
-      setTimeout(() => {
-        document.getElementById('seccion-monitor-sos')?.scrollIntoView({ behavior: 'smooth' });
-      }, 200);
+    // =========================================================
+    // REPARADOR AUTOMÁTICO DE COORDENADAS DE GOOGLE SHEETS (BOLIVIA)
+    // =========================================================
+    function normalizarNumeroCoordenada(val) {
+      if (val === null || val === undefined || val === '') return NaN;
+      if (typeof val === 'number') return val;
+      let s = String(val).trim().replace(/\s+/g, '');
+      if (!s) return NaN;
+
+      if (s.includes(',') && !s.includes('.')) {
+        s = s.replace(',', '.');
+      } else if (s.includes(',') && s.includes('.')) {
+        s = s.replace(/\./g, '').replace(',', '.');
+      } else {
+        const parts = s.split('.');
+        if (parts.length > 2) {
+          s = parts[0] + '.' + parts.slice(1).join('');
+        }
+      }
+
+      let num = parseFloat(s);
+      if (isNaN(num) || num === 0) return NaN;
+
+      while (Math.abs(num) > 180) {
+        num = num / 10;
+      }
+      return num;
     }
 
+    function extraerCoordenadasValidasDeFila(normObj, originalRow) {
+      let lat = normalizarNumeroCoordenada(normObj.LATITUD ?? normObj.LAT ?? normObj.LATITUDE ?? normObj.COORD_LAT ?? normObj.Y);
+      let lng = normalizarNumeroCoordenada(normObj.LONGITUD ?? normObj.LNG ?? normObj.LON ?? normObj.LONG ?? normObj.LONGITUDE ?? normObj.COORD_LNG ?? normObj.X);
+
+      if (isNaN(lat) || isNaN(lng)) {
+        const candidatosLat = [];
+        const candidatosLng = [];
+        Object.values(originalRow).forEach(v => {
+          const n = normalizarNumeroCoordenada(v);
+          if (!isNaN(n)) {
+            if (n <= -9 && n >= -24) candidatosLat.push(n);
+            else if (n <= -56 && n >= -71) candidatosLng.push(n);
+          }
+        });
+        if (isNaN(lat) && candidatosLat.length > 0) lat = candidatosLat[0];
+        if (isNaN(lng) && candidatosLng.length > 0) lng = candidatosLng[0];
+      }
+
+      if (!isNaN(lat) && !isNaN(lng) && lat < -45 && lng > -35) {
+        const tmp = lat; lat = lng; lng = tmp;
+      }
+
+      if (!isNaN(lat) && lat > 9 && lat < 24) lat = -lat;
+      if (!isNaN(lng) && lng > 56 && lng < 71) lng = -lng;
+
+      const esValido = !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+      return {
+        lat: esValido ? lat : null,
+        lng: esValido ? lng : null
+      };
+    }
+
+    // =========================================================
+    // DATATABLES DINÁMICO DE EMERGENCIAS
+    // =========================================================
     function initEmergenciasDataTable() {
       if (emergenciasDataTable) return;
       emergenciasDataTable = $('#tabla-emergencias-dt').DataTable({
@@ -1752,8 +1891,11 @@
       const kpiTotal = document.getElementById('kpi-sos-total');
       const kpiGps = document.getElementById('kpi-sos-gps');
       const kpiLast = document.getElementById('kpi-sos-last');
+      const badgeTop = document.getElementById('top-login-badge');
 
       if (kpiTotal) kpiTotal.textContent = emergenciasLog.length;
+      if (badgeTop) badgeTop.textContent = emergenciasLog.length;
+
       const conGps = emergenciasLog.filter(d => /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(String(d.COORDENADAS_GPS || '').replace(/\s+/g, '').replace(/\(.*\)/, ''))).length;
       if (kpiGps) kpiGps.textContent = conGps;
       if (kpiLast) kpiLast.textContent = new Date().toLocaleTimeString('es-BO');
@@ -1796,7 +1938,7 @@
           localStorage.setItem(CACHE_KEY_EMERGENCIAS, JSON.stringify(emergenciasLog));
           renderizarBitacoraEmergencias();
           if (mostrarAlerta) {
-            Swal.fire({ icon: 'success', title: 'Monitor Sincronizado', text: `Se cargaron ${emergenciasLog.length} registros de emergencia desde Google Sheets.`, timer: 2000, showConfirmButton: false });
+            Swal.fire({ icon: 'success', title: 'Monitor Sincronizada', text: `Se cargaron ${emergenciasLog.length} registros de emergencia desde Google Sheets.`, timer: 2000, showConfirmButton: false });
           }
         }
       } catch (err) {
@@ -1934,7 +2076,6 @@
       const badge = document.getElementById('loading-badge');
       badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-1"></i>Sincronizando...`;
 
-      // 1. Si corre dentro de Apps Script nativo
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => {
@@ -1946,7 +2087,6 @@
         return;
       }
 
-      // 2. Leer caché local si es válido
       if (!forzarDescarga) {
         const cData = localStorage.getItem(CACHE_KEY_DATA);
         const cTime = localStorage.getItem(CACHE_KEY_TIME);
@@ -1966,7 +2106,7 @@
 
       const sourceUrl = getConfiguredUrl();
       if (!sourceUrl) {
-        mostrarFallbackDemo("Mostrando 15 establecimientos reales del SEDES La Paz (Modo Demo). Haz clic en 'Conectar Sheet' para vincular tu hoja completa.");
+        mostrarFallbackDemo("Mostrando 15 establecimientos reales del SEDES La Paz (Modo Demo). Haz clic en 'Sheet' arriba a la derecha para vincular tu hoja completa.");
         return;
       }
 
@@ -2407,7 +2547,7 @@
       map = L.map('map', { zoomControl: false }).setView([-16.5000, -68.1500], 9);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap | SEDES La Paz - SUISD'
       }).addTo(map);
@@ -2678,6 +2818,8 @@
         const savedLog = localStorage.getItem(CACHE_KEY_EMERGENCIAS);
         if (savedLog) emergenciasLog = JSON.parse(savedLog) || [];
       } catch (e) {}
+
+      document.getElementById('top-login-badge').textContent = emergenciasLog.length;
 
       if (sessionStorage.getItem(SESSION_AUTH_KEY) === "1") {
         mostrarPanelMonitorDesbloqueado();
